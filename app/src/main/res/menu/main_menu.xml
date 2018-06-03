@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mnu_show_completed"
+        android:title="@string/mnu_show_completed_label"
+        android:checkable="true"/>
+    <item android:id="@+id/mnu_settings"
+        android:title="@string/mnu_settings_label" />
+</menu>

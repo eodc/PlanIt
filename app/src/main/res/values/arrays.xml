@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_init_page_labels">
+        <item>@string/pref_init_page_home_label</item>
+        <item>@string/pref_init_page_planner_label</item>
+        <item>@string/pref_init_page_calendar_label</item>
+    </array>
+    <array name="pref_init_page_values">
+        <item>@string/pref_init_page_home_value</item>
+        <item>@string/pref_init_page_planner_value</item>
+        <item>@string/pref_init_page_calendar_value</item>
+    </array>
+
+    <array name="pref_show_notif_days_labels">
+        <item>@string/pref_show_notif_mon_label</item>
+        <item>@string/pref_show_notif_tue_label</item>
+        <item>@string/pref_show_notif_wed_label</item>
+        <item>@string/pref_show_notif_thu_label</item>
+        <item>@string/pref_show_notif_fri_label</item>
+        <item>@string/pref_show_notif_sat_label</item>
+        <item>@string/pref_show_notif_sun_label</item>
+    </array>
+    <array name="pref_show_notif_days_values">
+        <item>@string/pref_show_notif_mon_value</item>
+        <item>@string/pref_show_notif_tue_value</item>
+        <item>@string/pref_show_notif_wed_value</item>
+        <item>@string/pref_show_notif_thu_value</item>
+        <item>@string/pref_show_notif_fri_value</item>
+        <item>@string/pref_show_notif_sat_value</item>
+        <item>@string/pref_show_notif_sun_value</item>
+    </array>
+
+    <array name="pref_what_assign_show_labels">
+        <item>@string/pref_what_assign_show_curr_day_label</item>
+        <item>@string/pref_what_assign_show_next_day_label</item>
+    </array>
+
+    <array name="pref_what_assign_show_values">
+        <item>@string/pref_what_assign_show_curr_day_value</item>
+        <item>@string/pref_what_assign_show_next_day_value</item>
+    </array>
+</resources>

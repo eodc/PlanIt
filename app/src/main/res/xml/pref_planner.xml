@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.PreferenceCategory android:title="General" >
+        <ListPreference
+            android:title="Start In"
+            android:summary="Home"
+            android:key="@string/pref_init_page_key"
+            android:entries="@array/pref_init_page_labels"
+            android:entryValues="@array/pref_init_page_values"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:defaultValue="@string/pref_init_page_home_value"/>
+
+        <Preference
+            android:title="Classes"
+            android:key="@string/pref_classes_key"
+            android:summary="Add, remove, or modify classes"
+            android:icon="@drawable/ic_book_black_24dp"/>
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="Notifications">
+        <SwitchPreference
+            android:defaultValue="@bool/pref_show_notif_default"
+            android:key="@string/pref_show_notif_key"
+            android:summaryOff="Notifications will not be shown"
+            android:summaryOn="Notifications will be shown"
+            android:title="Show Notifications"
+            android:icon="@drawable/ic_notifications_black_24dp" />
+
+        <MultiSelectListPreference
+            android:title="Notification Days"
+            android:summary="Every Day"
+            android:key="@string/pref_show_notif_days_key"
+            android:entries="@array/pref_show_notif_days_labels"
+            android:entryValues="@array/pref_show_notif_days_values"
+            android:icon="@drawable/ic_calendar_black_24px"
+            android:defaultValue="@array/pref_show_notif_days_values" />
+
+        <io.eodc.planit.preference.DialogPreferenceContainer
+            android:title="Notification Time"
+            android:key="@string/pref_show_notif_time_key"
+            android:summary="7:00PM"
+            android:dialogTitle=""
+            android:icon="@drawable/ic_clock_black_24dp" />
+
+        <ListPreference
+            android:title="Notify Assignments Due"
+            android:key="@string/pref_what_assign_show_key"
+            android:summary="On Current Day"
+            android:entries="@array/pref_what_assign_show_labels"
+            android:entryValues="@array/pref_what_assign_show_values"
+            android:defaultValue="@string/pref_what_assign_show_next_day_value"
+            android:icon="@drawable/ic_homework_black_24dp"/>
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="About">
+        <Preference
+            android:title="3rd Party Licences"
+            android:icon="@drawable/ic_libs_black_24dp">
+            <intent android:targetPackage="io.eodc.planit"
+                android:targetClass="io.eodc.planit.activity.LicensesActivity" />
+        </Preference>
+        <Preference
+            android:title="@string/app_name"
+            android:summary="Nicholas Nhien - 2018"
+            android:icon="@drawable/ic_info_black_24dp" />
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>
