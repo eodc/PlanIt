@@ -21,6 +21,7 @@ import io.eodc.planit.listener.OnAssignmentChangeListener;
 public abstract class BaseFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OnAssignmentChangeListener {
+
     @Override
     public void onAssignmentComplete(Cursor cursor) {
         cursor.moveToFirst();

@@ -31,15 +31,15 @@ import timber.log.Timber;
  */
 public class PlannerFragment extends BaseFragment implements
         AssignmentTypeLoadChangeListener {
-
     private static final int CLASSES_LOADER_ID = 0;
     private static final int ASSIGNMENTS_LOADER_ID = 1;
-    @BindView(R.id.content)
-    RecyclerView rvContent;
-    @BindView(R.id.all_done_layout)
-    LinearLayout noAssignmentsLayout;
-    private int currentShownAssignmentFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
-    private AssignmentsAdapter assignmentsAdapter;
+
+    @BindView(R.id.content)         private RecyclerView mRvContent;
+    @BindView(R.id.all_done_layout) private LinearLayout mLayoutNoAssignments;
+
+    private AssignmentsAdapter mAssignmentsAdapter;
+
+    private int mFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
 
     /**
      * Creates a new instance of Planner Fragment
@@ -84,7 +84,7 @@ public class PlannerFragment extends BaseFragment implements
                 String orderBy = PlannerContract.AssignmentColumns.DUE_DATE + ", " + PlannerContract.AssignmentColumns.CLASS_ID + " ASC";
                 return new CursorLoader(requireContext(), PlannerContract.AssignmentColumns.CONTENT_URI,
                         null, PlannerContract.AssignmentColumns.COMPLETED + "=?",
-                        new String[]{String.valueOf(currentShownAssignmentFlag)}, orderBy);
+                        new String[]{String.valueOf(mFlag)}, orderBy);
         }
         return new CursorLoader(requireContext());
     }
@@ -93,26 +93,26 @@ public class PlannerFragment extends BaseFragment implements
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case CLASSES_LOADER_ID:
-                assignmentsAdapter = new AssignmentsAdapter(getActivity(), data, this);
+                mAssignmentsAdapter = new AssignmentsAdapter(getActivity(), data, this);
                 getLoaderManager().initLoader(ASSIGNMENTS_LOADER_ID, null, this);
                 break;
             case ASSIGNMENTS_LOADER_ID:
                 if (data.getCount() > 0) {
-                    noAssignmentsLayout.setVisibility(View.GONE);
-                    assignmentsAdapter.swapAssignmentsCursor(data);
+                    mLayoutNoAssignments.setVisibility(View.GONE);
+                    mAssignmentsAdapter.swapAssignmentsCursor(data);
                 } else {
-                    noAssignmentsLayout.setVisibility(View.VISIBLE);
-                    assignmentsAdapter.swapAssignmentsCursor(null);
+                    mLayoutNoAssignments.setVisibility(View.VISIBLE);
+                    mAssignmentsAdapter.swapAssignmentsCursor(null);
                 }
                 break;
         }
-        rvContent.setAdapter(assignmentsAdapter);
-        rvContent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvContent.setAdapter(mAssignmentsAdapter);
+        mRvContent.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(requireContext(), 0,
                 ItemTouchHelper.RIGHT, this);
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
-        touchHelper.attachToRecyclerView(rvContent);
+        touchHelper.attachToRecyclerView(mRvContent);
     }
 
     @Override
@@ -132,10 +132,10 @@ public class PlannerFragment extends BaseFragment implements
 
     @Override
     public void onTypeChanged(int flag) {
-        currentShownAssignmentFlag = flag;
+        mFlag = flag;
         try {
             getLoaderManager().restartLoader(ASSIGNMENTS_LOADER_ID, null, this);
-            assignmentsAdapter.setAssignmentsCompleted(currentShownAssignmentFlag == PlannerContract.FLAG_SHOW_COMPLETE);
+            mAssignmentsAdapter.setAssignmentsCompleted(mFlag == PlannerContract.FLAG_SHOW_COMPLETE);
         } catch (Exception e) {
             Timber.i(e, "May just be inserting fragment");
         }

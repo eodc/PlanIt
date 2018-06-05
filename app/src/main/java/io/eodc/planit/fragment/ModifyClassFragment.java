@@ -45,28 +45,24 @@ public class ModifyClassFragment extends DialogFragment implements
 
     private static final String ARG_FLAG = "flag";
     private static final String ARG_ID = "id";
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
-    @BindView(R.id.tv_subtitle)
-    TextView tvSubtitle;
-    @BindView(R.id.edit_class_name)
-    EditText editClassName;
-    @BindView(R.id.edit_teacher_name)
-    EditText editTeacherName;
-    @BindView(R.id.color_picker)
-    ImageView colorPicker;
-    @BindView(R.id.btn_confirm)
-    Button btnConfirm;
-    @BindView(R.id.btn_delete)
-    Button btnDelete;
-    private int flag;
-    private String colorChosen;
-    private OnClassListChangeListener listener;
+
+    @BindView(R.id.tv_title)            private TextView    mTextTitle;
+    @BindView(R.id.tv_subtitle)         private TextView    mTextSubtitle;
+    @BindView(R.id.edit_class_name)     private EditText    mEditClassName;
+    @BindView(R.id.edit_teacher_name)   private EditText    mEditTeacherName;
+    @BindView(R.id.color_picker)        private ImageView   mColorPicker;
+    @BindView(R.id.btn_confirm)         private Button      mBtnConfirm;
+    @BindView(R.id.btn_delete)          private Button      mBtnDelete;
+
+    private OnClassListChangeListener mListener;
+
+    private int     mFlag;
+    private String  mColorChosen;
 
     /**
      * Creates an new instance of a ModifyClassFragment
      *
-     * @param listener The listener listening for class list changes
+     * @param listener The mListener listening for class list changes
      * @param flag     Specifies whether a new class is being added or an existing one is being modified
      * @param id       If being modified, the row number in the class table. If being added use 0
      * @return A new instance of ModifyClassFragment
@@ -131,7 +127,7 @@ public class ModifyClassFragment extends DialogFragment implements
                             Cursor cursor = getActivity().getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
                                     null, null, null, null);
                             if (cursor != null) {
-                                listener.onClassListChange(cursor.getCount());
+                                mListener.onClassListChange(cursor.getCount());
                                 cursor.close();
                             }
                             dismiss();
@@ -148,8 +144,8 @@ public class ModifyClassFragment extends DialogFragment implements
     void setBtnConfirm() {
         ContentValues values = new ContentValues();
 
-        String className = editClassName.getText().toString().trim();
-        String teacherName = editTeacherName.getText().toString().trim();
+        String className = mEditClassName.getText().toString().trim();
+        String teacherName = mEditTeacherName.getText().toString().trim();
 
         if (!className.equals("") &&
                 !teacherName.equals("") &&
@@ -157,10 +153,10 @@ public class ModifyClassFragment extends DialogFragment implements
                 getActivity().getContentResolver() != null) {
             values.put(PlannerContract.ClassColumns.NAME, className);
             values.put(PlannerContract.ClassColumns.TEACHER, teacherName);
-            values.put(PlannerContract.ClassColumns.COLOR, colorChosen);
-            if (flag == FLAG_NEW_CLASS)
+            values.put(PlannerContract.ClassColumns.COLOR, mColorChosen);
+            if (mFlag == FLAG_NEW_CLASS)
                 getActivity().getContentResolver().insert(PlannerContract.ClassColumns.CONTENT_URI, values);
-            else if (flag == FLAG_MOD_CLASS) {
+            else if (mFlag == FLAG_MOD_CLASS) {
                 Bundle args = getArguments();
                 if (args != null) {
                     int id = args.getInt(ARG_ID);
@@ -172,7 +168,7 @@ public class ModifyClassFragment extends DialogFragment implements
             Cursor cursor = getActivity().getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
                     null, null, null, null);
             if (cursor != null) {
-                listener.onClassListChange(cursor.getCount());
+                mListener.onClassListChange(cursor.getCount());
                 cursor.close();
             }
             dismiss();
@@ -193,8 +189,8 @@ public class ModifyClassFragment extends DialogFragment implements
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            flag = args.getInt(ARG_FLAG);
-            if (flag == FLAG_MOD_CLASS) {
+            mFlag = args.getInt(ARG_FLAG);
+            if (mFlag == FLAG_MOD_CLASS) {
                 int id = args.getInt(ARG_ID);
                 getLoaderManager().initLoader(id, null, this);
             }
@@ -212,14 +208,14 @@ public class ModifyClassFragment extends DialogFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (flag == FLAG_NEW_CLASS) {
-            tvTitle.setText(R.string.create_class_title);
-            tvSubtitle.setText(R.string.create_class_description);
-            btnConfirm.setText(R.string.btn_create_label);
-        } else if (flag == FLAG_MOD_CLASS) {
-            btnDelete.setVisibility(View.VISIBLE);
+        if (mFlag == FLAG_NEW_CLASS) {
+            mTextTitle.setText(R.string.create_class_title);
+            mTextSubtitle.setText(R.string.create_class_description);
+            mBtnConfirm.setText(R.string.btn_create_label);
+        } else if (mFlag == FLAG_MOD_CLASS) {
+            mBtnDelete.setVisibility(View.VISIBLE);
         }
-        colorChosen = "#" + ContextCompat.getColor(requireContext(), R.color.class_red);
+        mColorChosen = "#" + ContextCompat.getColor(requireContext(), R.color.class_red);
     }
 
     @Override
@@ -233,10 +229,10 @@ public class ModifyClassFragment extends DialogFragment implements
     }
 
     /**
-     * Swaps the current listener with the specified one
+     * Swaps the current mListener with the specified one
      */
     public void swapListener(OnClassListChangeListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
     }
 
     @NonNull
@@ -249,9 +245,9 @@ public class ModifyClassFragment extends DialogFragment implements
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         data.moveToFirst();
-        editClassName.setText(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.NAME)));
-        editTeacherName.setText(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.TEACHER)));
-        colorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.COLOR)))));
+        mEditClassName.setText(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.NAME)));
+        mEditTeacherName.setText(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.TEACHER)));
+        mColorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(data.getString(data.getColumnIndex(PlannerContract.ClassColumns.COLOR)))));
     }
 
     @Override
@@ -261,8 +257,8 @@ public class ModifyClassFragment extends DialogFragment implements
     @Override
     public void onColorSelected(boolean positiveResult, int color) {
         if (positiveResult) {
-            colorPicker.setImageDrawable(new ColorDrawable(color));
-            colorChosen = "#" + Integer.toHexString(color).toUpperCase();
+            mColorPicker.setImageDrawable(new ColorDrawable(color));
+            mColorChosen = "#" + Integer.toHexString(color).toUpperCase();
         }
     }
 }
