@@ -23,9 +23,9 @@ import io.eodc.planit.R;
  * @author 2n
  */
 public class AssignmentTypeAdapter extends ArrayAdapter<AssignmentType> {
-    private Context mContext;
-    private int mResource;
-    private List<AssignmentType> types;
+    private Context                 mContext;
+    private int                     mResource;
+    private List<AssignmentType>    mTypes;
 
     /**
      * Constructs a new AssignmentTypeAdapter
@@ -42,7 +42,7 @@ public class AssignmentTypeAdapter extends ArrayAdapter<AssignmentType> {
         super(context, resource, textViewId, objects);
         mContext = context;
         mResource = resource;
-        types = objects;
+        mTypes = objects;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AssignmentTypeAdapter extends ArrayAdapter<AssignmentType> {
             holder = (ViewHolder) v.getTag();
         }
 
-        AssignmentType type = types.get(position);
+        AssignmentType type = mTypes.get(position);
 
         holder.icon.setImageResource(type.getIconId());
         holder.title.setText(type.getName());

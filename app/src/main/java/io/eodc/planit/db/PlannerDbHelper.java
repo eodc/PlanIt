@@ -11,8 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  * @see PlannerProvider
  */
 public class PlannerDbHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "assignments.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int    DATABASE_VERSION    = 1;
+    private static final String DATABASE_NAME       = "assignments.db";
 
     /**
      * Constructs a new instance of this DB Helper

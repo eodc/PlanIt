@@ -35,11 +35,11 @@ import io.eodc.planit.receiver.NotificationPublishReceiver;
 public class NotificationHelper extends ContextWrapper {
     private static final int SUMMARY_NOTIF_ID = 99999; // High number in case some person for some reason is taking 99998 classes.....
 
-    private static final String CLASSES_CHANNEL_ID = "classes";
+    private static final String CLASSES_CHANNEL_ID  = "classes";
     private static final String REMINDER_CHANNEL_ID = "reminder";
-    private static final String GROUP_ID = "assignments";
+    private static final String GROUP_ID            = "assignments";
 
-    private NotificationManager manager;
+    private NotificationManager mManager;
 
     /**
      * Constructs a new NotificationHelper
@@ -85,8 +85,8 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     private NotificationManager getManager() {
-        if (manager == null) manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        return manager;
+        if (mManager == null) mManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        return mManager;
     }
 
     /**
@@ -151,7 +151,7 @@ public class NotificationHelper extends ContextWrapper {
                         Notification notif = notificationBuilder.setContentText(assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due")
                                 .setStyle(notificationStyle).build();
                         classesWithAssignmentsDue++;
-                        if (manager != null) manager.notify(classId, notif);
+                        if (mManager != null) mManager.notify(classId, notif);
                         else {
                             NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
                             notifManagerCompat.notify(classId, notif);
@@ -167,7 +167,7 @@ public class NotificationHelper extends ContextWrapper {
 
                 summaryBuilder.setStyle(summaryStyle);
                 Notification summaryNotif = summaryBuilder.build();
-                if (manager != null) manager.notify(SUMMARY_NOTIF_ID, summaryNotif);
+                if (mManager != null) mManager.notify(SUMMARY_NOTIF_ID, summaryNotif);
                 else {
                     NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
                     notifManagerCompat.notify(SUMMARY_NOTIF_ID, summaryNotif);

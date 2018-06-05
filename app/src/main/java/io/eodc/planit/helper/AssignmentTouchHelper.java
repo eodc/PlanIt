@@ -16,12 +16,12 @@ import io.eodc.planit.listener.OnAssignmentChangeListener;
  * @author 2n
  */
 public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
-    private Context mContext;
-    private OnAssignmentChangeListener listener;
+    private Context                     mContext;
+    private OnAssignmentChangeListener mListener;
 
     public AssignmentTouchHelper(Context context, int dragDirs, int swipeDirs, OnAssignmentChangeListener listener) {
         super(dragDirs, swipeDirs);
-        this.listener = listener;
+        this.mListener = listener;
         this.mContext = context;
     }
 
@@ -58,12 +58,12 @@ public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
                             new String[]{String.valueOf(id)},
                             null);
 
-                    listener.onAssignmentComplete(cursor);
+                    mListener.onAssignmentComplete(cursor);
                 } else {
                     mContext.getContentResolver().delete(PlannerContract.AssignmentColumns.CONTENT_URI,
                             PlannerContract.AssignmentColumns._ID + "=?",
                             new String[]{String.valueOf(id)});
-                    listener.onAssignmentEdit();
+                    mListener.onAssignmentEdit();
                 }
                 currentItem.close();
             }

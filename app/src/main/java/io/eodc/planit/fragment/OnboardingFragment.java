@@ -22,9 +22,9 @@ import io.eodc.planit.R;
  * @author 2n
  */
 public class OnboardingFragment extends Fragment {
-    private static final String ARG_TITLE = "title";
-    private static final String ARG_DRAWABLE = "drawable";
-    private static final String ARG_DESC = "desc";
+    private static final String ARG_TITLE       = "title";
+    private static final String ARG_DRAWABLE    = "drawable";
+    private static final String ARG_DESC        = "desc";
 
     /**
      * Creates a new instance of an OnboardingFragment

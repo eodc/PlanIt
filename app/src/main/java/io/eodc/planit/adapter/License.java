@@ -1,37 +1,37 @@
 package io.eodc.planit.adapter;
 
 public class License {
-    private String name;
-    private int year;
-    private String author;
-    private String licenseUrl;
-    private String projectUrl;
+    private int     mYear;
+    private String  mName;
+    private String  mAuthor;
+    private String  mLicenseUrl;
+    private String  mProjectUrl;
 
     public License(String name, int year, String author, String licenseUrl, String projectUrl) {
-        this.name = name;
-        this.year = year;
-        this.author = author;
-        this.licenseUrl = licenseUrl;
-        this.projectUrl = projectUrl;
+        this.mName = name;
+        this.mYear = year;
+        this.mAuthor = author;
+        this.mLicenseUrl = licenseUrl;
+        this.mProjectUrl = projectUrl;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public int getYear() {
-        return year;
+        return mYear;
     }
 
     public String getAuthor() {
-        return author;
+        return mAuthor;
     }
 
     public String getLicenseUrl() {
-        return licenseUrl;
+        return mLicenseUrl;
     }
 
     public String getProjectUrl() {
-        return projectUrl;
+        return mProjectUrl;
     }
 }

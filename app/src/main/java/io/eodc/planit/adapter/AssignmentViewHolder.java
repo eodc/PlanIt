@@ -17,26 +17,17 @@ import io.eodc.planit.R;
  */
 public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     boolean isExpanded = false;
-    int id;
+    int     id;
 
-    @BindView(R.id.header)
-    LinearLayout header;
-    @BindView(R.id.header_label)
-    TextView headerLabel;
-    @BindView(R.id.class_color)
-    ImageView classColor;
-    @BindView(R.id.assignment_name)
-    TextView assignmentName;
-    @BindView(R.id.class_and_type)
-    TextView classAndTypeName;
-    @BindView(R.id.due_date)
-    TextView dueDate;
-    @BindView(R.id.ic_due_date)
-    ImageView dueDateIcon;
-    @BindView(R.id.expand_button)
-    ImageView expandButton;
-    @BindView(R.id.notes_text)
-    TextView notes;
+    @BindView(R.id.header)              LinearLayout    header;
+    @BindView(R.id.header_label)        TextView        headerLabel;
+    @BindView(R.id.class_color)         ImageView       classColor;
+    @BindView(R.id.assignment_name)     TextView        assignmentName;
+    @BindView(R.id.class_and_type)      TextView        classAndTypeName;
+    @BindView(R.id.due_date)            TextView        dueDate;
+    @BindView(R.id.ic_due_date)         ImageView       dueDateIcon;
+    @BindView(R.id.expand_button)       ImageView       expandButton;
+    @BindView(R.id.notes_text)          TextView        notes;
 
     /**
      * Constructs an instance of an AssignmentViewHolder

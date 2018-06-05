@@ -49,10 +49,10 @@ import timber.log.Timber;
  */
 public class HomeFragment extends BaseFragment {
 
-    private static final int LOADER_DUE_THIS_WEEK = 0;
-    private static final int LOADER_DUE_TODAY = 1;
-    private static final int LOADER_DUE_OVERDUE = 2;
-    private static final int LOADER_CLASSES = 3;
+    private static final int LOADER_DUE_THIS_WEEK   = 0;
+    private static final int LOADER_DUE_TODAY       = 1;
+    private static final int LOADER_DUE_OVERDUE     = 2;
+    private static final int LOADER_CLASSES         = 3;
 
     @BindView(R.id.text_event_count)    private TextView        mTextEventCount;
     @BindView(R.id.graph_week)          private LineChart       mGraphWeek;
