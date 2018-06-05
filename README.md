@@ -1,5 +1,5 @@
 # PlanIt
-An Android planner app
+The Android Planner
 
 
 ## License
