@@ -97,12 +97,15 @@ public class EditAssignmentFragment extends DialogFragment implements
 
         String name = mEditTitle.getText().toString().trim();
         String notes = mEditNotes.getText().toString().trim();
+        String dueDate = mEditDue.getText().toString().trim();
 
         if (name.equals("") || mEditDue.getText().toString().trim().equals("")) {
-            if (name.equals(""))
+            if (name.equals("")) {
                 mEditNameLayout.setError("Title cannot be empty.");
-            if (mEditDue.getText().toString().trim().equals(""))
+            }
+            if (dueDate.equals("")) {
                 mEditDueLayout.setError("Due date can't be empty");
+            }
         } else {
             values.put(PlannerContract.AssignmentColumns.TITLE, name);
             values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClassId);
@@ -120,7 +123,7 @@ public class EditAssignmentFragment extends DialogFragment implements
 
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
+            dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
 
             values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
             values.put(PlannerContract.AssignmentColumns.NOTES, notes);
@@ -184,8 +187,7 @@ public class EditAssignmentFragment extends DialogFragment implements
     @Override
     public void onResume() {
         super.onResume();
-        if (getDialog() != null &&
-                getDialog().getWindow() != null) {
+        if (getDialog() != null && getDialog().getWindow() != null) {
             int width = (int) getResources().getDimension(R.dimen.edit_dialog_width);
             int height = (int) getResources().getDimension(R.dimen.edit_dialog_height);
             getDialog().getWindow().setLayout(width, height);
@@ -276,8 +278,7 @@ public class EditAssignmentFragment extends DialogFragment implements
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-    }
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -290,14 +291,10 @@ public class EditAssignmentFragment extends DialogFragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(mTypeSpinner)) {
-            mSelectedType = position;
-        } else if (parent.equals(mClassSpinner)) {
-            mSelectedClassId = id;
-        }
+        if (parent.equals(mTypeSpinner)) mSelectedType = position;
+        else if (parent.equals(mClassSpinner)) mSelectedClassId = id;
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+    public void onNothingSelected(AdapterView<?> parent) { }
 }

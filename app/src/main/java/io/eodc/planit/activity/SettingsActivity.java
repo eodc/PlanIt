@@ -24,7 +24,6 @@ public class SettingsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

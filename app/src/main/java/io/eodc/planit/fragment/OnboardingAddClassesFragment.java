@@ -69,8 +69,8 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) // Hack that works for some reason, idk why.
-            getLoaderManager().restartLoader(0, null, this);
+        // Hack that works for some reason, idk why.
+        if (savedInstanceState != null) getLoaderManager().restartLoader(0, null, this);
     }
 
     /**
@@ -99,13 +99,11 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
         mRvClasses.setAdapter(new ClassesAdapter(data, getContext(), this));
         mRvClasses.setLayoutManager(new LinearLayoutManager(getContext()));
         updateNoClassIndicators(data.getCount());
-        if (data.getCount() > 0)
-            mListener.onClassListChange(data.getCount());
+        if (data.getCount() > 0) mListener.onClassListChange(data.getCount());
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-    }
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 
     private void updateNoClassIndicators(int count) {
         if (count > 0) {

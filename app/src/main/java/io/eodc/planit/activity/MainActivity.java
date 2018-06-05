@@ -71,8 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         mFragmentManager = getSupportFragmentManager();
 
-        if (BuildConfig.DEBUG)
-            Timber.plant(new Timber.DebugTree());
+        if (BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
 
         setSupportActionBar(mToolbar);
         mToolbar.inflateMenu(R.menu.main_menu);
@@ -82,12 +81,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String initScreen = sharedPreferences.getString(getString(R.string.pref_init_page_key), getString(R.string.pref_init_page_home_value));
 
-        if (initScreen.equals(getString(R.string.pref_init_page_home_value)))
+        if (initScreen.equals(getString(R.string.pref_init_page_home_value))) {
             mFragmentManager.beginTransaction().add(R.id.content_fragment, new HomeFragment()).commit();
-        else if (initScreen.equals(getString(R.string.pref_init_page_planner_value)))
-            mBottomNav.setCurrentItem(1);
-        else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value)))
-            mBottomNav.setCurrentItem(2);
+        } else if (initScreen.equals(getString(R.string.pref_init_page_planner_value))) mBottomNav.setCurrentItem(1);
+        else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value))) mBottomNav.setCurrentItem(2);
 
     }
 
@@ -149,9 +146,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                 } else {
-                    if (position == 1) {
-                        hideBottomSheet();
-                    }
+                    if (position == 1) hideBottomSheet();
                 }
                 return true;
             }
@@ -256,9 +251,7 @@ public class MainActivity extends AppCompatActivity {
         if (mBottomSheetShown) {
             hideBottomSheet();
             mFab.show();
-        } else {
-            super.onBackPressed();
-        }
+        } else super.onBackPressed();
     }
 
     public void showFab() {

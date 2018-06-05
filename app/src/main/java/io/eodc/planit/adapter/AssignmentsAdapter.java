@@ -309,8 +309,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public int getItemCount() {
-        if (assignments != null)
-            return assignments.getCount();
+        if (assignments != null) return assignments.getCount();
         else return 0;
     }
 
@@ -323,15 +322,14 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      */
     private String getHeaderText(DateTime dtCurrent) {
         DateTime dtNow = new DateTime();
-        if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0)
+        if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0) {
             return "Overdue";
+        }
         if (dtCurrent.getYear() == dtNow.getYear()) {
             if (dtCurrent.getMonthOfYear() == dtNow.getMonthOfYear()) {
                 if (dtCurrent.getWeekOfWeekyear() == dtNow.getWeekOfWeekyear()) {
-                    if (dtCurrent.getDayOfYear() == dtNow.getDayOfYear())
-                        return mContext.getString(R.string.assignment_header_near_future_text, "Today");
-                    if (dtCurrent.getDayOfYear() - dtNow.getDayOfYear() == 1)
-                        return mContext.getString(R.string.assignment_header_near_future_text, "Tomorrow");
+                    if (dtCurrent.getDayOfYear() == dtNow.getDayOfYear()) return mContext.getString(R.string.assignment_header_near_future_text, "Today");
+                    if (dtCurrent.getDayOfYear() - dtNow.getDayOfYear() == 1) return mContext.getString(R.string.assignment_header_near_future_text, "Tomorrow");
                     else return mContext.getString(R.string.assignment_header_far_future_text,
                             String.valueOf(dtCurrent.getDayOfYear() - dtNow.getDayOfYear()) + " Days");
                 } else

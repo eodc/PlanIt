@@ -85,8 +85,7 @@ public class NotificationHelper extends ContextWrapper {
     }
 
     private NotificationManager getManager() {
-        if (manager == null)
-            manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (manager == null) manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         return manager;
     }
 
@@ -162,8 +161,9 @@ public class NotificationHelper extends ContextWrapper {
                 summaryStyle
                         .setBigContentTitle(classesWithAssignmentsDue + (classesWithAssignmentsDue == 1 ? " class " : " classes ") + "with assignments due");
 
-                if (overflowClasses > 0)
+                if (overflowClasses > 0) {
                     summaryStyle.setSummaryText("+" + overflowClasses + " other " + (overflowClasses == 1 ? "class" : "classes"));
+                }
 
                 summaryBuilder.setStyle(summaryStyle);
                 Notification summaryNotif = summaryBuilder.build();
@@ -215,9 +215,7 @@ public class NotificationHelper extends ContextWrapper {
      */
     private void setAlarm(DateTime time, PendingIntent pendingIntent) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (alarmManager != null) {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, time.getMillis(), pendingIntent);
-        }
+        if (alarmManager != null) alarmManager.set(AlarmManager.RTC_WAKEUP, time.getMillis(), pendingIntent);
     }
 
     /**
@@ -227,9 +225,7 @@ public class NotificationHelper extends ContextWrapper {
         Intent intent = new Intent(this, NotificationPublishReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
-        }
+        if (alarmManager != null) alarmManager.cancel(pendingIntent);
     }
 
     /**

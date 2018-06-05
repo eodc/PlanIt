@@ -27,11 +27,9 @@ public class FabHideBehavior extends CoordinatorLayout.Behavior<FloatingActionBu
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
-        if (dependency != null && dependency instanceof Snackbar.SnackbarLayout) {
-            return true;
-        } else if (dependency != null && dependency instanceof AHBottomNavigation) {
-            return true;
-        }
+        if (dependency != null && dependency instanceof Snackbar.SnackbarLayout) return true;
+        else if (dependency != null && dependency instanceof AHBottomNavigation) return true;
+
         return super.layoutDependsOn(parent, child, dependency);
     }
 
@@ -52,25 +50,21 @@ public class FabHideBehavior extends CoordinatorLayout.Behavior<FloatingActionBu
             child.setY(dependency.getY() - fabDefaultBottomMargin);
         } else if (child != null && dependency != null && dependency instanceof AHBottomNavigation) {
             // Hack to avoid moving the FAB when the AHBottomNavigation is moving (showing or hiding animation)
-            if (System.currentTimeMillis() - lastSnackbarUpdate < 30) {
-                return;
-            }
+            if (System.currentTimeMillis() - lastSnackbarUpdate < 30) return;
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
             int fabDefaultBottomMargin = p.bottomMargin;
             float translateDist = dependency.getY() - fabDefaultBottomMargin;
             float windowBottom = parent.getBottom() - fabDefaultBottomMargin;
             child.setY(translateDist);
             float childPos = child.getY();
-            if (childPos == windowBottom) {
-                child.hide();
-            } else {
+            if (childPos == windowBottom) child.hide();
+            else {
                 if (((AHBottomNavigation) dependency).getCurrentItem() != 1 &&
                         child.getVisibility() != View.INVISIBLE) {
                     child.hide();
                     return;
                 }
-                if (child.getVisibility() != View.VISIBLE)
-                    child.show();
+                if (child.getVisibility() != View.VISIBLE) child.show();
             }
         }
     }

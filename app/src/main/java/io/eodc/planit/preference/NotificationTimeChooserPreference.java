@@ -39,8 +39,7 @@ public class NotificationTimeChooserPreference extends PreferenceDialogFragmentC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-        if (args != null)
-            key = args.getString(ARG_KEY);
+        if (args != null) key = args.getString(ARG_KEY);
     }
 
     @NonNull
