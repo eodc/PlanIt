@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#cccccc</color>
+    <color name="colorPrimaryLight">#ffffff</color>
+    <color name="colorAccent">#2196f3</color>
+    <color name="colorAccentLight">#6ec6ff</color>
+    <color name="colorAccentDark">#0069c0</color>
+
+    <color name="white">#fff</color>
+
+    <color name="class_red">#e53935</color>
+    <color name="class_pink">#d81b60</color>
+    <color name="class_purple">#8e24aa</color>
+    <color name="class_deep_purple">#5e35b1</color>
+    <color name="class_indigo">#3949ab</color>
+    <color name="class_blue">#1e88e5</color>
+    <color name="class_light_blue">#039be5</color>
+    <color name="class_cyan">#00acc1</color>
+    <color name="class_teal">#00897b</color>
+    <color name="class_green">#43a047</color>
+    <color name="class_light_green">#7cb342</color>
+    <color name="class_lime">#c0ca33</color>
+    <color name="class_yellow">#fdd835</color>
+    <color name="class_amber">#ffb300</color>
+    <color name="class_orange">#fb8c00</color>
+    <color name="class_deep_orange">#f4511e</color>
+    <color name="class_brown">#6d4c41</color>
+    <color name="class_grey">#757575</color>
+    <color name="class_blue_grey">#546e7a</color>
+    <color name="class_black">#212121</color>
+
+    <array name="spectrum_colors">
+        <item>@color/class_red</item>
+        <item>@color/class_pink</item>
+        <item>@color/class_purple</item>
+        <item>@color/class_deep_purple</item>
+        <item>@color/class_indigo</item>
+        <item>@color/class_blue</item>
+        <item>@color/class_light_blue</item>
+        <item>@color/class_cyan</item>
+        <item>@color/class_teal</item>
+        <item>@color/class_green</item>
+        <item>@color/class_light_green</item>
+        <item>@color/class_lime</item>
+        <item>@color/class_yellow</item>
+        <item>@color/class_amber</item>
+        <item>@color/class_orange</item>
+        <item>@color/class_deep_orange</item>
+        <item>@color/class_brown</item>
+        <item>@color/class_grey</item>
+        <item>@color/class_blue_grey</item>
+        <item>@color/class_black</item>
+    </array>
+</resources>

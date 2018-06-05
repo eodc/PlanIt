@@ -1,0 +1,127 @@
+<resources>
+    <string name="app_name">PlanIt</string>
+    <string name="tagline">Because it shouldn\'t be hard to get things done on time.</string>
+
+    <string name="activity_settings_title">Settings</string>
+    <string name="activity_classes_title">Classes</string>
+    <string name="activity_licenses_title">Licenses</string>
+
+    <string name="mnu_home_label">Home</string>
+    <string name="mnu_planner_label">Planner</string>
+    <string name="mnu_calendar_label">Calendar</string>
+    <string name="mnu_homework_label">Homework</string>
+    <string name="mnu_test_quiz_label">Test/Quiz</string>
+    <string name="mnu_project_label">Project</string>
+    <string name="mnu_show_completed_label">Show Completed</string>
+    <string name="mnu_settings_label">Settings</string>
+    <string name="mnu_add_class_label">Add Class</string>
+
+    <string name="create_assignment_title">Create an Assignment</string>
+    <string name="create_assignment_description">Add an assignment to your planner.</string>
+
+    <string name="due_date_label">Due Date</string>
+    <string name="date_format" translatable="false">%1$d/%2$d/%3$d</string>
+
+    <string name="assignment_header_near_future_text" translatable="false">Due %s</string>
+    <string name="assignment_header_far_future_text" translatable="false">Due in %s</string>
+
+    <string name="class_name_and_type_text" translatable="false">%1$s %2$s</string>
+
+    <string name="edit_assignment_title">Edit Assignment</string>
+    <string name="edit_assignment_subtitle">Change this assignment.</string>
+    <string name="edit_assignment_name_label">Assignment Name</string>
+
+    <string name="edit_notes_hint">Notes</string>
+    <string name="edit_class_name_hint">Class Name</string>
+    <string name="edit_teacher_name_hint">Teacher Name</string>
+
+    <string name="your_week_title">Your Week</string>
+
+    <string name="overdue_label">Overdue</string>
+
+    <string name="today_title">Today</string>
+    <string name="nothing_due_today_label">Everything for today is done!</string>
+
+    <string name="create_class_title">Create a Class</string>
+    <string name="create_class_description">Add a new class to put assignments in.</string>
+
+    <string name="edit_class_title">Edit Class</string>
+    <string name="edit_class_description">Change this class.</string>
+
+    <string name="nothing_due_text">Nothing due on this day!</string>
+    <string name="no_classes_text">You don\'t have any classes. Add some to continue!</string>
+    <string name="no_assignments_due_text">No Assignments Due!</string>
+
+    <string name="btn_edit_label">Edit</string>
+    <string name="btn_restore_label">Restore</string>
+    <string name="btn_back_label"><![CDATA[< Back]]></string>
+    <string name="btn_next_label"><![CDATA[Next >]]></string>
+    <string name="btn_create_label">Create</string>
+    <string name="btn_add_label">Add a class</string>
+    <string name="btn_finish_label">Finish</string>
+    <string name="btn_delete_label">Delete</string>
+    <string name="btn_license_label">License</string>
+    <string name="btn_project_label">Project</string>
+    <string name="btn_cancel_label">Cancel</string>
+
+    <string name="snckbr_complete_label">Completed %s</string>
+
+    <string name="this_week_label">next 7 days</string>
+
+    <string name="num_events_label" translatable="false">%d event</string>
+    <string name="num_events_label_plural" translatable="false">%d events</string>
+
+    <string name="noti_channel_classes">Classes</string>
+    <string name="noti_channel_reminder">Reminders</string>
+
+    <string name="license_cpyrght">%s %d</string>
+
+    <string name="no_classes_content_desc">No classes</string>
+    <string name="nothing_due_content_desc">Nothing is due on this day.</string>
+    <string name="no_assignments_due_content_desc">No assignments are due.</string>
+    <string name="btn_expand_content_desc">Show notes</string>
+    <string name="carousel_image_content_desc">Carousel image</string>
+
+    <!-- Settings keys & labels -->
+
+    <string name="pref_init_page_key" translatable="false">init_page</string>
+    <string name="pref_show_notif_key" translatable="false">show_notif</string>
+    <string name="pref_show_notif_days_key" translatable="false">show_notif_days</string>
+    <string name="pref_show_notif_time_key" translatable="false">show_notif_time</string>
+    <string name="pref_what_assign_show_key" translatable="false">show_what_notif</string>
+    <string name="pref_classes_key" translatable="false">classes</string>
+    <string name="pref_first_time_key" translatable="false">first_time</string>
+
+
+    <string name="pref_show_notif_mon_label">Monday</string>
+    <string name="pref_show_notif_tue_label">Tuesday</string>
+    <string name="pref_show_notif_wed_label">Wednesday</string>
+    <string name="pref_show_notif_thu_label">Thursday</string>
+    <string name="pref_show_notif_fri_label">Friday</string>
+    <string name="pref_show_notif_sat_label">Saturday</string>
+    <string name="pref_show_notif_sun_label">Sunday</string>
+
+    <string name="pref_show_notif_mon_value" translatable="false">1</string>
+    <string name="pref_show_notif_tue_value" translatable="false">2</string>
+    <string name="pref_show_notif_wed_value" translatable="false">3</string>
+    <string name="pref_show_notif_thu_value" translatable="false">4</string>
+    <string name="pref_show_notif_fri_value" translatable="false">5</string>
+    <string name="pref_show_notif_sat_value" translatable="false">6</string>
+    <string name="pref_show_notif_sun_value" translatable="false">7</string>
+
+    <string name="pref_init_page_home_label">Home</string>
+    <string name="pref_init_page_planner_label">Planner</string>
+    <string name="pref_init_page_calendar_label">Calendar</string>
+
+    <string name="pref_init_page_home_value" translatable="false">home</string>
+    <string name="pref_init_page_planner_value" translatable="false">planner</string>
+    <string name="pref_init_page_calendar_value" translatable="false">calendar</string>
+
+    <string name="pref_what_assign_show_curr_day_label">On Current Day</string>
+    <string name="pref_what_assign_show_next_day_label">On Next Day</string>
+
+    <string name="pref_what_assign_show_curr_day_value">current_day</string>
+    <string name="pref_what_assign_show_next_day_value">next_day</string>
+
+
+</resources>

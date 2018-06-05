@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/header_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/black"
+            tools:text="Due Today" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/class_color"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        android:background="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/assignment_name"
+        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@id/class_color"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        tools:text="Example Homework" />
+
+    <TextView
+        android:id="@+id/class_and_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/notes_text"
+        app:layout_constraintStart_toEndOf="@+id/class_color"
+        app:layout_constraintTop_toBottomOf="@+id/ic_due_date"
+        tools:text="Example Class Homework" />
+
+    <ImageView
+        android:id="@+id/ic_due_date"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:alpha="0.6"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/class_and_type"
+        app:layout_constraintStart_toEndOf="@+id/class_color"
+        app:layout_constraintTop_toBottomOf="@+id/assignment_name"
+        app:srcCompat="@drawable/ic_due_date_24dp" />
+
+    <TextView
+        android:id="@+id/due_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_due_date"
+        app:layout_constraintStart_toEndOf="@+id/ic_due_date"
+        app:layout_constraintTop_toTopOf="@+id/ic_due_date"
+        tools:text="Apr 20, 2018" />
+
+    <ImageView
+        android:id="@+id/expand_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/btn_expand_content_desc"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/class_and_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:srcCompat="@drawable/ic_arrow_expand_black_24dp"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/notes_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/class_color"
+        tools:visibility="gone" />
+</android.support.constraint.ConstraintLayout>
