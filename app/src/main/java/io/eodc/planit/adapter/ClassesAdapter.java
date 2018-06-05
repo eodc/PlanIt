@@ -56,9 +56,9 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
         mClassCursor.moveToPosition(position);
-        holder.classColor.setBackgroundColor(Color.parseColor(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.COLOR))));
-        holder.className.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.NAME)));
-        holder.teacherName.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.TEACHER)));
+        holder.imageClassColor.setBackgroundColor(Color.parseColor(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.COLOR))));
+        holder.textClassName.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.NAME)));
+        holder.textTeacherName.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.TEACHER)));
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -87,12 +87,9 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
      * Holder for information and attributes for the class view
      */
     class ClassViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.class_color)
-        ImageView classColor;
-        @BindView(R.id.tv_title)
-        TextView className;
-        @BindView(R.id.tv_teacher)
-        TextView teacherName;
+        @BindView(R.id.class_color) ImageView   imageClassColor;
+        @BindView(R.id.tv_title)    TextView    textClassName;
+        @BindView(R.id.tv_teacher)  TextView    textTeacherName;
 
         /**
          * Constructs a new instance of ClassViewHolder

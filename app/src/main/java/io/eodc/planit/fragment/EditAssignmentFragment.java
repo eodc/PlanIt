@@ -52,8 +52,8 @@ public class EditAssignmentFragment extends DialogFragment implements
     private static final String ID_KEY = "id";
 
     @BindView(R.id.btn_restore)                 private Button              mBtnRestore;
-    @BindView(R.id.type_chooser)                private Spinner             mTypeSpinner;
-    @BindView(R.id.class_chooser)               private Spinner             mClassSpinner;
+    @BindView(R.id.type_chooser)                private Spinner             mSpinnerType;
+    @BindView(R.id.class_chooser)               private Spinner             mSpinnerClass;
     @BindView(R.id.edit_assignment_name)        private EditText            mEditTitle;
     @BindView(R.id.edit_due_date)               private EditText            mEditDue;
     @BindView(R.id.edit_notes)                  private EditText            mEditNotes;
@@ -215,15 +215,15 @@ public class EditAssignmentFragment extends DialogFragment implements
         types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
         types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
         AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(mContext, R.layout.item_assignment_type, R.id.title, types);
-        mTypeSpinner.setAdapter(typeAdapter);
-        mTypeSpinner.setOnItemSelectedListener(this);
+        mSpinnerType.setAdapter(typeAdapter);
+        mSpinnerType.setOnItemSelectedListener(this);
     }
 
     private void setupClassSpinner(Cursor data) {
         mClassAdapter.swapCursor(data);
-        mClassSpinner.setAdapter(mClassAdapter);
-        mClassSpinner.setOnItemSelectedListener(this);
-        mClassSpinner.setSelection(mAssignmentCursor.getInt(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)) - 1);
+        mSpinnerClass.setAdapter(mClassAdapter);
+        mSpinnerClass.setOnItemSelectedListener(this);
+        mSpinnerClass.setSelection(mAssignmentCursor.getInt(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)) - 1);
     }
 
     @NonNull
@@ -291,8 +291,8 @@ public class EditAssignmentFragment extends DialogFragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(mTypeSpinner)) mSelectedType = position;
-        else if (parent.equals(mClassSpinner)) mSelectedClassId = id;
+        if (parent.equals(mSpinnerType)) mSelectedType = position;
+        else if (parent.equals(mSpinnerClass)) mSelectedClassId = id;
     }
 
     @Override

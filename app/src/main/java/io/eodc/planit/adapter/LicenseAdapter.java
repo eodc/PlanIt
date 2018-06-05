@@ -35,8 +35,8 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseV
     @Override
     public void onBindViewHolder(@NonNull LicenseViewHolder holder, int position) {
         final License license = mLicenses.get(position);
-        holder.tvName.setText(license.getName());
-        holder.tvCopyright.setText(mContext.getString(R.string.license_cpyrght,
+        holder.textName.setText(license.getName());
+        holder.textCopyright.setText(mContext.getString(R.string.license_cpyrght,
                 license.getAuthor(), license.getYear()));
         holder.btnLicense.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,14 +62,10 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseV
     }
 
     class LicenseViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_name)
-        TextView tvName;
-        @BindView(R.id.tv_copyright)
-        TextView tvCopyright;
-        @BindView(R.id.btn_license)
-        Button btnLicense;
-        @BindView(R.id.btn_project)
-        Button btnProject;
+        @BindView(R.id.tv_name)         TextView    textName;
+        @BindView(R.id.tv_copyright)    TextView    textCopyright;
+        @BindView(R.id.btn_license)     Button      btnLicense;
+        @BindView(R.id.btn_project)     Button      btnProject;
 
         LicenseViewHolder(View itemView) {
             super(itemView);

@@ -19,15 +19,15 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     boolean isExpanded = false;
     int     id;
 
-    @BindView(R.id.header)              LinearLayout    header;
-    @BindView(R.id.header_label)        TextView        headerLabel;
-    @BindView(R.id.class_color)         ImageView       classColor;
-    @BindView(R.id.assignment_name)     TextView        assignmentName;
-    @BindView(R.id.class_and_type)      TextView        classAndTypeName;
-    @BindView(R.id.due_date)            TextView        dueDate;
-    @BindView(R.id.ic_due_date)         ImageView       dueDateIcon;
-    @BindView(R.id.expand_button)       ImageView       expandButton;
-    @BindView(R.id.notes_text)          TextView        notes;
+    @BindView(R.id.header)              LinearLayout    layoutHeader;
+    @BindView(R.id.ic_due_date)         ImageView       iconDueDate;
+    @BindView(R.id.expand_button)       ImageView       iconExpand;
+    @BindView(R.id.class_color)         ImageView       imageClassColor;
+    @BindView(R.id.header_label)        TextView        textHeader;
+    @BindView(R.id.assignment_name)     TextView        textAssignmentName;
+    @BindView(R.id.class_and_type)      TextView        textClassType;
+    @BindView(R.id.due_date)            TextView        textDueDate;
+    @BindView(R.id.notes_text)          TextView        textNotes;
 
     /**
      * Constructs an instance of an AssignmentViewHolder
@@ -49,22 +49,22 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * Hides the notes section of the view
+     * Hides the textNotes section of the view
      */
     public void shrinkNotes() {
-        expandButton.animate()
+        iconExpand.animate()
                 .rotation(0f);
-        notes.setVisibility(View.GONE);
+        textNotes.setVisibility(View.GONE);
         isExpanded = false;
     }
 
     /**
-     * Shows the notes section of the vie
+     * Shows the textNotes section of the vie
      */
     public void expandNotes() {
-        expandButton.animate()
+        iconExpand.animate()
                 .rotation(-180f);
-        notes.setVisibility(View.VISIBLE);
+        textNotes.setVisibility(View.VISIBLE);
         isExpanded = true;
     }
 }
