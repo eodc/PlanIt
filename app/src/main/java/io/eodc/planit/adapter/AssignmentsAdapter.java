@@ -99,7 +99,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     }
 
     /**
-     * Differentiates one assignment from another, and decides whether to show that it has notes,
+     * Differentiates one assignment from another, and decides whether to show that it has textNotes,
      * is on a different day, etc.
      *
      * @param position Position in the cursor
@@ -218,29 +218,29 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             SimpleDateFormat ddSdf = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
             String dueDate = ddSdf.format(dtCurrent.toDate());
 
-            holder.dueDate.setText(dueDate);
+            holder.textDueDate.setText(dueDate);
 
             if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
                     holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES) {
                 String headerText = getHeaderText(dtCurrent);
-                holder.headerLabel.setText(headerText);
-                holder.header.setVisibility(View.VISIBLE);
-                holder.dueDateIcon.setVisibility(View.VISIBLE);
-                holder.dueDate.setVisibility(View.VISIBLE);
+                holder.textHeader.setText(headerText);
+                holder.layoutHeader.setVisibility(View.VISIBLE);
+                holder.iconDueDate.setVisibility(View.VISIBLE);
+                holder.textDueDate.setVisibility(View.VISIBLE);
             } else {
                 DateTime dtNow = new DateTime();
                 if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
                         dtCurrent.isAfterNow() && dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
                                 mShowDividerFlag != NEVER_SHOW_DIVIDER) {
-                    holder.dueDateIcon.setVisibility(View.VISIBLE);
-                    holder.dueDate.setVisibility(View.VISIBLE);
+                    holder.iconDueDate.setVisibility(View.VISIBLE);
+                    holder.textDueDate.setVisibility(View.VISIBLE);
                 }
             }
 
             if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
                     holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
-                holder.expandButton.setVisibility(View.VISIBLE);
-                holder.notes.setText(mAssignments.getString(notesIndex));
+                holder.iconExpand.setVisibility(View.VISIBLE);
+                holder.textNotes.setText(mAssignments.getString(notesIndex));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -279,19 +279,19 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                     mClasses.getString(mClasses.getColumnIndex(PlannerContract.ClassColumns.NAME)),
                     assignmentType);
 
-            holder.classColor.setBackgroundColor(Color.parseColor(mClasses.getString(
+            holder.imageClassColor.setBackgroundColor(Color.parseColor(mClasses.getString(
                     mClasses.getColumnIndex(PlannerContract.ClassColumns.COLOR)
             )));
 
-            holder.assignmentName.setText(mAssignments.getString(
+            holder.textAssignmentName.setText(mAssignments.getString(
                     mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)
             ));
 
             if (mShowAssignmnentsCompleted) {
-                holder.assignmentName.setPaintFlags(holder.assignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textAssignmentName.setPaintFlags(holder.textAssignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
-            holder.classAndTypeName.setText(classAndTypeText);
+            holder.textClassType.setText(classAndTypeText);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -314,11 +314,11 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     }
 
     /**
-     * Gets the text shown at the divider (header) based off of the assignment's due date and the
+     * Gets the text shown at the divider (layoutHeader) based off of the assignment's due date and the
      * current day.
      *
-     * @param dtCurrent The {@link DateTime} of the assignment with the header shown
-     * @return The parsed header text
+     * @param dtCurrent The {@link DateTime} of the assignment with the layoutHeader shown
+     * @return The parsed layoutHeader text
      */
     private String getHeaderText(DateTime dtCurrent) {
         DateTime dtNow = new DateTime();
