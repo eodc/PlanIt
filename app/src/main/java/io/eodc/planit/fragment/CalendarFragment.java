@@ -109,9 +109,10 @@ public class CalendarFragment extends BaseFragment implements
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if (id == LOADER_CLASSES)
+        if (id == LOADER_CLASSES) {
             return new CursorLoader(requireContext(), PlannerContract.ClassColumns.CONTENT_URI,
                     null, null, null, null);
+        }
 
         Date dateSelected = (Date) args.getSerializable(ARG_DATE);
         if (dateSelected != null) {
@@ -175,8 +176,7 @@ public class CalendarFragment extends BaseFragment implements
                         if (data.getPosition() == data.getCount()) count++;
                         dateIntegerHashMap.put(currentDate, count);
                         checkPosition++;
-                        if (data.getPosition() != data.getCount())
-                            data.moveToPosition(checkPosition);
+                        if (data.getPosition() != data.getCount()) data.moveToPosition(checkPosition);
                     }
                     mCalendar.addDecorator(this);
                 } catch (ParseException e) {
@@ -196,16 +196,13 @@ public class CalendarFragment extends BaseFragment implements
             Map.Entry pair = (Map.Entry) o;
             DateTime dtCalDay = new DateTime(day.getDate());
             DateTime dtKey = (DateTime) pair.getKey();
-            if (dtKey.getDayOfMonth() == dtCalDay.getDayOfMonth() &&
-                    (int) pair.getValue() > 0) return true;
+            if (dtKey.getDayOfMonth() == dtCalDay.getDayOfMonth() && (int) pair.getValue() > 0) return true;
         }
         return false;
     }
 
     @Override
-    public void decorate(DayViewFacade view) {
-        view.addSpan(new DotSpan(5f));
-    }
+    public void decorate(DayViewFacade view) { view.addSpan(new DotSpan(5f)); }
 
     @Override
     public void onAssignmentEdit() {

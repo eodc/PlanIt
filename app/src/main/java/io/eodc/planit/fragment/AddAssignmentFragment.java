@@ -96,8 +96,7 @@ public class AddAssignmentFragment extends Fragment implements
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-    }
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
 
     /**
      * Attaches the specified listener to this fragment
@@ -180,10 +179,12 @@ public class AddAssignmentFragment extends Fragment implements
                     provider.insert(PlannerContract.AssignmentColumns.CONTENT_URI, values);
                     mListener.onAssignmentCreation();
                 } else {
-                    if (titleText.equals(""))
+                    if (titleText.equals("")) {
                         editTitleLayout.setError("Title can't be empty");
-                    if (dueDateText.equals(""))
+                    }
+                    if (dueDateText.equals("")) {
                         editDueDateLayout.setError("Due date can't be empty");
+                    }
                 }
             }
         });
@@ -191,11 +192,8 @@ public class AddAssignmentFragment extends Fragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(mTypeSpinner)) {
-            mSelectedType = position;
-        } else if (parent.equals(mClassSpinner)) {
-            mSelectedClass = id;
-        }
+        if (parent.equals(mTypeSpinner)) mSelectedType = position;
+        else if (parent.equals(mClassSpinner)) mSelectedClass = id;
     }
 
     @Override

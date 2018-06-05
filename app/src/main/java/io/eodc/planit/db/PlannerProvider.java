@@ -92,16 +92,18 @@ public class PlannerProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case ASSIGNMENT:
                 id = db.insert(PlannerContract.AssignmentColumns.TABLE_NAME, null, values);
-                if (id > 0)
+                if (id > 0) {
                     return ContentUris.withAppendedId(PlannerContract.AssignmentColumns.CONTENT_URI, id);
-                else
+                } else {
                     throw new SQLException("Something went wrong when inserting into the Assignments table.");
+                }
             case CLASS:
                 id = db.insert(PlannerContract.ClassColumns.TABLE_NAME, null, values);
-                if (id > 0)
+                if (id > 0) {
                     return ContentUris.withAppendedId(PlannerContract.ClassColumns.CONTENT_URI, id);
-                else
+                } else {
                     throw new SQLException("Something went wrong when inserting into the Classes table.");
+                }
         }
 
         return null;

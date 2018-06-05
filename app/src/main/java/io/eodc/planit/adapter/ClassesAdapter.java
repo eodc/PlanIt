@@ -68,10 +68,9 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
 
                 Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
                 if (v != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                    else
-                        v.vibrate(500);
+                    } else v.vibrate(500);
                 }
                 return true;
             }

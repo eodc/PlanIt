@@ -33,9 +33,8 @@ public class LicensesActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         List<License> licenses = new ArrayList<>();
         licenses.add(new License("AHBottomNavigation",
                 2017,

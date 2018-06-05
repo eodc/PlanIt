@@ -97,9 +97,8 @@ public class OnboardingActivity extends AppCompatActivity implements
 
     @Override
     public void onPageSelected(final int position) {
-        if (position == 0) {
-            mBtnBack.setVisibility(View.GONE);
-        } else if (position == mOnboardingFragments.size() - 1) {
+        if (position == 0) mBtnBack.setVisibility(View.GONE);
+        else if (position == mOnboardingFragments.size() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
             Cursor c = getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
                     null, null, null, null);

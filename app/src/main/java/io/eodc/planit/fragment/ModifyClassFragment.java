@@ -85,13 +85,14 @@ public class ModifyClassFragment extends DialogFragment implements
      */
     @OnClick(R.id.color_picker)
     void showColorPicker() {
-        if (getFragmentManager() != null)
+        if (getFragmentManager() != null) {
             new SpectrumDialog.Builder(getContext())
                     .setColors(R.array.spectrum_colors)
                     .setSelectedColorRes(R.color.class_red)
                     .setDismissOnColorSelected(false)
                     .setOnColorSelectedListener(this)
                     .build().show(getFragmentManager(), null);
+        }
     }
 
     /**
@@ -212,9 +213,8 @@ public class ModifyClassFragment extends DialogFragment implements
             mTextTitle.setText(R.string.create_class_title);
             mTextSubtitle.setText(R.string.create_class_description);
             mBtnConfirm.setText(R.string.btn_create_label);
-        } else if (mFlag == FLAG_MOD_CLASS) {
-            mBtnDelete.setVisibility(View.VISIBLE);
-        }
+        } else if (mFlag == FLAG_MOD_CLASS) mBtnDelete.setVisibility(View.VISIBLE);
+
         mColorChosen = "#" + ContextCompat.getColor(requireContext(), R.color.class_red);
     }
 

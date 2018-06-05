@@ -41,8 +41,7 @@ public class ClassesActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportLoaderManager().initLoader(0, null, this);
     }

@@ -168,8 +168,7 @@ public class HomeFragment extends BaseFragment {
                 xAxis.setLabelCount(7, true);
                 xAxis.setValueFormatter(formatter);
 
-                if (totalCount > 1)
-                    mTextEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
+                if (totalCount > 1) mTextEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
                 else mTextEventCount.setText(getString(R.string.num_events_label, totalCount));
                 mGraphWeek.setData(lineData);
                 mGraphWeek.invalidate();

@@ -94,10 +94,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         Preference pref = findPreference(key);
         NotificationHelper helper = new NotificationHelper(getContext());
         if (pref instanceof SwitchPreference) {
-            if (((SwitchPreference) pref).isChecked())
-                helper.scheduleNotification();
-            else
-                helper.cancelNotification();
+            if (((SwitchPreference) pref).isChecked()) helper.scheduleNotification();
+            else helper.cancelNotification();
         } else if (pref instanceof ListPreference) {
             pref.setSummary(((ListPreference) pref).getEntry());
         } else if (pref instanceof DialogPreferenceContainer) {
