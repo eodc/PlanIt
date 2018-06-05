@@ -50,32 +50,27 @@ public class EditAssignmentFragment extends DialogFragment implements
         AdapterView.OnItemSelectedListener {
 
     private static final String ID_KEY = "id";
-    @BindView(R.id.btn_restore)
-    Button btnRestore;
-    @BindView(R.id.type_chooser)
-    Spinner typeSpinner;
-    @BindView(R.id.class_chooser)
-    Spinner classSpinner;
-    @BindView(R.id.edit_assignment_name)
-    EditText editTitle;
-    @BindView(R.id.edit_due_date)
-    EditText editDue;
-    @BindView(R.id.edit_notes)
-    EditText editNotes;
-    @BindView(R.id.edit_layout_assignment_name)
-    TextInputLayout editNameLayout;
-    @BindView(R.id.edit_layout_due_date)
-    TextInputLayout editDueLayout;
-    private OnAssignmentChangeListener listener;
-    private SimpleCursorAdapter classAdapter;
-    private Context mContext;
-    private int id;
-    private Cursor assignmentCursor;
-    private int selectedType = 0;
-    private long selectedClassId = 1;
-    private int dueDay;
-    private int dueMonth;
-    private int dueYear;
+
+    @BindView(R.id.btn_restore)                 private Button              mBtnRestore;
+    @BindView(R.id.type_chooser)                private Spinner             mTypeSpinner;
+    @BindView(R.id.class_chooser)               private Spinner             mClassSpinner;
+    @BindView(R.id.edit_assignment_name)        private EditText            mEditTitle;
+    @BindView(R.id.edit_due_date)               private EditText            mEditDue;
+    @BindView(R.id.edit_notes)                  private EditText            mEditNotes;
+    @BindView(R.id.edit_layout_assignment_name) private TextInputLayout     mEditNameLayout;
+    @BindView(R.id.edit_layout_due_date)        private TextInputLayout     mEditDueLayout;
+
+    private OnAssignmentChangeListener  mListener;
+    private SimpleCursorAdapter         mClassAdapter;
+    private Context                     mContext;
+    private Cursor                      mAssignmentCursor;
+
+    private long    mSelectedClassId = 1;
+    private int     mId;
+    private int     mSelectedType;
+    private int     mDueDay;
+    private int     mDueMonth;
+    private int     mDueYear;
 
     public EditAssignmentFragment() {
     }
@@ -100,18 +95,18 @@ public class EditAssignmentFragment extends DialogFragment implements
     void editAssignment() {
         ContentValues values = new ContentValues();
 
-        String name = editTitle.getText().toString().trim();
-        String notes = editNotes.getText().toString().trim();
+        String name = mEditTitle.getText().toString().trim();
+        String notes = mEditNotes.getText().toString().trim();
 
-        if (name.equals("") || editDue.getText().toString().trim().equals("")) {
+        if (name.equals("") || mEditDue.getText().toString().trim().equals("")) {
             if (name.equals(""))
-                editNameLayout.setError("Title cannot be empty.");
-            if (editDue.getText().toString().trim().equals(""))
-                editDueLayout.setError("Due date can't be empty");
+                mEditNameLayout.setError("Title cannot be empty.");
+            if (mEditDue.getText().toString().trim().equals(""))
+                mEditDueLayout.setError("Due date can't be empty");
         } else {
             values.put(PlannerContract.AssignmentColumns.TITLE, name);
-            values.put(PlannerContract.AssignmentColumns.CLASS_ID, selectedClassId);
-            switch (selectedType) {
+            values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClassId);
+            switch (mSelectedType) {
                 case 0:
                     values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_HOMEWORK);
                     break;
@@ -125,7 +120,7 @@ public class EditAssignmentFragment extends DialogFragment implements
 
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            String dueDate = sdf.format(new DateTime(dueYear, dueMonth, dueDay, 0, 0).toDate());
+            String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
 
             values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
             values.put(PlannerContract.AssignmentColumns.NOTES, notes);
@@ -134,9 +129,9 @@ public class EditAssignmentFragment extends DialogFragment implements
                 ContentResolver resolver = getActivity().getContentResolver();
                 resolver.update(PlannerContract.AssignmentColumns.CONTENT_URI,
                         values, PlannerContract.AssignmentColumns._ID + "=?",
-                        new String[]{String.valueOf(id)});
+                        new String[]{String.valueOf(mId)});
 
-                listener.onAssignmentEdit();
+                mListener.onAssignmentEdit();
             }
 
             dismiss();
@@ -145,7 +140,7 @@ public class EditAssignmentFragment extends DialogFragment implements
 
     @OnClick(R.id.edit_due_date)
     void showDatePicker() {
-        DatePickerFragment fragment = DatePickerFragment.newInstance(this, dueYear, dueMonth, dueDay);
+        DatePickerFragment fragment = DatePickerFragment.newInstance(this, mDueYear, mDueMonth, mDueDay);
 
         if (getFragmentManager() != null) fragment.show(getFragmentManager(), null);
     }
@@ -157,8 +152,8 @@ public class EditAssignmentFragment extends DialogFragment implements
             values.put(PlannerContract.AssignmentColumns.COMPLETED, false);
             getContext().getContentResolver().update(PlannerContract.AssignmentColumns.CONTENT_URI,
                     values, PlannerContract.AssignmentColumns._ID + "=?",
-                    new String[]{String.valueOf(id)});
-            listener.onAssignmentEdit();
+                    new String[]{String.valueOf(mId)});
+            mListener.onAssignmentEdit();
         }
 
         dismiss();
@@ -170,20 +165,20 @@ public class EditAssignmentFragment extends DialogFragment implements
         Bundle args = getArguments();
 
         if (args != null) {
-            id = args.getInt(ID_KEY);
+            mId = args.getInt(ID_KEY);
 
             getLoaderManager().initLoader(0, null, this);
 
             mContext = requireContext();
 
-            classAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+            mClassAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
                     null, new String[]{PlannerContract.ClassColumns.NAME},
                     new int[]{android.R.id.text1}, 0);
         }
     }
 
     public void setListener(OnAssignmentChangeListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
     }
 
     @Override
@@ -218,15 +213,15 @@ public class EditAssignmentFragment extends DialogFragment implements
         types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
         types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
         AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(mContext, R.layout.item_assignment_type, R.id.title, types);
-        typeSpinner.setAdapter(typeAdapter);
-        typeSpinner.setOnItemSelectedListener(this);
+        mTypeSpinner.setAdapter(typeAdapter);
+        mTypeSpinner.setOnItemSelectedListener(this);
     }
 
     private void setupClassSpinner(Cursor data) {
-        classAdapter.swapCursor(data);
-        classSpinner.setAdapter(classAdapter);
-        classSpinner.setOnItemSelectedListener(this);
-        classSpinner.setSelection(assignmentCursor.getInt(assignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)) - 1);
+        mClassAdapter.swapCursor(data);
+        mClassSpinner.setAdapter(mClassAdapter);
+        mClassSpinner.setOnItemSelectedListener(this);
+        mClassSpinner.setSelection(mAssignmentCursor.getInt(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)) - 1);
     }
 
     @NonNull
@@ -245,29 +240,29 @@ public class EditAssignmentFragment extends DialogFragment implements
     }
 
     private void fillAssignmentInfo() {
-        assignmentCursor = mContext.getContentResolver().query(PlannerContract.AssignmentColumns.CONTENT_URI,
-                null, PlannerContract.AssignmentColumns._ID + "=?", new String[]{String.valueOf(id)},
+        mAssignmentCursor = mContext.getContentResolver().query(PlannerContract.AssignmentColumns.CONTENT_URI,
+                null, PlannerContract.AssignmentColumns._ID + "=?", new String[]{String.valueOf(mId)},
                 null);
-        if (assignmentCursor != null) {
-            assignmentCursor.moveToFirst();
+        if (mAssignmentCursor != null) {
+            mAssignmentCursor.moveToFirst();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             try {
-                DateTime dtDue = new DateTime(sdf.parse(assignmentCursor.getString(assignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE))));
-                editTitle.setText(assignmentCursor.getString(
-                        assignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)));
-                editDue.setText(getString(R.string.date_format, dtDue.getDayOfMonth(),
+                DateTime dtDue = new DateTime(sdf.parse(mAssignmentCursor.getString(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE))));
+                mEditTitle.setText(mAssignmentCursor.getString(
+                        mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)));
+                mEditDue.setText(getString(R.string.date_format, dtDue.getDayOfMonth(),
                         dtDue.getMonthOfYear(),
                         dtDue.getYear()));
-                editNotes.setText(assignmentCursor.getString(assignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.NOTES)));
+                mEditNotes.setText(mAssignmentCursor.getString(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.NOTES)));
 
-                if (assignmentCursor.getInt(assignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.COMPLETED)) != 0) {
-                    btnRestore.setVisibility(View.VISIBLE);
+                if (mAssignmentCursor.getInt(mAssignmentCursor.getColumnIndex(PlannerContract.AssignmentColumns.COMPLETED)) != 0) {
+                    mBtnRestore.setVisibility(View.VISIBLE);
                 }
 
-                dueDay = dtDue.getDayOfMonth();
-                dueMonth = dtDue.getMonthOfYear();
-                dueYear = dtDue.getYear();
+                mDueDay = dtDue.getDayOfMonth();
+                mDueMonth = dtDue.getMonthOfYear();
+                mDueYear = dtDue.getYear();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -277,7 +272,7 @@ public class EditAssignmentFragment extends DialogFragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        assignmentCursor.close();
+        mAssignmentCursor.close();
     }
 
     @Override
@@ -286,19 +281,19 @@ public class EditAssignmentFragment extends DialogFragment implements
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        dueDay = dayOfMonth;
-        dueMonth = month + 1;
-        dueYear = year;
+        mDueDay = dayOfMonth;
+        mDueMonth = month + 1;
+        mDueYear = year;
 
-        editDue.setText(getString(R.string.date_format, dueDay, dueMonth, dueYear));
+        mEditDue.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(typeSpinner)) {
-            selectedType = position;
-        } else if (parent.equals(classSpinner)) {
-            selectedClassId = id;
+        if (parent.equals(mTypeSpinner)) {
+            mSelectedType = position;
+        } else if (parent.equals(mClassSpinner)) {
+            mSelectedClassId = id;
         }
     }
 

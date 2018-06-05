@@ -50,20 +50,20 @@ public class AddAssignmentFragment extends Fragment implements
         DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    @BindView(R.id.due_date_chooser)
-    EditText editDueDate;
-    @BindView(R.id.type_chooser)
-    Spinner typeSpinner;
-    @BindView(R.id.class_chooser)
-    Spinner classSpinner;
-    private Context mContext;
-    private OnAssignmentChangeListener assignmentCreationListener;
-    private SimpleCursorAdapter classAdapter;
-    private int selectedType = 0;
-    private long selectedClass = 1;
-    private int dueDay = 0;
-    private int dueMonth = 0;
-    private int dueYear = 0;
+    @BindView(R.id.due_date_chooser)    private EditText    mEditDueDate;
+    @BindView(R.id.type_chooser)        private Spinner     mTypeSpinner;
+    @BindView(R.id.class_chooser)       private Spinner     mClassSpinner;
+
+    private Context                     mContext;
+    private OnAssignmentChangeListener  mListener;
+    private SimpleCursorAdapter         mClassAdapter;
+
+
+    private long    mSelectedClass = 1;
+    private int     mSelectedType;
+    private int     mDueDay;
+    private int     mDueMonth;
+    private int     mDueYear;
 
     /**
      * Creates a new instance of this AddAssignmentFragment
@@ -75,7 +75,7 @@ public class AddAssignmentFragment extends Fragment implements
         Bundle args = new Bundle();
 
         AddAssignmentFragment fragment = new AddAssignmentFragment();
-        fragment.setAssignmentCreationListener(listener);
+        fragment.setListener(listener);
         fragment.setArguments(args);
         return fragment;
     }
@@ -102,15 +102,15 @@ public class AddAssignmentFragment extends Fragment implements
     /**
      * Attaches the specified listener to this fragment
      */
-    private void setAssignmentCreationListener(OnAssignmentChangeListener listener) {
-        assignmentCreationListener = listener;
+    private void setListener(OnAssignmentChangeListener listener) {
+        mListener = listener;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLoaderManager().initLoader(0, null, this);
-        classAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+        mClassAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
                 null, new String[]{PlannerContract.ClassColumns.NAME},
                 new int[]{android.R.id.text1}, 0);
 
@@ -151,7 +151,7 @@ public class AddAssignmentFragment extends Fragment implements
                 TextInputEditText editNotes = view.findViewById(R.id.edit_notes);
 
                 String titleText = editTitle.getText().toString().trim();
-                String dueDateText = editDueDate.getText().toString().trim();
+                String dueDateText = mEditDueDate.getText().toString().trim();
 
                 if (!titleText.equals("") && !dueDateText.equals("")) {
                     ContentResolver provider = mContext.getContentResolver();
@@ -160,10 +160,10 @@ public class AddAssignmentFragment extends Fragment implements
                     values.put(PlannerContract.AssignmentColumns.TITLE, titleText);
 
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                    String dueDate = sdf.format(new DateTime(dueYear, dueMonth, dueDay, 0, 0).toDate());
+                    String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
 
                     values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
-                    switch (selectedType) {
+                    switch (mSelectedType) {
                         case 0:
                             values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_HOMEWORK);
                             break;
@@ -174,11 +174,11 @@ public class AddAssignmentFragment extends Fragment implements
                             values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_PROJECT);
                             break;
                     }
-                    values.put(PlannerContract.AssignmentColumns.CLASS_ID, selectedClass);
+                    values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClass);
                     values.put(PlannerContract.AssignmentColumns.COMPLETED, false);
                     values.put(PlannerContract.AssignmentColumns.NOTES, editNotes.getText().toString());
                     provider.insert(PlannerContract.AssignmentColumns.CONTENT_URI, values);
-                    assignmentCreationListener.onAssignmentCreation();
+                    mListener.onAssignmentCreation();
                 } else {
                     if (titleText.equals(""))
                         editTitleLayout.setError("Title can't be empty");
@@ -191,10 +191,10 @@ public class AddAssignmentFragment extends Fragment implements
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(typeSpinner)) {
-            selectedType = position;
-        } else if (parent.equals(classSpinner)) {
-            selectedClass = id;
+        if (parent.equals(mTypeSpinner)) {
+            mSelectedType = position;
+        } else if (parent.equals(mClassSpinner)) {
+            mSelectedClass = id;
         }
     }
 
@@ -211,8 +211,8 @@ public class AddAssignmentFragment extends Fragment implements
         types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
         types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
         AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(mContext, R.layout.item_assignment_type, R.id.title, types);
-        typeSpinner.setAdapter(typeAdapter);
-        typeSpinner.setOnItemSelectedListener(this);
+        mTypeSpinner.setAdapter(typeAdapter);
+        mTypeSpinner.setOnItemSelectedListener(this);
     }
 
     /**
@@ -221,17 +221,17 @@ public class AddAssignmentFragment extends Fragment implements
      * @param data A cursor containing all classes
      */
     private void setupClassSpinner(Cursor data) {
-        classAdapter.swapCursor(data);
-        classSpinner.setAdapter(classAdapter);
-        classSpinner.setOnItemSelectedListener(this);
+        mClassAdapter.swapCursor(data);
+        mClassSpinner.setAdapter(mClassAdapter);
+        mClassSpinner.setOnItemSelectedListener(this);
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        dueYear = year;
-        dueMonth = month + 1;
-        dueDay = dayOfMonth;
-        editDueDate.setText(getString(R.string.date_format, dueDay, dueMonth, dueYear));
+        mDueYear = year;
+        mDueMonth = month + 1;
+        mDueDay = dayOfMonth;
+        mEditDueDate.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
     }
 
 }

@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,15 +32,11 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OnClassListChangeListener {
 
-    @BindView(R.id.no_classes)
-    ImageView mIvNoClasses;
-    @BindView(R.id.rv_classes)
-    RecyclerView mRvClasses;
-    @BindView(R.id.btn_add)
-    Button mBtnAdd;
-    @BindView(R.id.tv_no_classes)
-    TextView mTvNoClasses;
-    private OnClassListChangeListener listener;
+    @BindView(R.id.no_classes)      private ImageView       mImageNoClass;
+    @BindView(R.id.tv_no_classes)   private TextView        mTextNoClass;
+    @BindView(R.id.rv_classes)      private RecyclerView    mRvClasses;
+
+    private OnClassListChangeListener mListener;
 
     public static OnboardingAddClassesFragment newInstance(OnClassListChangeListener l) {
         OnboardingAddClassesFragment fragment = new OnboardingAddClassesFragment();
@@ -79,15 +74,15 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
     }
 
     /**
-     * Swaps the class list change listener
+     * Swaps the class list change mListener
      */
     private void swapListeners(OnClassListChangeListener l) {
-        this.listener = l;
+        this.mListener = l;
     }
 
     @Override
     public void onClassListChange(int count) {
-        listener.onClassListChange(count);
+        mListener.onClassListChange(count);
         updateNoClassIndicators(count);
         getLoaderManager().restartLoader(0, null, this);
     }
@@ -105,7 +100,7 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
         mRvClasses.setLayoutManager(new LinearLayoutManager(getContext()));
         updateNoClassIndicators(data.getCount());
         if (data.getCount() > 0)
-            listener.onClassListChange(data.getCount());
+            mListener.onClassListChange(data.getCount());
     }
 
     @Override
@@ -114,11 +109,11 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
 
     private void updateNoClassIndicators(int count) {
         if (count > 0) {
-            mTvNoClasses.setVisibility(View.GONE);
-            mIvNoClasses.setVisibility(View.GONE);
+            mTextNoClass.setVisibility(View.GONE);
+            mImageNoClass.setVisibility(View.GONE);
         } else {
-            mTvNoClasses.setVisibility(View.VISIBLE);
-            mIvNoClasses.setVisibility(View.VISIBLE);
+            mTextNoClass.setVisibility(View.VISIBLE);
+            mImageNoClass.setVisibility(View.VISIBLE);
         }
     }
 }

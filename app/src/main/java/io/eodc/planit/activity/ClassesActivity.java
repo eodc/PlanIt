@@ -30,10 +30,9 @@ import io.eodc.planit.listener.OnClassListChangeListener;
 public class ClassesActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OnClassListChangeListener {
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.rv_classes)
-    RecyclerView rvClasses;
+
+    @BindView(R.id.toolbar)     private Toolbar         mToolbar;
+    @BindView(R.id.rv_classes)  private RecyclerView    mRvClasses;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class ClassesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_classes);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -76,8 +75,8 @@ public class ClassesActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         ClassesAdapter classesAdapter = new ClassesAdapter(data, this, this);
-        rvClasses.setAdapter(classesAdapter);
-        rvClasses.setLayoutManager(new LinearLayoutManager(this));
+        mRvClasses.setAdapter(classesAdapter);
+        mRvClasses.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override

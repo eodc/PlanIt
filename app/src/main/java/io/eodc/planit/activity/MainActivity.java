@@ -47,22 +47,20 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.bottom_navigation)
-    AHBottomNavigation bottomNav;
-    @BindView(R.id.create_fab)
-    FloatingActionButton fab;
-    @BindView(R.id.overlay)
-    ImageView overlay;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    private boolean bottomSheetShown = false;
-    private int shownAssignmentFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
-    private FragmentManager fragmentManager;
-    private AddAssignmentFragment bottomSheet;
+    @BindView(R.id.bottom_navigation)   private AHBottomNavigation      mBottomNav;
+    @BindView(R.id.create_fab)          private FloatingActionButton    mFab;
+    @BindView(R.id.overlay)             private ImageView               mOverlay;
+    @BindView(R.id.toolbar)             private Toolbar                 mToolbar;
+
+    private boolean mBottomSheetShown       = false;
+    private int     mShownAssignmentFlag    = PlannerContract.FLAG_SHOW_INCOMPLETE;
+
+    private FragmentManager         mFragmentManager;
+    private AddAssignmentFragment   mBottomSheet;
 
     @OnClick(R.id.create_fab)
     void handleBottomSheet() {
-        if (!bottomSheetShown) showBottomSheet();
+        if (!mBottomSheetShown) showBottomSheet();
     }
 
     @Override
@@ -71,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        fragmentManager = getSupportFragmentManager();
+        mFragmentManager = getSupportFragmentManager();
 
         if (BuildConfig.DEBUG)
             Timber.plant(new Timber.DebugTree());
 
-        setSupportActionBar(toolbar);
-        toolbar.inflateMenu(R.menu.main_menu);
+        setSupportActionBar(mToolbar);
+        mToolbar.inflateMenu(R.menu.main_menu);
 
         setupBottomNavigation();
 
@@ -85,11 +83,11 @@ public class MainActivity extends AppCompatActivity {
         String initScreen = sharedPreferences.getString(getString(R.string.pref_init_page_key), getString(R.string.pref_init_page_home_value));
 
         if (initScreen.equals(getString(R.string.pref_init_page_home_value)))
-            fragmentManager.beginTransaction().add(R.id.content_fragment, new HomeFragment()).commit();
+            mFragmentManager.beginTransaction().add(R.id.content_fragment, new HomeFragment()).commit();
         else if (initScreen.equals(getString(R.string.pref_init_page_planner_value)))
-            bottomNav.setCurrentItem(1);
+            mBottomNav.setCurrentItem(1);
         else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value)))
-            bottomNav.setCurrentItem(2);
+            mBottomNav.setCurrentItem(2);
 
     }
 
@@ -107,14 +105,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mnu_show_completed:
                 if (!item.isChecked()) {
                     item.setChecked(true);
-                    shownAssignmentFlag = PlannerContract.FLAG_SHOW_COMPLETE;
+                    mShownAssignmentFlag = PlannerContract.FLAG_SHOW_COMPLETE;
                 } else {
                     item.setChecked(false);
-                    shownAssignmentFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
+                    mShownAssignmentFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
                 }
-                Fragment currentFragment = fragmentManager.findFragmentById(R.id.content_fragment);
+                Fragment currentFragment = mFragmentManager.findFragmentById(R.id.content_fragment);
                 if (currentFragment instanceof AssignmentTypeLoadChangeListener) {
-                    ((AssignmentTypeLoadChangeListener) currentFragment).onTypeChanged(shownAssignmentFlag);
+                    ((AssignmentTypeLoadChangeListener) currentFragment).onTypeChanged(mShownAssignmentFlag);
                 }
                 return true;
             case R.id.mnu_settings:
@@ -127,13 +125,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         AHBottomNavigationAdapter bottomNavAdapter = new AHBottomNavigationAdapter(this, R.menu.bottom_menu);
-        bottomNav.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
-        bottomNavAdapter.setupWithBottomNavigation(bottomNav);
-        bottomNav.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
+        mBottomNav.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
+        bottomNavAdapter.setupWithBottomNavigation(mBottomNav);
+        mBottomNav.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
                 if (!wasSelected) {
-                    FragmentTransaction transaction = fragmentManager.beginTransaction()
+                    FragmentTransaction transaction = mFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                     switch (position) {
                         case 0:
@@ -141,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
                             transaction.replace(R.id.content_fragment, new HomeFragment()).commit();
                             break;
                         case 1:
-                            fab.show();
-                            Fragment fragment = PlannerFragment.newInstance(shownAssignmentFlag);
+                            mFab.show();
+                            Fragment fragment = PlannerFragment.newInstance(mShownAssignmentFlag);
                             transaction.replace(R.id.content_fragment, fragment).commit();
                             break;
                         case 2:
@@ -162,20 +160,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showBottomSheet() {
-        overlay.setVisibility(View.VISIBLE);
-        overlay.animate()
+        mOverlay.setVisibility(View.VISIBLE);
+        mOverlay.animate()
                 .alpha(0.5f)
                 .setDuration(225)
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        PlannerFragment fragment = (PlannerFragment) fragmentManager.findFragmentById(R.id.content_fragment);
+                        PlannerFragment fragment = (PlannerFragment) mFragmentManager.findFragmentById(R.id.content_fragment);
 
-                        bottomSheet = AddAssignmentFragment.newInstance(fragment);
+                        mBottomSheet = AddAssignmentFragment.newInstance(fragment);
 
-                        fragmentManager.beginTransaction()
+                        mFragmentManager.beginTransaction()
                                 .setCustomAnimations(R.anim.slide_up, 0)
-                                .add(R.id.bottom_sheet, bottomSheet)
+                                .add(R.id.bottom_sheet, mBottomSheet)
                                 .commit();
 
                         BottomSheetBehavior sheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
@@ -185,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                                     hideBottomSheet();
-                                    fab.show();
+                                    mFab.show();
                                 }
                             }
 
@@ -197,19 +195,19 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        overlay.setOnClickListener(new View.OnClickListener() {
+                        mOverlay.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 hideBottomSheet();
-                                fab.show();
+                                mFab.show();
                             }
                         });
 
                         FrameLayout bottomSheetContainer = findViewById(R.id.bottom_sheet);
                         bottomSheetContainer.setOnClickListener(null);
-                        fab.hide();
+                        mFab.hide();
 
-                        bottomSheetShown = true;
+                        mBottomSheetShown = true;
                     }
 
                     @Override
@@ -224,23 +222,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void hideBottomSheet() {
-        overlay.animate()
+        mOverlay.animate()
                 .alpha(0.0f)
                 .setDuration(195)
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        if (bottomSheet != null) {
-                            fragmentManager.beginTransaction()
-                                    .remove(bottomSheet)
+                        if (mBottomSheet != null) {
+                            mFragmentManager.beginTransaction()
+                                    .remove(mBottomSheet)
                                     .commit();
                         }
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        overlay.setVisibility(View.GONE);
-                        bottomSheetShown = false;
+                        mOverlay.setVisibility(View.GONE);
+                        mBottomSheetShown = false;
                     }
 
                     @Override
@@ -255,26 +253,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (bottomSheetShown) {
+        if (mBottomSheetShown) {
             hideBottomSheet();
-            fab.show();
+            mFab.show();
         } else {
             super.onBackPressed();
         }
     }
 
     public void showFab() {
-        fab.show();
+        mFab.show();
     }
 
     /**
      * Gets the instance of the bottom navigation for use in fragments
      *
-     * @return instance of bottomNav
+     * @return instance of mBottomNav
      */
     @NotNull
     public AHBottomNavigation getBottomNav() {
-        return bottomNav;
+        return mBottomNav;
     }
 
     /**
@@ -283,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
      * @param view view that called this method
      */
     public void showDatePicker(View view) {
-        DialogFragment datePicker = DatePickerFragment.newInstance(bottomSheet);
+        DialogFragment datePicker = DatePickerFragment.newInstance(mBottomSheet);
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 }

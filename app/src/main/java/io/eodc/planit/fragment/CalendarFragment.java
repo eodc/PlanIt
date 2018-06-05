@@ -55,12 +55,9 @@ public class CalendarFragment extends BaseFragment implements
 
     private static final String ARG_DATE = "date";
 
-    @BindView(R.id.calendar)
-    MaterialCalendarView calendar;
-    @BindView(R.id.rv_day_assignments)
-    RecyclerView rvDaysAssignments;
-    @BindView(R.id.layout_nothing_due)
-    LinearLayout layoutNothingDue;
+    @BindView(R.id.calendar)            private MaterialCalendarView    mCalendar;
+    @BindView(R.id.rv_day_assignments)  private RecyclerView            mRvDaysAssignments;
+    @BindView(R.id.layout_nothing_due)  private LinearLayout            mLayoutNothingDue;
 
     private AssignmentsAdapter assignmentsAdapter;
     private HashMap<DateTime, Integer> dateIntegerHashMap;
@@ -88,9 +85,9 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        calendar.setSelectedDate(new Date());
-        calendar.setOnMonthChangedListener(this);
-        calendar.setOnDateChangedListener(this);
+        mCalendar.setSelectedDate(new Date());
+        mCalendar.setOnMonthChangedListener(this);
+        mCalendar.setOnDateChangedListener(this);
     }
 
     @Override
@@ -145,21 +142,21 @@ public class CalendarFragment extends BaseFragment implements
                 Bundle args = new Bundle();
                 args.putSerializable(ARG_DATE, new Date());
                 getLoaderManager().initLoader(LOADER_DUE_DAY, args, this);
-                rvDaysAssignments.setAdapter(assignmentsAdapter);
-                rvDaysAssignments.setLayoutManager(new LinearLayoutManager(getActivity()));
+                mRvDaysAssignments.setAdapter(assignmentsAdapter);
+                mRvDaysAssignments.setLayoutManager(new LinearLayoutManager(getActivity()));
                 ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(requireContext(), 0,
                         ItemTouchHelper.RIGHT, this);
                 ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
-                touchHelper.attachToRecyclerView(rvDaysAssignments);
+                touchHelper.attachToRecyclerView(mRvDaysAssignments);
                 break;
             case LOADER_DUE_DAY:
                 if (data.getCount() > 0) {
-                    layoutNothingDue.setVisibility(View.GONE);
-                    rvDaysAssignments.setVisibility(View.VISIBLE);
+                    mLayoutNothingDue.setVisibility(View.GONE);
+                    mRvDaysAssignments.setVisibility(View.VISIBLE);
                     assignmentsAdapter.swapAssignmentsCursor(data);
                 } else {
-                    rvDaysAssignments.setVisibility(View.GONE);
-                    layoutNothingDue.setVisibility(View.VISIBLE);
+                    mRvDaysAssignments.setVisibility(View.GONE);
+                    mLayoutNothingDue.setVisibility(View.VISIBLE);
                 }
                 break;
             case LOADER_DUE_MONTH:
@@ -181,7 +178,7 @@ public class CalendarFragment extends BaseFragment implements
                         if (data.getPosition() != data.getCount())
                             data.moveToPosition(checkPosition);
                     }
-                    calendar.addDecorator(this);
+                    mCalendar.addDecorator(this);
                 } catch (ParseException e) {
                     Timber.e(e);
                 }
@@ -213,11 +210,11 @@ public class CalendarFragment extends BaseFragment implements
     @Override
     public void onAssignmentEdit() {
         Bundle dayLoaderArgs = new Bundle();
-        Date selectedDate = calendar.getSelectedDate().getDate();
+        Date selectedDate = mCalendar.getSelectedDate().getDate();
         dayLoaderArgs.putSerializable(ARG_DATE, selectedDate);
 
         Bundle monthLoaderArgs = new Bundle();
-        DateTime selectedMonth = new DateTime(calendar.getSelectedDate().getDate());
+        DateTime selectedMonth = new DateTime(mCalendar.getSelectedDate().getDate());
         selectedMonth = selectedMonth.withDayOfMonth(1).withTimeAtStartOfDay();
         monthLoaderArgs.putSerializable(ARG_DATE, selectedMonth.toDate());
 

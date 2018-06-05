@@ -54,23 +54,15 @@ public class HomeFragment extends BaseFragment {
     private static final int LOADER_DUE_OVERDUE = 2;
     private static final int LOADER_CLASSES = 3;
 
-    @BindView(R.id.text_event_count)
-    TextView textEventCount;
-    @BindView(R.id.graph_week)
-    LineChart graphWeek;
+    @BindView(R.id.text_event_count)    private TextView        mTextEventCount;
+    @BindView(R.id.graph_week)          private LineChart       mGraphWeek;
+    @BindView(R.id.rv_today)            private RecyclerView    mRvTodayAssign;
+    @BindView(R.id.rv_overdue)          private RecyclerView    mRvOverdueAssign;
+    @BindView(R.id.card_overdue)        private CardView        mCardOverdue;
+    @BindView(R.id.all_done_layout)     private LinearLayout    mLayoutAllDone;
 
-    @BindView(R.id.rv_today)
-    RecyclerView rvTodayAssign;
-    @BindView(R.id.rv_overdue)
-    RecyclerView rvOverdueAssign;
-
-    @BindView(R.id.card_overdue)
-    CardView cardOverdue;
-    @BindView(R.id.all_done_layout)
-    LinearLayout linLayAllDone;
-
-    private AssignmentsAdapter todayAssignmentsAdapter;
-    private AssignmentsAdapter overdueAssignmentsAdapter;
+    private AssignmentsAdapter mTodayAssignmentsAdapter;
+    private AssignmentsAdapter mOverdueAssignmentsAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,17 +89,17 @@ public class HomeFragment extends BaseFragment {
      * Sets up the week graph
      */
     private void setupGraph() {
-        graphWeek.disableScroll();
-        graphWeek.setDragEnabled(false);
-        graphWeek.setPinchZoom(false);
-        graphWeek.getAxisLeft().setDrawLabels(false);
-        graphWeek.getAxisLeft().setDrawGridLines(false);
-        graphWeek.getAxisRight().setDrawLabels(false);
-        graphWeek.getAxisRight().setDrawGridLines(false);
-        graphWeek.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        graphWeek.getDescription().setText("");
-        graphWeek.getLegend().setEnabled(false);
-        graphWeek.setDoubleTapToZoomEnabled(false);
+        mGraphWeek.disableScroll();
+        mGraphWeek.setDragEnabled(false);
+        mGraphWeek.setPinchZoom(false);
+        mGraphWeek.getAxisLeft().setDrawLabels(false);
+        mGraphWeek.getAxisLeft().setDrawGridLines(false);
+        mGraphWeek.getAxisRight().setDrawLabels(false);
+        mGraphWeek.getAxisRight().setDrawGridLines(false);
+        mGraphWeek.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        mGraphWeek.getDescription().setText("");
+        mGraphWeek.getLegend().setEnabled(false);
+        mGraphWeek.setDoubleTapToZoomEnabled(false);
     }
 
     @NonNull
@@ -172,35 +164,35 @@ public class HomeFragment extends BaseFragment {
 
                 LineData lineData = new LineData(dataSet);
                 DateValueFormatter formatter = new DateValueFormatter();
-                XAxis xAxis = graphWeek.getXAxis();
+                XAxis xAxis = mGraphWeek.getXAxis();
                 xAxis.setLabelCount(7, true);
                 xAxis.setValueFormatter(formatter);
 
                 if (totalCount > 1)
-                    textEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
-                else textEventCount.setText(getString(R.string.num_events_label, totalCount));
-                graphWeek.setData(lineData);
-                graphWeek.invalidate();
+                    mTextEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
+                else mTextEventCount.setText(getString(R.string.num_events_label, totalCount));
+                mGraphWeek.setData(lineData);
+                mGraphWeek.invalidate();
                 break;
             case LOADER_CLASSES:
-                todayAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
-                overdueAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
+                mTodayAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
+                mOverdueAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
                 getLoaderManager().initLoader(LOADER_DUE_TODAY, null, this);
                 getLoaderManager().initLoader(LOADER_DUE_OVERDUE, null, this);
                 break;
             case LOADER_DUE_OVERDUE:
                 if (data.getCount() > 0) {
-                    cardOverdue.setVisibility(View.VISIBLE);
-                    populateRecyclerView(data, overdueAssignmentsAdapter, rvOverdueAssign);
+                    mCardOverdue.setVisibility(View.VISIBLE);
+                    populateRecyclerView(data, mOverdueAssignmentsAdapter, mRvOverdueAssign);
                 } else {
                     if (activity != null) activity.getBottomNav().restoreBottomNavigation(true);
-                    cardOverdue.setVisibility(View.GONE);
+                    mCardOverdue.setVisibility(View.GONE);
                 }
                 break;
             case LOADER_DUE_TODAY:
-                if (data.getCount() > 0) linLayAllDone.setVisibility(View.GONE);
-                else linLayAllDone.setVisibility(View.VISIBLE);
-                populateRecyclerView(data, todayAssignmentsAdapter, rvTodayAssign);
+                if (data.getCount() > 0) mLayoutAllDone.setVisibility(View.GONE);
+                else mLayoutAllDone.setVisibility(View.VISIBLE);
+                populateRecyclerView(data, mTodayAssignmentsAdapter, mRvTodayAssign);
                 break;
         }
 

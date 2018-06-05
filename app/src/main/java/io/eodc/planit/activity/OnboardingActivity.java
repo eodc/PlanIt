@@ -38,22 +38,19 @@ public class OnboardingActivity extends AppCompatActivity implements
         ViewPager.OnPageChangeListener,
         OnClassListChangeListener {
 
-    @BindView(R.id.viewPager)
-    ViewPager viewPager;
-    @BindView(R.id.tabLayout)
-    TabLayout tabLayout;
-    @BindView(R.id.btn_back)
-    Button btnBack;
-    @BindView(R.id.btn_next)
-    Button btnNext;
-    private List<OnboardingFragment> fragments;
+    @BindView(R.id.viewPager)   private ViewPager   mViewPager;
+    @BindView(R.id.tabLayout)   private TabLayout   mTabLayout;
+    @BindView(R.id.btn_back)    private Button      mBtnBack;
+    @BindView(R.id.btn_next)    private Button      mBtnNext;
+
+    private List<OnboardingFragment> mOnboardingFragments;
 
     /**
      * Shows the next slide in the carousel
      */
     @OnClick(R.id.btn_next)
     void nextSlide() {
-        viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
     }
 
     /**
@@ -61,7 +58,7 @@ public class OnboardingActivity extends AppCompatActivity implements
      */
     @OnClick(R.id.btn_back)
     void backSlide() {
-        viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
     }
 
     @Override
@@ -73,17 +70,17 @@ public class OnboardingActivity extends AppCompatActivity implements
             setContentView(R.layout.activity_onboarding);
             ButterKnife.bind(this);
 
-            fragments = new ArrayList<>();
-            fragments.add(OnboardingFragment.newInstance(getString(R.string.app_name),
+            mOnboardingFragments = new ArrayList<>();
+            mOnboardingFragments.add(OnboardingFragment.newInstance(getString(R.string.app_name),
                     R.drawable.ic_book_blue_250dp,
                     getString(R.string.tagline)));
-            fragments.add(OnboardingFragment.newInstance("Your Planner, Your Way",
+            mOnboardingFragments.add(OnboardingFragment.newInstance("Your Planner, Your Way",
                     R.drawable.ic_format_list_bulleted_blue_250dp,
                     "See your assignments in an overview, list, or calendar. It's your choice."));
-            fragments.add(OnboardingAddClassesFragment.newInstance(this));
-            viewPager.setAdapter(new OnboardingPagerAdapter(getSupportFragmentManager(), fragments));
-            tabLayout.setupWithViewPager(viewPager);
-            viewPager.addOnPageChangeListener(this);
+            mOnboardingFragments.add(OnboardingAddClassesFragment.newInstance(this));
+            mViewPager.setAdapter(new OnboardingPagerAdapter(getSupportFragmentManager(), mOnboardingFragments));
+            mTabLayout.setupWithViewPager(mViewPager);
+            mViewPager.addOnPageChangeListener(this);
 
             preferences.edit()
                     .putString(getString(R.string.pref_show_notif_time_key), "19:00")
@@ -101,24 +98,24 @@ public class OnboardingActivity extends AppCompatActivity implements
     @Override
     public void onPageSelected(final int position) {
         if (position == 0) {
-            btnBack.setVisibility(View.GONE);
-        } else if (position == fragments.size() - 1) {
-            btnNext.setText(R.string.btn_finish_label);
+            mBtnBack.setVisibility(View.GONE);
+        } else if (position == mOnboardingFragments.size() - 1) {
+            mBtnNext.setText(R.string.btn_finish_label);
             Cursor c = getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
                     null, null, null, null);
             if (c != null && c.getCount() == 0)
-                btnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
             if (c != null) c.close();
         } else {
-            btnBack.setVisibility(View.VISIBLE);
-            btnNext.setText(getString(R.string.btn_next_label));
-            btnNext.setOnClickListener(new View.OnClickListener() {
+            mBtnBack.setVisibility(View.VISIBLE);
+            mBtnNext.setText(getString(R.string.btn_next_label));
+            mBtnNext.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     nextSlide();
                 }
             });
-            btnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+            mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
         }
     }
 
@@ -129,11 +126,11 @@ public class OnboardingActivity extends AppCompatActivity implements
     @Override
     public void onClassListChange(int count) {
         if (count == 0) {
-            btnNext.setOnClickListener(null);
-            btnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+            mBtnNext.setOnClickListener(null);
+            mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
         } else {
-            btnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-            btnNext.setOnClickListener(new View.OnClickListener() {
+            mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+            mBtnNext.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(OnboardingActivity.this);
