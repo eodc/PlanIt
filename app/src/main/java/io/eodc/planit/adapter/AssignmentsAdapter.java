@@ -45,8 +45,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     private Cursor                      mAssignments;
     private Cursor                      mClasses;
 
-    private boolean assignmentsCompleted;
-    private int     showDividerFlag;
+    private boolean mShowAssignmnentsCompleted;
+    private int     mShowDividerFlag;
 
     /**
      * Constructs a new instance of AssignmentsAdapter. Dynamically displays relevant information
@@ -65,8 +65,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
         this.mContext = context;
         this.mClasses = classCursor;
         this.mListener = listener;
-        this.showDividerFlag = -1;
-        assignmentsCompleted = false;
+        this.mShowDividerFlag = -1;
+        mShowAssignmnentsCompleted = false;
     }
 
     /**
@@ -83,8 +83,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
         this.mContext = context;
         this.mClasses = classCursor;
         this.mListener = listener;
-        this.showDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
-        assignmentsCompleted = false;
+        this.mShowDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
+        mShowAssignmnentsCompleted = false;
     }
 
     /**
@@ -107,7 +107,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      */
     @Override
     public int getItemViewType(int position) {
-        if (showDividerFlag == NEVER_SHOW_DIVIDER) return VIEW_TYPE_NORMAL;
+        if (mShowDividerFlag == NEVER_SHOW_DIVIDER) return VIEW_TYPE_NORMAL;
         mAssignments.moveToPosition(position);
         int notesIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
         String notes = mAssignments.getString(notesIndex).trim();
@@ -231,7 +231,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 DateTime dtNow = new DateTime();
                 if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
                         dtCurrent.isAfterNow() && dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
-                                showDividerFlag != NEVER_SHOW_DIVIDER) {
+                                mShowDividerFlag != NEVER_SHOW_DIVIDER) {
                     holder.dueDateIcon.setVisibility(View.VISIBLE);
                     holder.dueDate.setVisibility(View.VISIBLE);
                 }
@@ -287,7 +287,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                     mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)
             ));
 
-            if (assignmentsCompleted) {
+            if (mShowAssignmnentsCompleted) {
                 holder.assignmentName.setPaintFlags(holder.assignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
@@ -301,10 +301,10 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     /**
      * Specifies whether to show completed mAssignments
      *
-     * @param assignmentsCompleted Whether to show completed mAssignments
+     * @param showAssignmnentsCompleted Whether to show completed mAssignments
      */
-    public void setAssignmentsCompleted(boolean assignmentsCompleted) {
-        this.assignmentsCompleted = assignmentsCompleted;
+    public void setShowAssignmnentsCompleted(boolean showAssignmnentsCompleted) {
+        this.mShowAssignmnentsCompleted = showAssignmnentsCompleted;
     }
 
     @Override
