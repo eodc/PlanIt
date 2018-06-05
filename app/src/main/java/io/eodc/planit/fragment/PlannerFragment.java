@@ -135,7 +135,7 @@ public class PlannerFragment extends BaseFragment implements
         mFlag = flag;
         try {
             getLoaderManager().restartLoader(ASSIGNMENTS_LOADER_ID, null, this);
-            mAssignmentsAdapter.setAssignmentsCompleted(mFlag == PlannerContract.FLAG_SHOW_COMPLETE);
+            mAssignmentsAdapter.setShowAssignmnentsCompleted(mFlag == PlannerContract.FLAG_SHOW_COMPLETE);
         } catch (Exception e) {
             Timber.i(e, "May just be inserting fragment");
         }
