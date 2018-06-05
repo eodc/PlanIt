@@ -27,62 +27,62 @@ import io.eodc.planit.fragment.EditAssignmentFragment;
 import io.eodc.planit.listener.OnAssignmentChangeListener;
 
 /**
- * Adapter for interfacing assignments to {@link RecyclerView}
+ * Adapter for interfacing mAssignments to {@link RecyclerView}
  *
  * @author 2n
  */
 public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolder> {
 
-    private static final int NEVER_SHOW_DIVIDER = 0;
+    private static final int NEVER_SHOW_DIVIDER         = 0;
 
-    private static final int VIEW_TYPE_NORMAL = 0;
-    private static final int VIEW_TYPE_DIVIDER = 1;
-    private static final int VIEW_TYPE_NORMAL_NOTES = 2;
-    private static final int VIEW_TYPE_DIVIDER_NOTES = 3;
+    private static final int VIEW_TYPE_NORMAL           = 0;
+    private static final int VIEW_TYPE_DIVIDER          = 1;
+    private static final int VIEW_TYPE_NORMAL_NOTES     = 2;
+    private static final int VIEW_TYPE_DIVIDER_NOTES    = 3;
 
-    private OnAssignmentChangeListener listener;
-    private Context mContext;
-    private Cursor assignments;
-    private Cursor classes;
+    private OnAssignmentChangeListener  mListener;
+    private Context                     mContext;
+    private Cursor                      mAssignments;
+    private Cursor                      mClasses;
 
-    private int showDividerFlag;
     private boolean assignmentsCompleted;
+    private int     showDividerFlag;
 
     /**
      * Constructs a new instance of AssignmentsAdapter. Dynamically displays relevant information
      * about the assignment in its view depending on its position in the list and it due date.
      * <p>
-     * {@link #swapAssignmentsCursor(Cursor)} should be called as soon as the assignments cursor is
+     * {@link #swapAssignmentsCursor(Cursor)} should be called as soon as the mAssignments cursor is
      * available, or else nothing will be shown.
      *
      * @param context     The context to use for grabbing strings, colors, etc.
-     * @param classCursor The cursor containing all the user's classes.
-     * @param listener    The listener listening for assignment attribute changes.
+     * @param classCursor The cursor containing all the user's mClasses.
+     * @param listener    The mListener listening for assignment attribute changes.
      * @see AssignmentViewHolder
      * @see OnAssignmentChangeListener
      **/
     public AssignmentsAdapter(Context context, Cursor classCursor, OnAssignmentChangeListener listener) {
         this.mContext = context;
-        this.classes = classCursor;
-        this.listener = listener;
+        this.mClasses = classCursor;
+        this.mListener = listener;
         this.showDividerFlag = -1;
         assignmentsCompleted = false;
     }
 
     /**
      * Constructs a new instance of AssignmentsAdapter while specifying if dividers should be shown.
-     * This constructor should be used in instances where the full list of assignments is not being
-     * displayed, or the context of when the assignments are due have been established.
+     * This constructor should be used in instances where the full list of mAssignments is not being
+     * displayed, or the context of when the mAssignments are due have been established.
      *
      * @param context      The context to use for grabbing strings, colors, etc.
-     * @param classCursor  The cursor containing all the user's classes.
-     * @param listener     The listener listening for assignment attribute changes.
+     * @param classCursor  The cursor containing all the user's mClasses.
+     * @param listener     The mListener listening for assignment attribute changes.
      * @param showDividers Whether or not dividers should be shown.
      */
     public AssignmentsAdapter(Context context, Cursor classCursor, OnAssignmentChangeListener listener, boolean showDividers) {
         this.mContext = context;
-        this.classes = classCursor;
-        this.listener = listener;
+        this.mClasses = classCursor;
+        this.mListener = listener;
         this.showDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
         assignmentsCompleted = false;
     }
@@ -94,7 +94,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * @param c The new {@link Cursor} that should be used as the data set.
      */
     public void swapAssignmentsCursor(Cursor c) {
-        assignments = c;
+        mAssignments = c;
         notifyDataSetChanged();
     }
 
@@ -108,17 +108,17 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     @Override
     public int getItemViewType(int position) {
         if (showDividerFlag == NEVER_SHOW_DIVIDER) return VIEW_TYPE_NORMAL;
-        assignments.moveToPosition(position);
-        int notesIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
-        String notes = assignments.getString(notesIndex).trim();
+        mAssignments.moveToPosition(position);
+        int notesIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
+        String notes = mAssignments.getString(notesIndex).trim();
 
         if (position == 0) {
             if (notes.equals("")) return VIEW_TYPE_DIVIDER;
             else return VIEW_TYPE_DIVIDER_NOTES;
         } else {
-            int dueDateIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
+            int dueDateIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
 
-            String[] dateSegments = assignments.getString(dueDateIndex).split("-");
+            String[] dateSegments = mAssignments.getString(dueDateIndex).split("-");
 
             DateTime dtCurrent = new DateTime(Integer.valueOf(dateSegments[0]),
                     Integer.valueOf(dateSegments[1]),
@@ -130,9 +130,9 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 else return VIEW_TYPE_NORMAL_NOTES;
             }
 
-            assignments.moveToPosition(position - 1);
+            mAssignments.moveToPosition(position - 1);
 
-            dateSegments = assignments.getString(dueDateIndex).split("-");
+            dateSegments = mAssignments.getString(dueDateIndex).split("-");
 
             DateTime dtLast = new DateTime(Integer.valueOf(dateSegments[0]),
                     Integer.valueOf(dateSegments[1]),
@@ -184,24 +184,24 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull final AssignmentViewHolder holder, int position) {
-        assignments.moveToPosition(position);
-        classes.moveToFirst();
+        mAssignments.moveToPosition(position);
+        mClasses.moveToFirst();
 
-        final int idIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns._ID);
-        int dueDateIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
-        int typeIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns.TYPE);
-        final int notesIndex = assignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
+        final int idIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns._ID);
+        int dueDateIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
+        int typeIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TYPE);
+        final int notesIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
 
-        holder.id = assignments.getInt(idIndex);
+        holder.id = mAssignments.getInt(idIndex);
 
-        while (classes.getInt(classes.getColumnIndex(PlannerContract.ClassColumns._ID)) != assignments.getInt(assignments.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)))
-            classes.moveToNext();
+        while (mClasses.getInt(mClasses.getColumnIndex(PlannerContract.ClassColumns._ID)) != mAssignments.getInt(mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)))
+            mClasses.moveToNext();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         try {
-            DateTime dtCurrent = new DateTime(sdf.parse(assignments.getString(dueDateIndex)));
+            DateTime dtCurrent = new DateTime(sdf.parse(mAssignments.getString(dueDateIndex)));
 
-            String assignmentType = assignments.getString(typeIndex);
+            String assignmentType = mAssignments.getString(typeIndex);
 
             switch (assignmentType) {
                 case PlannerContract.TYPE_HOMEWORK:
@@ -240,7 +240,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
                     holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
                 holder.expandButton.setVisibility(View.VISIBLE);
-                holder.notes.setText(assignments.getString(notesIndex));
+                holder.notes.setText(mAssignments.getString(notesIndex));
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -259,7 +259,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                     if (mContext instanceof MainActivity) {
                         MainActivity activity = (MainActivity) mContext;
                         DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.id,
-                                listener);
+                                mListener);
 
                         editFragment.show(activity.getSupportFragmentManager(), null);
 
@@ -276,15 +276,15 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             });
 
             String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
-                    classes.getString(classes.getColumnIndex(PlannerContract.ClassColumns.NAME)),
+                    mClasses.getString(mClasses.getColumnIndex(PlannerContract.ClassColumns.NAME)),
                     assignmentType);
 
-            holder.classColor.setBackgroundColor(Color.parseColor(classes.getString(
-                    classes.getColumnIndex(PlannerContract.ClassColumns.COLOR)
+            holder.classColor.setBackgroundColor(Color.parseColor(mClasses.getString(
+                    mClasses.getColumnIndex(PlannerContract.ClassColumns.COLOR)
             )));
 
-            holder.assignmentName.setText(assignments.getString(
-                    assignments.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)
+            holder.assignmentName.setText(mAssignments.getString(
+                    mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)
             ));
 
             if (assignmentsCompleted) {
@@ -299,9 +299,9 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
 
     /**
-     * Specifies whether to show completed assignments
+     * Specifies whether to show completed mAssignments
      *
-     * @param assignmentsCompleted Whether to show completed assignments
+     * @param assignmentsCompleted Whether to show completed mAssignments
      */
     public void setAssignmentsCompleted(boolean assignmentsCompleted) {
         this.assignmentsCompleted = assignmentsCompleted;
@@ -309,7 +309,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public int getItemCount() {
-        if (assignments != null) return assignments.getCount();
+        if (mAssignments != null) return mAssignments.getCount();
         else return 0;
     }
 

@@ -49,9 +49,9 @@ public class CalendarFragment extends BaseFragment implements
         OnMonthChangedListener,
         DayViewDecorator {
 
-    private static final int LOADER_CLASSES = 0;
-    private static final int LOADER_DUE_MONTH = 1;
-    private static final int LOADER_DUE_DAY = 2;
+    private static final int LOADER_CLASSES     = 0;
+    private static final int LOADER_DUE_MONTH   = 1;
+    private static final int LOADER_DUE_DAY     = 2;
 
     private static final String ARG_DATE = "date";
 

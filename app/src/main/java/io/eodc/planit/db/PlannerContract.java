@@ -9,15 +9,18 @@ import android.provider.BaseColumns;
  * @author 2n
  */
 public class PlannerContract {
-    public static final String TYPE_HOMEWORK = "homework";
-    public static final String TYPE_TEST = "test";
-    public static final String TYPE_PROJECT = "project";
-    public static final int FLAG_SHOW_INCOMPLETE = 0;
-    public static final int FLAG_SHOW_COMPLETE = 1;
-    static final String AUTHORITY = "io.eodc.planit.planner";
-    static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-    static final String PATH_ASSIGNMENT = "assignment";
-    static final String PATH_CLASS = "class";
+    static final String AUTHORITY           = "io.eodc.planit.planner";
+    static final Uri    BASE_CONTENT_URI    = Uri.parse("content://" + AUTHORITY);
+    static final String PATH_ASSIGNMENT     = "assignment";
+    static final String PATH_CLASS          = "class";
+
+
+    public static final int FLAG_SHOW_INCOMPLETE    = 0;
+    public static final int FLAG_SHOW_COMPLETE      = 1;
+
+    public static final String TYPE_HOMEWORK    = "homework";
+    public static final String TYPE_TEST        = "test";
+    public static final String TYPE_PROJECT     = "project";
 
     private PlannerContract() {
     }

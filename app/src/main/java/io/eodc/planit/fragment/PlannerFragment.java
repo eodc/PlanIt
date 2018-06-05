@@ -31,8 +31,8 @@ import timber.log.Timber;
  */
 public class PlannerFragment extends BaseFragment implements
         AssignmentTypeLoadChangeListener {
-    private static final int CLASSES_LOADER_ID = 0;
-    private static final int ASSIGNMENTS_LOADER_ID = 1;
+    private static final int CLASSES_LOADER_ID      = 0;
+    private static final int ASSIGNMENTS_LOADER_ID  = 1;
 
     @BindView(R.id.content)         private RecyclerView mRvContent;
     @BindView(R.id.all_done_layout) private LinearLayout mLayoutNoAssignments;

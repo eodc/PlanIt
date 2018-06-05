@@ -19,7 +19,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 
 public class FabHideBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
 
-    private long lastSnackbarUpdate = 0;
+    private long mLastSnackbarUpdate = 0;
 
     public FabHideBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,13 +44,13 @@ public class FabHideBehavior extends CoordinatorLayout.Behavior<FloatingActionBu
      */
     private void updateFloatingActionButton(CoordinatorLayout parent, FloatingActionButton child, View dependency) {
         if (child != null && dependency != null && dependency instanceof Snackbar.SnackbarLayout) {
-            lastSnackbarUpdate = System.currentTimeMillis();
+            mLastSnackbarUpdate = System.currentTimeMillis();
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
             int fabDefaultBottomMargin = p.bottomMargin;
             child.setY(dependency.getY() - fabDefaultBottomMargin);
         } else if (child != null && dependency != null && dependency instanceof AHBottomNavigation) {
             // Hack to avoid moving the FAB when the AHBottomNavigation is moving (showing or hiding animation)
-            if (System.currentTimeMillis() - lastSnackbarUpdate < 30) return;
+            if (System.currentTimeMillis() - mLastSnackbarUpdate < 30) return;
             ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
             int fabDefaultBottomMargin = p.bottomMargin;
             float translateDist = dependency.getY() - fabDefaultBottomMargin;

@@ -43,8 +43,8 @@ public class ModifyClassFragment extends DialogFragment implements
     public static final int FLAG_NEW_CLASS = 0;
     public static final int FLAG_MOD_CLASS = 1;
 
-    private static final String ARG_FLAG = "flag";
-    private static final String ARG_ID = "id";
+    private static final String ARG_FLAG    = "flag";
+    private static final String ARG_ID      = "id";
 
     @BindView(R.id.tv_title)            private TextView    mTextTitle;
     @BindView(R.id.tv_subtitle)         private TextView    mTextSubtitle;

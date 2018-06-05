@@ -19,10 +19,11 @@ import android.support.annotation.Nullable;
  * @author 2n
  */
 public class PlannerProvider extends ContentProvider {
-    public static final int ASSIGNMENT = 100;
-    public static final int ASSIGNMENT_ID = 110;
-    public static final int CLASS = 200;
-    public static final int CLASS_ID = 210;
+    public static final int ASSIGNMENT      = 100;
+    public static final int ASSIGNMENT_ID   = 110;
+    public static final int CLASS           = 200;
+    public static final int CLASS_ID        = 210;
+
     public static UriMatcher uriMatcher;
 
     static {

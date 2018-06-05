@@ -18,12 +18,12 @@ import butterknife.ButterKnife;
 import io.eodc.planit.R;
 
 public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseViewHolder> {
-    private Context mContext;
-    private List<License> licenses;
+    private Context         mContext;
+    private List<License>   mLicenses;
 
     public LicenseAdapter(Context mContext, List<License> licenses) {
         this.mContext = mContext;
-        this.licenses = licenses;
+        this.mLicenses = licenses;
     }
 
     @NonNull
@@ -34,7 +34,7 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseV
 
     @Override
     public void onBindViewHolder(@NonNull LicenseViewHolder holder, int position) {
-        final License license = licenses.get(position);
+        final License license = mLicenses.get(position);
         holder.tvName.setText(license.getName());
         holder.tvCopyright.setText(mContext.getString(R.string.license_cpyrght,
                 license.getAuthor(), license.getYear()));
@@ -58,7 +58,7 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseV
 
     @Override
     public int getItemCount() {
-        return licenses.size();
+        return mLicenses.size();
     }
 
     class LicenseViewHolder extends RecyclerView.ViewHolder {

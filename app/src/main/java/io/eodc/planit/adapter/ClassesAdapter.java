@@ -29,22 +29,22 @@ import io.eodc.planit.listener.OnClassListChangeListener;
  */
 
 public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassViewHolder> {
-    private Cursor mClassCursor;
-    private Context mContext;
-    private OnClassListChangeListener listener;
+    private Cursor                      mClassCursor;
+    private Context                     mContext;
+    private OnClassListChangeListener   mListener;
 
     /**
      * Constructs a new instance of ClassAdapter
      *
      * @param mClassCursor The cursor containing the classes to show
      * @param mContext     The context to pull strings, colors, etc. from
-     * @param l            The listener listening for changes to the class list.
+     * @param l            The mListener listening for changes to the class list.
      * @see OnClassListChangeListener
      */
     public ClassesAdapter(Cursor mClassCursor, Context mContext, OnClassListChangeListener l) {
         this.mClassCursor = mClassCursor;
         this.mContext = mContext;
-        this.listener = l;
+        this.mListener = l;
     }
 
     @NonNull
@@ -62,7 +62,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                ModifyClassFragment.newInstance(listener, ModifyClassFragment.FLAG_MOD_CLASS,
+                ModifyClassFragment.newInstance(mListener, ModifyClassFragment.FLAG_MOD_CLASS,
                         mClassCursor.getInt(mClassCursor.getColumnIndex(PlannerContract.ClassColumns._ID)))
                         .show(((AppCompatActivity) mContext).getSupportFragmentManager(), null);
 

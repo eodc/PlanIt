@@ -9,25 +9,25 @@ import android.support.annotation.DrawableRes;
  * @see AssignmentTypeAdapter
  */
 public class AssignmentType {
-    private String name;
-    private int iconId;
+    private String  mName;
+    private int     mIconId;
 
     /**
      * Constructs a new instance of an Assignment Type
      *
-     * @param name   The name of the type
+     * @param name   The mName of the type
      * @param iconId The drawable resource id to be used as an icon in the view
      */
     public AssignmentType(String name, @DrawableRes int iconId) {
-        this.name = name;
-        this.iconId = iconId;
+        this.mName = name;
+        this.mIconId = iconId;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public int getIconId() {
-        return iconId;
+        return mIconId;
     }
 }
