@@ -72,7 +72,7 @@ public class OnboardingActivity extends AppCompatActivity implements
 
             mOnboardingFragments = new ArrayList<>();
             mOnboardingFragments.add(OnboardingFragment.newInstance(getString(R.string.app_name),
-                    R.drawable.ic_book_blue_250dp,
+                    R.drawable.ic_logo_24dp,
                     getString(R.string.tagline)));
             mOnboardingFragments.add(OnboardingFragment.newInstance("Your Planner, Your Way",
                     R.drawable.ic_format_list_bulleted_blue_250dp,
