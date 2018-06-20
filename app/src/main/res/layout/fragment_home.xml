@@ -31,7 +31,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_circle_dark_grey"
                     android:padding="6dp"
-                    android:src="@drawable/ic_graph_24dp"
+                    app:srcCompat="@drawable/ic_graph_24dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="ContentDescription" />
