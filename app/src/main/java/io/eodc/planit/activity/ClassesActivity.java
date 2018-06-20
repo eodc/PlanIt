@@ -31,8 +31,8 @@ public class ClassesActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OnClassListChangeListener {
 
-    @BindView(R.id.toolbar)     private Toolbar         mToolbar;
-    @BindView(R.id.rv_classes)  private RecyclerView    mRvClasses;
+    @BindView(R.id.toolbar)     Toolbar         mToolbar;
+    @BindView(R.id.rv_classes)  RecyclerView    mRvClasses;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

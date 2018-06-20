@@ -47,10 +47,10 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.bottom_navigation)   private AHBottomNavigation      mBottomNav;
-    @BindView(R.id.create_fab)          private FloatingActionButton    mFab;
-    @BindView(R.id.overlay)             private ImageView               mOverlay;
-    @BindView(R.id.toolbar)             private Toolbar                 mToolbar;
+    @BindView(R.id.bottom_navigation)   AHBottomNavigation      mBottomNav;
+    @BindView(R.id.create_fab)          FloatingActionButton    mFab;
+    @BindView(R.id.overlay)             ImageView               mOverlay;
+    @BindView(R.id.toolbar)             Toolbar                 mToolbar;
 
     private boolean mBottomSheetShown       = false;
     private int     mShownAssignmentFlag    = PlannerContract.FLAG_SHOW_INCOMPLETE;

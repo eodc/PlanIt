@@ -34,8 +34,8 @@ public class PlannerFragment extends BaseFragment implements
     private static final int CLASSES_LOADER_ID      = 0;
     private static final int ASSIGNMENTS_LOADER_ID  = 1;
 
-    @BindView(R.id.content)         private RecyclerView mRvContent;
-    @BindView(R.id.all_done_layout) private LinearLayout mLayoutNoAssignments;
+    @BindView(R.id.content)         RecyclerView mRvContent;
+    @BindView(R.id.all_done_layout) LinearLayout mLayoutNoAssignments;
 
     private AssignmentsAdapter mAssignmentsAdapter;
 

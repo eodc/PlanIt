@@ -55,9 +55,9 @@ public class CalendarFragment extends BaseFragment implements
 
     private static final String ARG_DATE = "date";
 
-    @BindView(R.id.calendar)            private MaterialCalendarView    mCalendar;
-    @BindView(R.id.rv_day_assignments)  private RecyclerView            mRvDaysAssignments;
-    @BindView(R.id.layout_nothing_due)  private LinearLayout            mLayoutNothingDue;
+    @BindView(R.id.calendar)            MaterialCalendarView    mCalendar;
+    @BindView(R.id.rv_day_assignments)  RecyclerView            mRvDaysAssignments;
+    @BindView(R.id.layout_nothing_due)  LinearLayout            mLayoutNothingDue;
 
     private AssignmentsAdapter assignmentsAdapter;
     private HashMap<DateTime, Integer> dateIntegerHashMap;

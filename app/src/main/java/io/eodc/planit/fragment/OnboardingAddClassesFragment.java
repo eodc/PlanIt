@@ -32,9 +32,9 @@ public class OnboardingAddClassesFragment extends OnboardingFragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
         OnClassListChangeListener {
 
-    @BindView(R.id.rv_classes)      private RecyclerView    mRvClasses;
-    @BindView(R.id.no_classes)      private ImageView       mImageNoClass;
-    @BindView(R.id.tv_no_classes)   private TextView        mTextNoClass;
+    @BindView(R.id.rv_classes)      RecyclerView    mRvClasses;
+    @BindView(R.id.no_classes)      ImageView       mImageNoClass;
+    @BindView(R.id.tv_no_classes)   TextView        mTextNoClass;
 
     private OnClassListChangeListener mListener;
 

@@ -46,13 +46,13 @@ public class ModifyClassFragment extends DialogFragment implements
     private static final String ARG_FLAG    = "flag";
     private static final String ARG_ID      = "id";
 
-    @BindView(R.id.tv_title)            private TextView    mTextTitle;
-    @BindView(R.id.tv_subtitle)         private TextView    mTextSubtitle;
-    @BindView(R.id.edit_class_name)     private EditText    mEditClassName;
-    @BindView(R.id.edit_teacher_name)   private EditText    mEditTeacherName;
-    @BindView(R.id.color_picker)        private ImageView   mColorPicker;
-    @BindView(R.id.btn_confirm)         private Button      mBtnConfirm;
-    @BindView(R.id.btn_delete)          private Button      mBtnDelete;
+    @BindView(R.id.tv_title)            TextView    mTextTitle;
+    @BindView(R.id.tv_subtitle)         TextView    mTextSubtitle;
+    @BindView(R.id.edit_class_name)     EditText    mEditClassName;
+    @BindView(R.id.edit_teacher_name)   EditText    mEditTeacherName;
+    @BindView(R.id.color_picker)        ImageView   mColorPicker;
+    @BindView(R.id.btn_confirm)         Button      mBtnConfirm;
+    @BindView(R.id.btn_delete)          Button      mBtnDelete;
 
     private OnClassListChangeListener mListener;
 

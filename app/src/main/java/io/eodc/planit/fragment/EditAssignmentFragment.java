@@ -51,14 +51,14 @@ public class EditAssignmentFragment extends DialogFragment implements
 
     private static final String ID_KEY = "id";
 
-    @BindView(R.id.btn_restore)                 private Button              mBtnRestore;
-    @BindView(R.id.type_chooser)                private Spinner             mSpinnerType;
-    @BindView(R.id.class_chooser)               private Spinner             mSpinnerClass;
-    @BindView(R.id.edit_assignment_name)        private EditText            mEditTitle;
-    @BindView(R.id.edit_due_date)               private EditText            mEditDue;
-    @BindView(R.id.edit_notes)                  private EditText            mEditNotes;
-    @BindView(R.id.edit_layout_assignment_name) private TextInputLayout     mEditNameLayout;
-    @BindView(R.id.edit_layout_due_date)        private TextInputLayout     mEditDueLayout;
+    @BindView(R.id.btn_restore)                 Button              mBtnRestore;
+    @BindView(R.id.type_chooser)                Spinner             mSpinnerType;
+    @BindView(R.id.class_chooser)               Spinner             mSpinnerClass;
+    @BindView(R.id.edit_assignment_name)        EditText            mEditTitle;
+    @BindView(R.id.edit_due_date)               EditText            mEditDue;
+    @BindView(R.id.edit_notes)                  EditText            mEditNotes;
+    @BindView(R.id.edit_layout_assignment_name) TextInputLayout     mEditNameLayout;
+    @BindView(R.id.edit_layout_due_date)        TextInputLayout     mEditDueLayout;
 
     private OnAssignmentChangeListener  mListener;
     private SimpleCursorAdapter         mClassAdapter;

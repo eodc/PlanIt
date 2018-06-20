@@ -50,9 +50,9 @@ public class AddAssignmentFragment extends Fragment implements
         DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    @BindView(R.id.due_date_chooser)    private EditText    mEditDueDate;
-    @BindView(R.id.type_chooser)        private Spinner     mTypeSpinner;
-    @BindView(R.id.class_chooser)       private Spinner     mClassSpinner;
+    @BindView(R.id.due_date_chooser)    EditText    mEditDueDate;
+    @BindView(R.id.type_chooser)        Spinner     mTypeSpinner;
+    @BindView(R.id.class_chooser)       Spinner     mClassSpinner;
 
     private Context                     mContext;
     private OnAssignmentChangeListener  mListener;

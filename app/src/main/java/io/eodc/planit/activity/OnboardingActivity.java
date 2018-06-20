@@ -38,10 +38,10 @@ public class OnboardingActivity extends AppCompatActivity implements
         ViewPager.OnPageChangeListener,
         OnClassListChangeListener {
 
-    @BindView(R.id.viewPager)   private ViewPager   mViewPager;
-    @BindView(R.id.tabLayout)   private TabLayout   mTabLayout;
-    @BindView(R.id.btn_back)    private Button      mBtnBack;
-    @BindView(R.id.btn_next)    private Button      mBtnNext;
+    @BindView(R.id.viewPager)   ViewPager   mViewPager;
+    @BindView(R.id.tabLayout)   TabLayout   mTabLayout;
+    @BindView(R.id.btn_back)    Button      mBtnBack;
+    @BindView(R.id.btn_next)    Button      mBtnNext;
 
     private List<OnboardingFragment> mOnboardingFragments;
 

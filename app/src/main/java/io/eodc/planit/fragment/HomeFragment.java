@@ -54,12 +54,12 @@ public class HomeFragment extends BaseFragment {
     private static final int LOADER_DUE_OVERDUE     = 2;
     private static final int LOADER_CLASSES         = 3;
 
-    @BindView(R.id.all_done_layout)     private LinearLayout    mLayoutAllDone;
-    @BindView(R.id.card_overdue)        private CardView        mCardOverdue;
-    @BindView(R.id.graph_week)          private LineChart       mGraphWeek;
-    @BindView(R.id.rv_today)            private RecyclerView    mRvTodayAssign;
-    @BindView(R.id.rv_overdue)          private RecyclerView    mRvOverdueAssign;
-    @BindView(R.id.text_event_count)    private TextView        mTextEventCount;
+    @BindView(R.id.all_done_layout)     LinearLayout    mLayoutAllDone;
+    @BindView(R.id.card_overdue)        CardView        mCardOverdue;
+    @BindView(R.id.graph_week)          LineChart       mGraphWeek;
+    @BindView(R.id.rv_today)            RecyclerView    mRvTodayAssign;
+    @BindView(R.id.rv_overdue)          RecyclerView    mRvOverdueAssign;
+    @BindView(R.id.text_event_count)    TextView        mTextEventCount;
 
     private AssignmentsAdapter mTodayAssignmentsAdapter;
     private AssignmentsAdapter mOverdueAssignmentsAdapter;
