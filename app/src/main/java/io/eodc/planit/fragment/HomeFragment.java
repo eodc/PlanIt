@@ -184,7 +184,6 @@ public class HomeFragment extends BaseFragment {
                     mCardOverdue.setVisibility(View.VISIBLE);
                     populateRecyclerView(data, mOverdueAssignmentsAdapter, mRvOverdueAssign);
                 } else {
-                    if (activity != null) activity.getBottomNav().restoreBottomNavigation(true);
                     mCardOverdue.setVisibility(View.GONE);
                 }
                 break;
@@ -240,6 +239,9 @@ public class HomeFragment extends BaseFragment {
         super.onAssignmentComplete(cursor);
         reloadAllLoaders();
     }
+
+    @Override
+    public void onAssignmentCreation() { }
 
     @Override
     public void onAssignmentEdit() {
