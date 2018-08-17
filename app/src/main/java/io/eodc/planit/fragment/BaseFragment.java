@@ -41,7 +41,6 @@ public abstract class BaseFragment extends Fragment implements
                 break;
         }
         if (getActivity() != null) {
-            ((MainActivity) getActivity()).getBottomNav().restoreBottomNavigation(true);
             Snackbar.make(((MainActivity) getActivity()).getBottomNav(),
                     snackbarLabel,
                     Snackbar.LENGTH_SHORT)
@@ -58,14 +57,5 @@ public abstract class BaseFragment extends Fragment implements
                     }).show();
         }
         cursor.close();
-    }
-
-    @Override
-    public void onAssignmentCreation() {
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null) {
-            activity.hideBottomSheet();
-            activity.showFab();
-        }
     }
 }

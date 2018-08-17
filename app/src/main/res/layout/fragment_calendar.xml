@@ -9,7 +9,7 @@
     <com.prolificinteractive.materialcalendarview.MaterialCalendarView
         android:id="@+id/calendar"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="360dp"
         app:mcv_selectionColor="@color/colorAccent" />
 
     <LinearLayout
@@ -39,6 +39,5 @@
         android:id="@+id/rv_day_assignments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingBottom="50dp" />
+        android:clipToPadding="false" />
 </LinearLayout>

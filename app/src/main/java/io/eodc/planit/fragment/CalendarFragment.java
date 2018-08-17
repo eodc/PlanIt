@@ -224,4 +224,7 @@ public class CalendarFragment extends BaseFragment implements
         super.onAssignmentComplete(cursor);
         onAssignmentEdit();
     }
+
+    @Override
+    public void onAssignmentCreation() { }
 }

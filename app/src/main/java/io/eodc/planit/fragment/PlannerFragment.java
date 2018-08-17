@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.eodc.planit.R;
-import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.adapter.AssignmentsAdapter;
 import io.eodc.planit.db.PlannerContract;
 import io.eodc.planit.helper.AssignmentTouchHelper;
@@ -36,6 +36,13 @@ public class PlannerFragment extends BaseFragment implements
 
     @BindView(R.id.content)         RecyclerView mRvContent;
     @BindView(R.id.all_done_layout) LinearLayout mLayoutNoAssignments;
+
+    @OnClick(R.id.create_fab) void handleCreateFab() {
+        if (getFragmentManager() != null) {
+            AddAssignmentFragment mBottomSheet = AddAssignmentFragment.newInstance(this);
+            mBottomSheet.show(getFragmentManager(), null);
+        }
+    }
 
     private AssignmentsAdapter mAssignmentsAdapter;
 
@@ -70,7 +77,6 @@ public class PlannerFragment extends BaseFragment implements
     @Override
     public void onAssignmentCreation() {
         getLoaderManager().restartLoader(ASSIGNMENTS_LOADER_ID, null, this);
-        if (getActivity() != null) ((MainActivity) getActivity()).hideBottomSheet();
     }
 
     @NonNull

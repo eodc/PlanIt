@@ -1,26 +1,32 @@
 package io.eodc.planit.fragment;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
@@ -33,6 +39,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.eodc.planit.R;
 import io.eodc.planit.adapter.AssignmentType;
 import io.eodc.planit.adapter.AssignmentTypeAdapter;
@@ -45,7 +52,7 @@ import io.eodc.planit.listener.OnAssignmentChangeListener;
  *
  * @author 2n
  */
-public class AddAssignmentFragment extends Fragment implements
+public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         AdapterView.OnItemSelectedListener,
         DatePickerDialog.OnDateSetListener,
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -54,10 +61,64 @@ public class AddAssignmentFragment extends Fragment implements
     @BindView(R.id.type_chooser)        Spinner     mTypeSpinner;
     @BindView(R.id.class_chooser)       Spinner     mClassSpinner;
 
+    @OnClick(R.id.create_button) void addAssignment() {
+        if (getView() != null) {
+            TextInputLayout editTitleLayout = getView().findViewById(R.id.edit_layout_assignment_name);
+            TextInputLayout editDueDateLayout = getView().findViewById(R.id.edit_layout_due_date);
+            TextInputEditText editTitle = getView().findViewById(R.id.edit_assignment_name);
+            TextInputEditText editNotes = getView().findViewById(R.id.edit_notes);
+
+            String titleText = editTitle.getText().toString().trim();
+            String dueDateText = mEditDueDate.getText().toString().trim();
+
+            if (!titleText.equals("") && !dueDateText.equals("")) {
+                ContentResolver provider = mContext.getContentResolver();
+                ContentValues values = new ContentValues();
+
+                values.put(PlannerContract.AssignmentColumns.TITLE, titleText);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
+
+                values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
+                switch (mSelectedType) {
+                    case 0:
+                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_HOMEWORK);
+                        break;
+                    case 1:
+                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_TEST);
+                        break;
+                    case 2:
+                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_PROJECT);
+                        break;
+                }
+                values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClass);
+                values.put(PlannerContract.AssignmentColumns.COMPLETED, false);
+                values.put(PlannerContract.AssignmentColumns.NOTES, editNotes.getText().toString());
+                provider.insert(PlannerContract.AssignmentColumns.CONTENT_URI, values);
+                mListener.onAssignmentCreation();
+                this.dismiss();
+            } else {
+                if (titleText.equals("")) {
+                    editTitleLayout.setError("Title can't be empty");
+                }
+                if (dueDateText.equals("")) {
+                    editDueDateLayout.setError("Due date can't be empty");
+                }
+            }
+        }
+    }
+
+    @OnClick(R.id.due_date_chooser) void handleDueDateChooser() {
+        if (getFragmentManager() != null) {
+            DialogFragment datePicker = DatePickerFragment.newInstance(this);
+            datePicker.show(getFragmentManager(), "datePicker");
+        }
+    }
+
     private Context                     mContext;
     private OnAssignmentChangeListener  mListener;
     private SimpleCursorAdapter         mClassAdapter;
-
 
     private long    mSelectedClass = 1;
     private int     mSelectedType;
@@ -78,6 +139,23 @@ public class AddAssignmentFragment extends Fragment implements
         fragment.setListener(listener);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        @Override
+        public void onShow(DialogInterface dialog) {
+            BottomSheetDialog d = (BottomSheetDialog) dialog;
+
+            FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
+            int height = (int) Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 290, getResources().getDisplayMetrics()));
+            BottomSheetBehavior.from(bottomSheet).setPeekHeight(height);
+        }
+    });
+        return dialog;
     }
 
     @NonNull
@@ -130,64 +208,7 @@ public class AddAssignmentFragment extends Fragment implements
             mContext = getActivity().getApplicationContext();
 
             setupTypeSpinner();
-            setupCreateButton(view);
         }
-    }
-
-    /**
-     * Sets up the create button
-     *
-     * @param view The root view of the fragment
-     */
-    private void setupCreateButton(final View view) {
-        Button creationButton = view.findViewById(R.id.create_button);
-        creationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextInputLayout editTitleLayout = view.findViewById(R.id.edit_layout_assignment_name);
-                TextInputLayout editDueDateLayout = view.findViewById(R.id.edit_layout_due_date);
-                TextInputEditText editTitle = view.findViewById(R.id.edit_assignment_name);
-                TextInputEditText editNotes = view.findViewById(R.id.edit_notes);
-
-                String titleText = editTitle.getText().toString().trim();
-                String dueDateText = mEditDueDate.getText().toString().trim();
-
-                if (!titleText.equals("") && !dueDateText.equals("")) {
-                    ContentResolver provider = mContext.getContentResolver();
-                    ContentValues values = new ContentValues();
-
-                    values.put(PlannerContract.AssignmentColumns.TITLE, titleText);
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                    String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
-
-                    values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
-                    switch (mSelectedType) {
-                        case 0:
-                            values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_HOMEWORK);
-                            break;
-                        case 1:
-                            values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_TEST);
-                            break;
-                        case 2:
-                            values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_PROJECT);
-                            break;
-                    }
-                    values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClass);
-                    values.put(PlannerContract.AssignmentColumns.COMPLETED, false);
-                    values.put(PlannerContract.AssignmentColumns.NOTES, editNotes.getText().toString());
-                    provider.insert(PlannerContract.AssignmentColumns.CONTENT_URI, values);
-                    mListener.onAssignmentCreation();
-                } else {
-                    if (titleText.equals("")) {
-                        editTitleLayout.setError("Title can't be empty");
-                    }
-                    if (dueDateText.equals("")) {
-                        editDueDateLayout.setError("Due date can't be empty");
-                    }
-                }
-            }
-        });
     }
 
     @Override
