@@ -21,7 +21,6 @@ import butterknife.ButterKnife;
 import io.eodc.planit.R;
 import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.ModifyClassFragment;
-import io.eodc.planit.listener.OnClassListChangeListener;
 
 /**
  * Adapter for interfacing Classes with {@link RecyclerView}
@@ -31,14 +30,13 @@ import io.eodc.planit.listener.OnClassListChangeListener;
 
 public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassViewHolder> {
     private List<Class>       mClasses;
-    private Context                     mContext;
+    private Context           mContext;
 
     /**
      * Constructs a new instance of ClassAdapter
      *
      * @param classes      A LiveData Model containing the classes to show
      * @param mContext     The context to pull strings, colors, etc. from
-     * @see OnClassListChangeListener
      */
     public ClassesAdapter(List<Class> classes, Context mContext) {
         this.mClasses = classes;

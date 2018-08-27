@@ -170,92 +170,95 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     @Override
     public void onBindViewHolder(@NonNull final AssignmentViewHolder holder, int position) {
             Assignment assignment = mAssignments.get(position);
+            if (assignment.isCompleted() && mShowAssignmnentsCompleted ||
+                    !assignment.isCompleted() && mShowAssignmnentsCompleted ||
+                    !assignment.isCompleted() && !mShowAssignmnentsCompleted) {
+                Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
 
-            Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
+                DateTime dtCurrent = assignment.getDueDate();
 
-            DateTime dtCurrent = assignment.getDueDate();
+                String assignmentType = assignment.getType();
 
-            String assignmentType = assignment.getType();
+                switch (assignmentType) {
+                    case Assignment.TYPE_HOMEWORK:
+                        assignmentType = "Homework";
+                        break;
+                    case Assignment.TYPE_TEST:
+                        assignmentType = "Test/Quiz";
+                        break;
+                    case Assignment.TYPE_PROJECT:
+                        assignmentType = "Project";
+                        break;
+                }
 
-            switch (assignmentType) {
-                case Assignment.TYPE_HOMEWORK:
-                    assignmentType = "Homework";
-                    break;
-                case Assignment.TYPE_TEST:
-                    assignmentType = "Test/Quiz";
-                    break;
-                case Assignment.TYPE_PROJECT:
-                    assignmentType = "Project";
-                    break;
-            }
+                SimpleDateFormat ddSdf = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+                String dueDate = ddSdf.format(dtCurrent.toDate());
 
-            SimpleDateFormat ddSdf = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
-            String dueDate = ddSdf.format(dtCurrent.toDate());
+                holder.textDueDate.setText(dueDate);
+                holder.assignment = assignment;
 
-            holder.textDueDate.setText(dueDate);
-            holder.assignment = assignment;
-
-            if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
-                    holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES) {
-                String headerText = getHeaderText(dtCurrent);
-                holder.textHeader.setText(headerText);
-                holder.layoutHeader.setVisibility(View.VISIBLE);
-                holder.iconDueDate.setVisibility(View.VISIBLE);
-                holder.textDueDate.setVisibility(View.VISIBLE);
-            } else {
-                DateTime dtNow = new DateTime();
-                if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
-                        dtCurrent.isAfterNow() && dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
-                                mShowDividerFlag != NEVER_SHOW_DIVIDER) {
+                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
+                        holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES) {
+                    String headerText = getHeaderText(dtCurrent);
+                    holder.textHeader.setText(headerText);
+                    holder.layoutHeader.setVisibility(View.VISIBLE);
                     holder.iconDueDate.setVisibility(View.VISIBLE);
                     holder.textDueDate.setVisibility(View.VISIBLE);
-                }
-            }
-
-            if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
-                    holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
-                holder.iconExpand.setVisibility(View.VISIBLE);
-                holder.textNotes.setText(assignment.getNotes());
-                holder.itemView.setOnClickListener(view -> {
-                    if (holder.isExpanded) {
-                        holder.shrinkNotes();
-                    } else {
-                        holder.expandNotes();
+                } else {
+                    DateTime dtNow = new DateTime();
+                    if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
+                            dtCurrent.isAfterNow() && dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
+                                    mShowDividerFlag != NEVER_SHOW_DIVIDER) {
+                        holder.iconDueDate.setVisibility(View.VISIBLE);
+                        holder.textDueDate.setVisibility(View.VISIBLE);
                     }
+                }
+
+                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
+                        holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
+                    holder.iconExpand.setVisibility(View.VISIBLE);
+                    holder.textNotes.setText(assignment.getNotes());
+                    holder.itemView.setOnClickListener(view -> {
+                        if (holder.isExpanded) {
+                            holder.shrinkNotes();
+                        } else {
+                            holder.expandNotes();
+                        }
+                    });
+                }
+
+                holder.itemView.setOnLongClickListener(view -> {
+                    if (mContext instanceof MainActivity) {
+                        MainActivity activity = (MainActivity) mContext;
+                        DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.assignment);
+
+                        editFragment.show(activity.getSupportFragmentManager(), null);
+
+                        Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                        if (v != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                                v.vibrate(VibrationEffect
+                                        .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                            else v.vibrate(500);
+                        }
+                    }
+                    return true;
                 });
-            }
 
-            holder.itemView.setOnLongClickListener(view -> {
-                if (mContext instanceof MainActivity) {
-                    MainActivity activity = (MainActivity) mContext;
-                    DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.assignment);
+                String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
+                        assignmentClass.getName(),
+                        assignmentType);
 
-                    editFragment.show(activity.getSupportFragmentManager(), null);
+                holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
 
-                    Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (v != null) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                            v.vibrate(VibrationEffect
-                                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                        else v.vibrate(500);
-                    }
+                holder.textAssignmentName.setText(assignment.getTitle());
+
+                if (assignment.isCompleted() && mShowAssignmnentsCompleted) {
+                    holder.textAssignmentName.setPaintFlags(holder.textAssignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
-                return true;
-            });
 
-            String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
-                    assignmentClass.getName(),
-                    assignmentType);
-
-            holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
-
-            holder.textAssignmentName.setText(assignment.getTitle());
-
-            if (mShowAssignmnentsCompleted) {
-                holder.textAssignmentName.setPaintFlags(holder.textAssignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                holder.textClassType.setText(classAndTypeText);
             }
-
-            holder.textClassType.setText(classAndTypeText);
     }
 
 
@@ -266,11 +269,22 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      */
     public void setShowAssignmnentsCompleted(boolean showAssignmnentsCompleted) {
         this.mShowAssignmnentsCompleted = showAssignmnentsCompleted;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        if (mAssignments != null) return mAssignments.size();
+        if (mAssignments != null) {
+            if (mShowAssignmnentsCompleted) {
+                return mAssignments.size();
+            } else {
+                int count = 0;
+                for (Assignment assignment: mAssignments) {
+                    if (!assignment.isCompleted()) count++;
+                }
+                return count;
+            }
+        }
         else return 0;
     }
 

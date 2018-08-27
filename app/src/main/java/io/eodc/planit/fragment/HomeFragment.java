@@ -1,7 +1,9 @@
 package io.eodc.planit.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -55,6 +57,34 @@ public class HomeFragment extends BaseFragment {
     private AssignmentsAdapter mTodayAssignmentsAdapter;
     private AssignmentsAdapter mOverdueAssignmentsAdapter;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
+                .observe(this, classes -> {
+                    mTodayAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+                    mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+                });
+
+        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime dateToRetrieve;
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        if (preferences.getString(getString(R.string.pref_what_assign_show_key), "")
+                .equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
+            dateToRetrieve = today;
+        } else {
+            dateToRetrieve = today.plusDays(1);
+        }
+
+        assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
+        assignmentListViewModel.getAssignmentsDueOnDay(dateToRetrieve).observe(this, this::onDaysAssignmentsGet);
+        assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,20 +96,7 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupGraph();
-
-        ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
-                .observe(this, classes -> {
-                    mTodayAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
-                    mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
-                });
-
-        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
-        DateTime today = new DateTime().withTimeAtStartOfDay();
-        assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
-        assignmentListViewModel.getAssignmentsDueOnDay(today).observe(this, this::onDaysAssignmentsGet);
-        assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
     }
 
     private void onOverdueAssignmentsGet(List<Assignment> assignments) {
@@ -99,14 +116,12 @@ public class HomeFragment extends BaseFragment {
         ListIterator<Assignment> iterator = assignments.listIterator();
         for (int i = 0; i < 7; ++i) {
             int count = 0;
-            boolean moved = false;
             while (iterator.hasNext()) {
                 Assignment current = iterator.next();
                 currentDate = current.getDueDate();
-                moved = true;
                 if (currentDate.getDayOfYear() == checkDate.getDayOfYear()) count++;
             }
-            if (moved) iterator.previous();
+            iterator = assignments.listIterator(0);
             entries.add(new Entry(checkDate.getMillis(), count));
             checkDate = checkDate.plusDays(1);
             totalCount += count;

@@ -58,6 +58,26 @@ public class CalendarFragment extends BaseFragment implements
     private LiveData<List<Assignment>>  mCurrentDayAssignments;
     private HashMap<DateTime, Integer>  mDateAssignmentCountMap;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ViewModelProviders.of(this).get(ClassListViewModel.class)
+                .getClasses().observe(this, this::onClassesGet);
+
+        DateTime monthBeginning = new DateTime().withDayOfMonth(1).withTimeAtStartOfDay();
+
+        mAssignmentListViewModel = ViewModelProviders.of(this)
+                .get(AssignmentListViewModel.class);
+
+        mCurrentMonthAssignments = mAssignmentListViewModel
+                .getAssignmentsBetweenDates(
+                        monthBeginning,
+                        monthBeginning
+                                .plusMonths(1)
+                                .minusDays(1));
+        mCurrentMonthAssignments.observe(this, this::onDateRangeAssignmentsChange);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -72,21 +92,6 @@ public class CalendarFragment extends BaseFragment implements
         mCalendar.setSelectedDate(new Date());
         mCalendar.setOnMonthChangedListener(this);
         mCalendar.setOnDateChangedListener(this);
-
-        ViewModelProviders.of(this).get(ClassListViewModel.class)
-                .getClasses().observe(this, this::onClassesGet);
-
-        DateTime monthBeginning = new DateTime().withDayOfMonth(1).withTimeAtStartOfDay();
-        mAssignmentListViewModel = ViewModelProviders.of(this)
-                .get(AssignmentListViewModel.class);
-
-        mCurrentMonthAssignments = mAssignmentListViewModel
-                .getAssignmentsBetweenDates(
-                        monthBeginning,
-                        monthBeginning
-                                .plusMonths(1)
-                                .minusDays(1));
-        mCurrentMonthAssignments.observe(this, this::onDateRangeAssignmentsChange);
     }
 
     private void onClassesGet(List<Class> classes) {
@@ -95,7 +100,7 @@ public class CalendarFragment extends BaseFragment implements
             mRvDaysAssignments.setAdapter(adapter);
             mRvDaysAssignments.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            mCurrentDayAssignments = mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime());
+            mCurrentDayAssignments = mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()));
             mCurrentDayAssignments.observe(this, this::onSingleDayAssignmentsChange);
 
             ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(getContext(), 0,

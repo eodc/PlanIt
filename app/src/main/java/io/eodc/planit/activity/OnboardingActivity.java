@@ -84,17 +84,18 @@ public class OnboardingActivity extends AppCompatActivity implements
             ViewModelProviders.of(this).get(ClassListViewModel.class)
                     .getClasses().observe(this, classes -> {
                         if (classes != null) {
-                            if (classes.size() == 0) {
-                                mBtnNext.setOnClickListener(null);
-                                mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-                            } else {
-                                mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-                                mBtnNext.setOnClickListener(v -> {
-                                    preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
-                                    Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                });
-
+                            if (mTabLayout.getSelectedTabPosition() == mTabLayout.getTabCount() - 1) {
+                                if (classes.size() == 0) {
+                                    mBtnNext.setOnClickListener(null);
+                                    mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                                } else {
+                                    mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                                    mBtnNext.setOnClickListener(v -> {
+                                       preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
+                                       Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
+                                       startActivity(intent);
+                                    });
+                                }
                             }
                         }
             });
@@ -115,11 +116,12 @@ public class OnboardingActivity extends AppCompatActivity implements
     @Override
     public void onPageSelected(final int position) {
         if (position == 0) mBtnBack.setVisibility(View.GONE);
-        else if (position == mOnboardingFragments.size() - 1) {
+        else if (position == mTabLayout.getTabCount() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
-            List<Class> classes = ViewModelProviders.of(this).get(ClassListViewModel.class)
+            List<Class> classes = ViewModelProviders
+                    .of(this).get(ClassListViewModel.class)
                     .getClasses().getValue();
-            if (classes != null && classes.size() == 0)
+            if (classes != null && classes.size() == 0 || classes == null)
                 mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
         } else {
             mBtnBack.setVisibility(View.VISIBLE);

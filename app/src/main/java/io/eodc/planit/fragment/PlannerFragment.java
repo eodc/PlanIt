@@ -52,17 +52,9 @@ public class PlannerFragment extends BaseFragment implements
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_planner, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ClassListViewModel classListViewModel = ViewModelProviders.of(this)
                 .get(ClassListViewModel.class);
         AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this)
@@ -78,12 +70,21 @@ public class PlannerFragment extends BaseFragment implements
             ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
             touchHelper.attachToRecyclerView(mRvContent);
         });
+
         assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
             AssignmentsAdapter adapter = (AssignmentsAdapter) mRvContent.getAdapter();
             if (adapter != null) {
                 adapter.swapAssignmentsList(assignments);
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_planner, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override

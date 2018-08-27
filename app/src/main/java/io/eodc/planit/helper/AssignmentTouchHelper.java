@@ -1,6 +1,8 @@
 package io.eodc.planit.helper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -29,6 +31,7 @@ public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
         return false;
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         if (direction == ItemTouchHelper.RIGHT) {
@@ -36,12 +39,24 @@ public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
             Assignment currentAssignment = holder.getAssignment();
 
             if (currentAssignment.isCompleted()) {
-                PlannerDatabase.getInstance(mContext)
-                        .assignmentDao().removeAssignment(currentAssignment);
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        PlannerDatabase.getInstance(mContext)
+                                .assignmentDao().removeAssignment(currentAssignment);
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
             } else {
                 currentAssignment.setCompleted(true);
-                PlannerDatabase.getInstance(mContext)
-                        .assignmentDao().updateAssignment(currentAssignment);
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        PlannerDatabase.getInstance(mContext)
+                                .assignmentDao().updateAssignment(currentAssignment);
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
             }
         }
     }
