@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -24,7 +23,9 @@ import java.util.List;
 import java.util.Set;
 
 import io.eodc.planit.R;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.db.Assignment;
+import io.eodc.planit.db.Class;
+import io.eodc.planit.db.PlannerDatabase;
 import io.eodc.planit.receiver.NotificationPublishReceiver;
 
 /**
@@ -104,14 +105,13 @@ public class NotificationHelper extends ContextWrapper {
                 dtTimeToShow = dtTimeToShow.plusDays(1).withTimeAtStartOfDay();
             }
 
-            String selection = PlannerContract.AssignmentColumns.DUE_DATE + "= date(" + dtTimeToShow.getMillis() / 1000 + ", 'unixepoch', 'localtime') and " +
-                    PlannerContract.AssignmentColumns.COMPLETED + "=0";
-            Cursor dueAssign = getContentResolver().query(PlannerContract.AssignmentColumns.CONTENT_URI,
-                    null, selection, null, PlannerContract.AssignmentColumns.CLASS_ID + " asc");
-            Cursor classes = getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
-                    null, null, null, PlannerContract.AssignmentColumns._ID + " asc");
+            List<Assignment> dueAssignments = PlannerDatabase.getInstance(this).assignmentDao()
+                    .getAssignmentsDueBetweenDates(dtTimeToShow, dtTimeToShow.plusDays(1))
+                    .getValue();
 
-            if (dueAssign != null && classes != null) {
+            List<Class> classes = PlannerDatabase.getInstance(this).classDao().getAllClasses().getValue();
+
+            if (dueAssignments != null && classes != null) {
                 NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_book_black_24dp)
                         .setGroup(GROUP_ID)
@@ -123,25 +123,25 @@ public class NotificationHelper extends ContextWrapper {
                 int overflowClasses = 0;
                 int classesWithAssignmentsDue = 0;
 
-                while (classes.moveToNext()) {
+                for (Class currentClass : classes) {
                     NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_book_black_24dp)
-                            .setContentTitle(classes.getString(classes.getColumnIndex(PlannerContract.ClassColumns.NAME)))
+                            .setContentTitle(currentClass.getName())
                             .setAutoCancel(true)
                             .setGroup(GROUP_ID);
 
                     NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
                     StringBuilder sb = new StringBuilder();
-                    String className = classes.getString(classes.getColumnIndex(PlannerContract.ClassColumns.NAME));
-                    int classId = classes.getInt(classes.getColumnIndex(PlannerContract.ClassColumns._ID));
+                    String className = currentClass.getName();
+                    int classId = currentClass.getId();
                     int assignmentsDue = 0;
-                    while (dueAssign.moveToNext() &&
-                            dueAssign.getInt(dueAssign.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)) == classId) {
-                        sb.append(dueAssign.getString(dueAssign.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)))
-                                .append("\n");
-                        assignmentsDue++;
+                    for (Assignment assign: dueAssignments) {
+                        if (assign.getClassId() == currentClass.getId()) {
+                            sb.append(assign.getTitle())
+                                    .append("\n");
+                            assignmentsDue++;
+                        }
                     }
-                    if (dueAssign.getPosition() != dueAssign.getCount()) dueAssign.moveToPrevious();
                     if (assignmentsDue > 0) {
                         summaryStyle.addLine(className + " " + (assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due"));
                         summaryLineCount++;
@@ -174,9 +174,6 @@ public class NotificationHelper extends ContextWrapper {
                 }
 
                 scheduleNotification();
-
-                dueAssign.close();
-                classes.close();
             }
         }
     }

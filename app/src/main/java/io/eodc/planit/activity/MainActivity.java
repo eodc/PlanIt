@@ -16,13 +16,11 @@ import android.view.MenuItem;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
-import org.jetbrains.annotations.NotNull;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.BuildConfig;
 import io.eodc.planit.R;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.fragment.BaseFragment;
 import io.eodc.planit.fragment.CalendarFragment;
 import io.eodc.planit.fragment.HomeFragment;
 import io.eodc.planit.fragment.PlannerFragment;
@@ -39,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.bottom_navigation)   AHBottomNavigation      mBottomNav;
     @BindView(R.id.toolbar)             Toolbar                 mToolbar;
 
-    private int     mShownAssignmentFlag    = PlannerContract.FLAG_SHOW_INCOMPLETE;
-
     private FragmentManager         mFragmentManager;
+
+    private int     mShownAssignmentFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mnu_show_completed:
                 if (!item.isChecked()) {
                     item.setChecked(true);
-                    mShownAssignmentFlag = PlannerContract.FLAG_SHOW_COMPLETE;
+                    mShownAssignmentFlag = BaseFragment.FLAG_SHOW_COMPLETE;
                 } else {
                     item.setChecked(false);
-                    mShownAssignmentFlag = PlannerContract.FLAG_SHOW_INCOMPLETE;
+                    mShownAssignmentFlag = BaseFragment.FLAG_SHOW_INCOMPLETE;
                 }
                 Fragment currentFragment = mFragmentManager.findFragmentById(R.id.content_fragment);
                 if (currentFragment instanceof AssignmentTypeLoadChangeListener) {
@@ -105,38 +103,25 @@ public class MainActivity extends AppCompatActivity {
         mBottomNav.setAccentColor(ContextCompat.getColor(this, R.color.colorAccent));
         mBottomNav.setBehaviorTranslationEnabled(false);
         bottomNavAdapter.setupWithBottomNavigation(mBottomNav);
-        mBottomNav.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
-            @Override
-            public boolean onTabSelected(int position, boolean wasSelected) {
-                if (!wasSelected) {
-                    FragmentTransaction transaction = mFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                    switch (position) {
-                        case 0:
-                            transaction.replace(R.id.content_fragment, new HomeFragment()).commit();
-                            break;
-                        case 1:
-                            Fragment fragment = PlannerFragment.newInstance(mShownAssignmentFlag);
-                            transaction.replace(R.id.content_fragment, fragment).commit();
-                            break;
-                        case 2:
-                            transaction.replace(R.id.content_fragment, new CalendarFragment()).commit();
-                            break;
-                    }
+        mBottomNav.setOnTabSelectedListener((position, wasSelected) -> {
+            if (!wasSelected) {
+                FragmentTransaction transaction = mFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+                switch (position) {
+                    case 0:
+                        transaction.replace(R.id.content_fragment, new HomeFragment()).commit();
+                        break;
+                    case 1:
+                        Fragment fragment = PlannerFragment.newInstance(mShownAssignmentFlag);
+                        transaction.replace(R.id.content_fragment, fragment).commit();
+                        break;
+                    case 2:
+                        transaction.replace(R.id.content_fragment, new CalendarFragment()).commit();
+                        break;
                 }
-                return true;
             }
+            return true;
         });
 
-    }
-
-     /**
-     * Gets the instance of the bottom navigation for use in fragments
-     *
-     * @return instance of mBottomNav
-     */
-    @NotNull
-    public AHBottomNavigation getBottomNav() {
-        return mBottomNav;
     }
 }

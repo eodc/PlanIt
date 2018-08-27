@@ -54,11 +54,6 @@
             </intent-filter>
         </receiver>
 
-        <provider
-            android:name=".db.PlannerProvider"
-            android:authorities="io.eodc.planit.planner"
-            android:exported="false" />
-
     </application>
 
 </manifest>

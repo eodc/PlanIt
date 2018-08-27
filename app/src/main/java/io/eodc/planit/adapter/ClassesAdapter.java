@@ -1,7 +1,6 @@
 package io.eodc.planit.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -15,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.ModifyClassFragment;
 import io.eodc.planit.listener.OnClassListChangeListener;
 
@@ -29,22 +30,19 @@ import io.eodc.planit.listener.OnClassListChangeListener;
  */
 
 public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassViewHolder> {
-    private Cursor                      mClassCursor;
+    private List<Class>       mClasses;
     private Context                     mContext;
-    private OnClassListChangeListener   mListener;
 
     /**
      * Constructs a new instance of ClassAdapter
      *
-     * @param mClassCursor The cursor containing the classes to show
+     * @param classes      A LiveData Model containing the classes to show
      * @param mContext     The context to pull strings, colors, etc. from
-     * @param l            The mListener listening for changes to the class list.
      * @see OnClassListChangeListener
      */
-    public ClassesAdapter(Cursor mClassCursor, Context mContext, OnClassListChangeListener l) {
-        this.mClassCursor = mClassCursor;
+    public ClassesAdapter(List<Class> classes, Context mContext) {
+        this.mClasses = classes;
         this.mContext = mContext;
-        this.mListener = l;
     }
 
     @NonNull
@@ -55,15 +53,14 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
 
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
-        mClassCursor.moveToPosition(position);
-        holder.imageClassColor.setBackgroundColor(Color.parseColor(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.COLOR))));
-        holder.textClassName.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.NAME)));
-        holder.textTeacherName.setText(mClassCursor.getString(mClassCursor.getColumnIndex(PlannerContract.ClassColumns.TEACHER)));
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                ModifyClassFragment.newInstance(mListener, ModifyClassFragment.FLAG_MOD_CLASS,
-                        mClassCursor.getInt(mClassCursor.getColumnIndex(PlannerContract.ClassColumns._ID)))
+        if (mClasses != null) {
+            Class currentClass = mClasses.get(position);
+
+            holder.imageClassColor.setBackgroundColor(Color.parseColor(currentClass.getColor()));
+            holder.textClassName.setText(currentClass.getName());
+            holder.textTeacherName.setText(currentClass.getTeacher());
+            holder.itemView.setOnLongClickListener(view -> {
+                ModifyClassFragment.newInstance(currentClass)
                         .show(((AppCompatActivity) mContext).getSupportFragmentManager(), null);
 
                 Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
@@ -73,14 +70,19 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
                     } else v.vibrate(500);
                 }
                 return true;
-            }
-        });
+            });
+        }
+    }
+
+    public void swapClassesList(List<Class> mClasses) {
+        this.mClasses = mClasses;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        if (mClassCursor == null) return 0;
-        else return mClassCursor.getCount();
+        if (mClasses != null) return mClasses.size();
+        else return 0;
     }
 
     /**

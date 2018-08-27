@@ -1,12 +1,10 @@
 package io.eodc.planit.fragment;
 
-import android.database.Cursor;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,21 +23,19 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import org.joda.time.DateTime;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.ListIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
-import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.adapter.AssignmentsAdapter;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.db.Assignment;
 import io.eodc.planit.helper.AssignmentTouchHelper;
 import io.eodc.planit.helper.DateValueFormatter;
-import timber.log.Timber;
+import io.eodc.planit.model.AssignmentListViewModel;
+import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment that shows a week's overview of assignments, the current day's assignments, and any
@@ -48,11 +44,6 @@ import timber.log.Timber;
  * @author 2n
  */
 public class HomeFragment extends BaseFragment {
-
-    private static final int LOADER_DUE_THIS_WEEK   = 0;
-    private static final int LOADER_DUE_TODAY       = 1;
-    private static final int LOADER_DUE_OVERDUE     = 2;
-    private static final int LOADER_CLASSES         = 3;
 
     @BindView(R.id.all_done_layout)     LinearLayout    mLayoutAllDone;
     @BindView(R.id.card_overdue)        CardView        mCardOverdue;
@@ -63,13 +54,6 @@ public class HomeFragment extends BaseFragment {
 
     private AssignmentsAdapter mTodayAssignmentsAdapter;
     private AssignmentsAdapter mOverdueAssignmentsAdapter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_DUE_THIS_WEEK, null, this);
-        getLoaderManager().initLoader(LOADER_CLASSES, null, this);
-    }
 
     @Nullable
     @Override
@@ -82,7 +66,70 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         setupGraph();
+
+        ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
+                .observe(this, classes -> {
+                    mTodayAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+                    mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+                });
+
+        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
+        assignmentListViewModel.getAssignmentsDueOnDay(today).observe(this, this::onDaysAssignmentsGet);
+        assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
+    }
+
+    private void onOverdueAssignmentsGet(List<Assignment> assignments) {
+        if (assignments.size() > 0) {
+            mCardOverdue.setVisibility(View.VISIBLE);
+            populateRecyclerView(assignments, mOverdueAssignmentsAdapter, mRvOverdueAssign);
+        } else {
+            mCardOverdue.setVisibility(View.GONE);
+        }
+    }
+
+    private void onWeekAssignmentsGet(List<Assignment> assignments) {
+        List<Entry> entries = new ArrayList<>();
+        DateTime checkDate = new DateTime();
+        DateTime currentDate;
+        int totalCount = 0;
+        ListIterator<Assignment> iterator = assignments.listIterator();
+        for (int i = 0; i < 7; ++i) {
+            int count = 0;
+            boolean moved = false;
+            while (iterator.hasNext()) {
+                Assignment current = iterator.next();
+                currentDate = current.getDueDate();
+                moved = true;
+                if (currentDate.getDayOfYear() == checkDate.getDayOfYear()) count++;
+            }
+            if (moved) iterator.previous();
+            entries.add(new Entry(checkDate.getMillis(), count));
+            checkDate = checkDate.plusDays(1);
+            totalCount += count;
+        }
+        LineDataSet dataSet = new LineDataSet(entries, "");
+        setupDataSet(dataSet);
+
+        LineData lineData = new LineData(dataSet);
+        DateValueFormatter formatter = new DateValueFormatter();
+        XAxis xAxis = mGraphWeek.getXAxis();
+        xAxis.setLabelCount(7, true);
+        xAxis.setValueFormatter(formatter);
+
+        if (totalCount > 1) mTextEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
+        else mTextEventCount.setText(getString(R.string.num_events_label, totalCount));
+        mGraphWeek.setData(lineData);
+        mGraphWeek.invalidate();
+    }
+
+    private void onDaysAssignmentsGet(List<Assignment> assignments) {
+        if (assignments.size() > 0) mLayoutAllDone.setVisibility(View.GONE);
+        else mLayoutAllDone.setVisibility(View.VISIBLE);
+        populateRecyclerView(assignments, mTodayAssignmentsAdapter, mRvTodayAssign);
     }
 
     /**
@@ -102,121 +149,23 @@ public class HomeFragment extends BaseFragment {
         mGraphWeek.setDoubleTapToZoomEnabled(false);
     }
 
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        switch (id) {
-            case LOADER_DUE_THIS_WEEK:
-                String[] projection = new String[]{PlannerContract.AssignmentColumns.DUE_DATE};
-                return new CursorLoader(requireContext(), PlannerContract.AssignmentColumns.CONTENT_URI, projection,
-                        PlannerContract.AssignmentColumns.DUE_DATE + " <= date('now', '+7 days', 'localtime') and " +
-                                PlannerContract.AssignmentColumns.DUE_DATE + " >= date('now', 'localtime') and " +
-                                PlannerContract.AssignmentColumns.COMPLETED + "=0", null,
-                        PlannerContract.AssignmentColumns.DUE_DATE + " asc");
-            case LOADER_DUE_TODAY:
-                return new CursorLoader(requireContext(), PlannerContract.AssignmentColumns.CONTENT_URI, null,
-                        PlannerContract.AssignmentColumns.DUE_DATE + " = date('now', 'localtime') and " +
-                                PlannerContract.AssignmentColumns.COMPLETED + "=0", null, null);
-            case LOADER_DUE_OVERDUE:
-                return new CursorLoader(requireContext(), PlannerContract.AssignmentColumns.CONTENT_URI, null,
-                        PlannerContract.AssignmentColumns.DUE_DATE + " < date('now', 'localtime') and " +
-                                PlannerContract.AssignmentColumns.COMPLETED + "=0", null,
-                        PlannerContract.AssignmentColumns.DUE_DATE + " asc");
-            case LOADER_CLASSES:
-                return new CursorLoader(requireContext(), PlannerContract.ClassColumns.CONTENT_URI,
-                        null, null, null, null);
-
-        }
-        return new CursorLoader(requireContext());
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        int id = loader.getId();
-        MainActivity activity = (MainActivity) getActivity();
-        switch (id) {
-            case LOADER_DUE_THIS_WEEK:
-                data.moveToPosition(-1); // Fix for bug where cursor is a recycled one and thus already at the end
-                List<Entry> entries = new ArrayList<>();
-                DateTime checkDate = new DateTime();
-                DateTime currentDate = new DateTime();
-                int totalCount = 0;
-                for (int i = 0; i < 7; ++i) {
-                    int count = 0;
-                    boolean moved = false;
-                    while (checkDate.getDayOfYear() == currentDate.getDayOfYear() && data.moveToNext()) {
-                        try {
-                            moved = true;
-                            SimpleDateFormat stdFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                            currentDate = new DateTime(stdFormat.parse(data.getString(data.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE))));
-                            if (currentDate.getDayOfYear() == checkDate.getDayOfYear()) count++;
-                        } catch (ParseException e) {
-                            Timber.d(e);
-                        }
-                    }
-                    if (moved) data.moveToPrevious();
-                    entries.add(new Entry(checkDate.getMillis(), count));
-                    checkDate = checkDate.plusDays(1);
-                    totalCount += count;
-                }
-                LineDataSet dataSet = new LineDataSet(entries, "");
-                setupDataSet(dataSet);
-
-                LineData lineData = new LineData(dataSet);
-                DateValueFormatter formatter = new DateValueFormatter();
-                XAxis xAxis = mGraphWeek.getXAxis();
-                xAxis.setLabelCount(7, true);
-                xAxis.setValueFormatter(formatter);
-
-                if (totalCount > 1) mTextEventCount.setText(getString(R.string.num_events_label_plural, totalCount));
-                else mTextEventCount.setText(getString(R.string.num_events_label, totalCount));
-                mGraphWeek.setData(lineData);
-                mGraphWeek.invalidate();
-                break;
-            case LOADER_CLASSES:
-                mTodayAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
-                mOverdueAssignmentsAdapter = new AssignmentsAdapter(requireContext(), data, this, false);
-                getLoaderManager().initLoader(LOADER_DUE_TODAY, null, this);
-                getLoaderManager().initLoader(LOADER_DUE_OVERDUE, null, this);
-                break;
-            case LOADER_DUE_OVERDUE:
-                if (data.getCount() > 0) {
-                    mCardOverdue.setVisibility(View.VISIBLE);
-                    populateRecyclerView(data, mOverdueAssignmentsAdapter, mRvOverdueAssign);
-                } else {
-                    mCardOverdue.setVisibility(View.GONE);
-                }
-                break;
-            case LOADER_DUE_TODAY:
-                if (data.getCount() > 0) mLayoutAllDone.setVisibility(View.GONE);
-                else mLayoutAllDone.setVisibility(View.VISIBLE);
-                populateRecyclerView(data, mTodayAssignmentsAdapter, mRvTodayAssign);
-                break;
-        }
-
-    }
-
     /**
      * Populates the specified RecyclerView with data from the specified cursor
      *
-     * @param data    The cursor containing information from the assignments table to populate the
-     *                {@link RecyclerView} with
-     * @param adapter The adapter to bind information from the cursor to
-     * @param rv      The RecyclerView to populate
+     * @param assignments       The cursor containing information from the assignments table to populate the
+     *                          {@link RecyclerView} with
+     * @param adapter           The adapter to bind information from the cursor to
+     * @param rv                The RecyclerView to populate
      */
-    private void populateRecyclerView(Cursor data, AssignmentsAdapter adapter, RecyclerView rv) {
-        if (data.getCount() > 0) adapter.swapAssignmentsCursor(data);
-        else adapter.swapAssignmentsCursor(null);
+    private void populateRecyclerView(List<Assignment> assignments, AssignmentsAdapter adapter, RecyclerView rv) {
+        if (assignments.size() > 0) adapter.swapAssignmentsList(assignments);
+        else adapter.swapAssignmentsList(null);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(requireContext(), 0,
-                ItemTouchHelper.RIGHT, this);
+                ItemTouchHelper.RIGHT);
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
         touchHelper.attachToRecyclerView(rv);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     }
 
     /**
@@ -232,28 +181,5 @@ public class HomeFragment extends BaseFragment {
         dataSet.setCircleColor(ContextCompat.getColor(requireContext(), R.color.colorAccentDark));
         dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
         dataSet.setDrawFilled(true);
-    }
-
-    @Override
-    public void onAssignmentComplete(Cursor cursor) {
-        super.onAssignmentComplete(cursor);
-        reloadAllLoaders();
-    }
-
-    @Override
-    public void onAssignmentCreation() { }
-
-    @Override
-    public void onAssignmentEdit() {
-        reloadAllLoaders();
-    }
-
-    /**
-     * Utility method to restart all loaders
-     */
-    private void reloadAllLoaders() {
-        getLoaderManager().restartLoader(LOADER_DUE_THIS_WEEK, null, this);
-        getLoaderManager().restartLoader(LOADER_DUE_TODAY, null, this);
-        getLoaderManager().restartLoader(LOADER_DUE_OVERDUE, null, this);
     }
 }

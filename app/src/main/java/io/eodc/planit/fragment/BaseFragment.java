@@ -1,16 +1,6 @@
 package io.eodc.planit.fragment;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.view.View;
-
-import io.eodc.planit.R;
-import io.eodc.planit.activity.MainActivity;
-import io.eodc.planit.db.PlannerContract;
-import io.eodc.planit.listener.OnAssignmentChangeListener;
 
 /**
  * An abstract fragment containing method implementation all freely navigable (that is, all fragments
@@ -18,11 +8,12 @@ import io.eodc.planit.listener.OnAssignmentChangeListener;
  *
  * @author 2n
  */
-public abstract class BaseFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor>,
-        OnAssignmentChangeListener {
+public abstract class BaseFragment extends Fragment {
 
-    @Override
+    public static final int FLAG_SHOW_COMPLETE = 1;
+    public static final int FLAG_SHOW_INCOMPLETE = 0;
+
+    /* @Override
     public void onAssignmentComplete(Cursor cursor) {
         cursor.moveToFirst();
         final int id = cursor.getInt(cursor.getColumnIndex(PlannerContract.AssignmentColumns._ID));
@@ -57,5 +48,5 @@ public abstract class BaseFragment extends Fragment implements
                     }).show();
         }
         cursor.close();
-    }
+    } */
 }

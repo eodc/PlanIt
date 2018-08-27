@@ -1,8 +1,8 @@
 package io.eodc.planit.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -23,10 +23,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.OnboardingAddClassesFragment;
 import io.eodc.planit.fragment.OnboardingFragment;
-import io.eodc.planit.listener.OnClassListChangeListener;
+import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Activity that is shown the first time the app is opened. Due to this, it is the default activity
@@ -35,8 +35,7 @@ import io.eodc.planit.listener.OnClassListChangeListener;
  * @author 2n
  */
 public class OnboardingActivity extends AppCompatActivity implements
-        ViewPager.OnPageChangeListener,
-        OnClassListChangeListener {
+        ViewPager.OnPageChangeListener {
 
     @BindView(R.id.viewPager)   ViewPager   mViewPager;
     @BindView(R.id.tabLayout)   TabLayout   mTabLayout;
@@ -77,10 +76,28 @@ public class OnboardingActivity extends AppCompatActivity implements
             mOnboardingFragments.add(OnboardingFragment.newInstance("Your Planner, Your Way",
                     R.drawable.ic_format_list_bulleted_blue_250dp,
                     "See your assignments in an overview, list, or calendar. It's your choice."));
-            mOnboardingFragments.add(OnboardingAddClassesFragment.newInstance(this));
+            mOnboardingFragments.add(new OnboardingAddClassesFragment());
             mViewPager.setAdapter(new OnboardingPagerAdapter(getSupportFragmentManager(), mOnboardingFragments));
             mTabLayout.setupWithViewPager(mViewPager);
             mViewPager.addOnPageChangeListener(this);
+
+            ViewModelProviders.of(this).get(ClassListViewModel.class)
+                    .getClasses().observe(this, classes -> {
+                        if (classes != null) {
+                            if (classes.size() == 0) {
+                                mBtnNext.setOnClickListener(null);
+                                mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                            } else {
+                                mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                                mBtnNext.setOnClickListener(v -> {
+                                    preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
+                                    Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                });
+
+                            }
+                        }
+            });
 
             preferences.edit()
                     .putString(getString(R.string.pref_show_notif_time_key), "19:00")
@@ -100,45 +117,20 @@ public class OnboardingActivity extends AppCompatActivity implements
         if (position == 0) mBtnBack.setVisibility(View.GONE);
         else if (position == mOnboardingFragments.size() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
-            Cursor c = getContentResolver().query(PlannerContract.ClassColumns.CONTENT_URI,
-                    null, null, null, null);
-            if (c != null && c.getCount() == 0)
+            List<Class> classes = ViewModelProviders.of(this).get(ClassListViewModel.class)
+                    .getClasses().getValue();
+            if (classes != null && classes.size() == 0)
                 mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-            if (c != null) c.close();
         } else {
             mBtnBack.setVisibility(View.VISIBLE);
             mBtnNext.setText(getString(R.string.btn_next_label));
-            mBtnNext.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nextSlide();
-                }
-            });
+            mBtnNext.setOnClickListener(v -> nextSlide());
             mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
         }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-    }
-
-    @Override
-    public void onClassListChange(int count) {
-        if (count == 0) {
-            mBtnNext.setOnClickListener(null);
-            mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-        } else {
-            mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-            mBtnNext.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(OnboardingActivity.this);
-                    preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
-                    Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
     }
 
     /**

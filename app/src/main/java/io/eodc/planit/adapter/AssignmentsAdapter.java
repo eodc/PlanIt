@@ -14,15 +14,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.common.collect.Iterables;
+
 import org.joda.time.DateTime;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 import io.eodc.planit.R;
 import io.eodc.planit.activity.MainActivity;
-import io.eodc.planit.db.PlannerContract;
+import io.eodc.planit.db.Assignment;
+import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.EditAssignmentFragment;
 import io.eodc.planit.listener.OnAssignmentChangeListener;
 
@@ -40,10 +43,10 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     private static final int VIEW_TYPE_NORMAL_NOTES     = 2;
     private static final int VIEW_TYPE_DIVIDER_NOTES    = 3;
 
-    private OnAssignmentChangeListener  mListener;
     private Context                     mContext;
-    private Cursor                      mAssignments;
-    private Cursor                      mClasses;
+
+    private List<Assignment>  mAssignments;
+    private List<Class>       mClasses;
 
     private boolean mShowAssignmnentsCompleted;
     private int     mShowDividerFlag;
@@ -52,19 +55,17 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * Constructs a new instance of AssignmentsAdapter. Dynamically displays relevant information
      * about the assignment in its view depending on its position in the list and it due date.
      * <p>
-     * {@link #swapAssignmentsCursor(Cursor)} should be called as soon as the mAssignments cursor is
+     * {@link #swapAssignmentsList(List)} should be called as soon as the mAssignments cursor is
      * available, or else nothing will be shown.
      *
      * @param context     The context to use for grabbing strings, colors, etc.
-     * @param classCursor The cursor containing all the user's mClasses.
-     * @param listener    The mListener listening for assignment attribute changes.
+     * @param classes     The LiveData containing all the user's classes.
      * @see AssignmentViewHolder
      * @see OnAssignmentChangeListener
      **/
-    public AssignmentsAdapter(Context context, Cursor classCursor, OnAssignmentChangeListener listener) {
+    public AssignmentsAdapter(Context context, List<Class> classes) {
         this.mContext = context;
-        this.mClasses = classCursor;
-        this.mListener = listener;
+        this.mClasses = classes;
         this.mShowDividerFlag = -1;
         mShowAssignmnentsCompleted = false;
     }
@@ -75,14 +76,12 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * displayed, or the context of when the mAssignments are due have been established.
      *
      * @param context      The context to use for grabbing strings, colors, etc.
-     * @param classCursor  The cursor containing all the user's mClasses.
-     * @param listener     The mListener listening for assignment attribute changes.
+     * @param classes     The LiveData containing all the user's classes.
      * @param showDividers Whether or not dividers should be shown.
      */
-    public AssignmentsAdapter(Context context, Cursor classCursor, OnAssignmentChangeListener listener, boolean showDividers) {
+    public AssignmentsAdapter(Context context, List<Class> classes, boolean showDividers) {
         this.mContext = context;
-        this.mClasses = classCursor;
-        this.mListener = listener;
+        this.mClasses = classes;
         this.mShowDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
         mShowAssignmnentsCompleted = false;
     }
@@ -91,10 +90,10 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * Swaps the current assignment cursor, then notifies the parent {@link RecyclerView} that the
      * current data set has been changed.
      *
-     * @param c The new {@link Cursor} that should be used as the data set.
+     * @param liveData The new {@link Cursor} that should be used as the data set.
      */
-    public void swapAssignmentsCursor(Cursor c) {
-        mAssignments = c;
+    public void swapAssignmentsList(List<Assignment> liveData) {
+        mAssignments = liveData;
         notifyDataSetChanged();
     }
 
@@ -108,71 +107,58 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     @Override
     public int getItemViewType(int position) {
         if (mShowDividerFlag == NEVER_SHOW_DIVIDER) return VIEW_TYPE_NORMAL;
-        mAssignments.moveToPosition(position);
-        int notesIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
-        String notes = mAssignments.getString(notesIndex).trim();
+            Assignment currentAssignment = mAssignments.get(position);
+            String notes = currentAssignment.getNotes().trim();
 
-        if (position == 0) {
-            if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-            else return VIEW_TYPE_DIVIDER_NOTES;
-        } else {
-            int dueDateIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
+            if (position == 0) {
+                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
+                else return VIEW_TYPE_DIVIDER_NOTES;
+            } else {
+                DateTime dtCurrent = currentAssignment.getDueDate();
+                DateTime dtNow = new DateTime();
 
-            String[] dateSegments = mAssignments.getString(dueDateIndex).split("-");
-
-            DateTime dtCurrent = new DateTime(Integer.valueOf(dateSegments[0]),
-                    Integer.valueOf(dateSegments[1]),
-                    Integer.valueOf(dateSegments[2]), 0, 0);
-            DateTime dtNow = new DateTime();
-
-            if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 1) { // Overdue
-                if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                else return VIEW_TYPE_NORMAL_NOTES;
-            }
-
-            mAssignments.moveToPosition(position - 1);
-
-            dateSegments = mAssignments.getString(dueDateIndex).split("-");
-
-            DateTime dtLast = new DateTime(Integer.valueOf(dateSegments[0]),
-                    Integer.valueOf(dateSegments[1]),
-                    Integer.valueOf(dateSegments[2]), 0, 0);
-            if (dtCurrent.getYear() == dtLast.getYear()) {
-                if (dtCurrent.getMonthOfYear() != dtNow.getMonthOfYear() &&
-                        dtCurrent.getMonthOfYear() == dtLast.getMonthOfYear()) {
+                if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 1) { // Overdue
                     if (notes.equals("")) return VIEW_TYPE_NORMAL;
                     else return VIEW_TYPE_NORMAL_NOTES;
-                } else if (dtCurrent.getMonthOfYear() == dtNow.getMonthOfYear()) {
-                    if (dtCurrent.getWeekOfWeekyear() == dtNow.getWeekOfWeekyear()) {
-                        if (dtCurrent.getDayOfYear() == dtLast.getDayOfYear()) {
-                            if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                            else return VIEW_TYPE_NORMAL_NOTES;
+                }
+
+                DateTime dtLast = mAssignments.get(position - 1).getDueDate();
+                if (dtCurrent.getYear() == dtLast.getYear()) {
+                    if (dtCurrent.getMonthOfYear() != dtNow.getMonthOfYear() &&
+                            dtCurrent.getMonthOfYear() == dtLast.getMonthOfYear()) {
+                        if (notes.equals("")) return VIEW_TYPE_NORMAL;
+                        else return VIEW_TYPE_NORMAL_NOTES;
+                    } else if (dtCurrent.getMonthOfYear() == dtNow.getMonthOfYear()) {
+                        if (dtCurrent.getWeekOfWeekyear() == dtNow.getWeekOfWeekyear()) {
+                            if (dtCurrent.getDayOfYear() == dtLast.getDayOfYear()) {
+                                if (notes.equals("")) return VIEW_TYPE_NORMAL;
+                                else return VIEW_TYPE_NORMAL_NOTES;
+                            } else {
+                                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
+                                else return VIEW_TYPE_DIVIDER_NOTES;
+                            }
                         } else {
-                            if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                            else return VIEW_TYPE_DIVIDER_NOTES;
+                            if (dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() == 1 &&
+                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER ||
+                                    dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
+                                            dtCurrent.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
+                                            getItemViewType(position - 1) == VIEW_TYPE_NORMAL) {
+                                if (notes.equals("")) return VIEW_TYPE_NORMAL;
+                                else return VIEW_TYPE_NORMAL_NOTES;
+                            } else {
+                                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
+                                else return VIEW_TYPE_DIVIDER_NOTES;
+                            }
                         }
                     } else {
-                        if (dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() == 1 &&
-                                getItemViewType(position - 1) == VIEW_TYPE_DIVIDER ||
-                                dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
-                                        dtCurrent.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
-                                        getItemViewType(position - 1) == VIEW_TYPE_NORMAL) {
-                            if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                            else return VIEW_TYPE_NORMAL_NOTES;
-                        } else {
-                            if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                            else return VIEW_TYPE_DIVIDER_NOTES;
-                        }
+                        if (notes.equals("")) return VIEW_TYPE_DIVIDER;
+                        else return VIEW_TYPE_DIVIDER_NOTES;
                     }
                 } else {
                     if (notes.equals("")) return VIEW_TYPE_DIVIDER;
                     else return VIEW_TYPE_DIVIDER_NOTES;
                 }
-            } else {
-                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                else return VIEW_TYPE_DIVIDER_NOTES;
             }
-        }
     }
 
     @NonNull
@@ -184,33 +170,22 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull final AssignmentViewHolder holder, int position) {
-        mAssignments.moveToPosition(position);
-        mClasses.moveToFirst();
+            Assignment assignment = mAssignments.get(position);
 
-        final int idIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns._ID);
-        int dueDateIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.DUE_DATE);
-        int typeIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TYPE);
-        final int notesIndex = mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.NOTES);
+            Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
 
-        holder.id = mAssignments.getInt(idIndex);
+            DateTime dtCurrent = assignment.getDueDate();
 
-        while (mClasses.getInt(mClasses.getColumnIndex(PlannerContract.ClassColumns._ID)) != mAssignments.getInt(mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.CLASS_ID)))
-            mClasses.moveToNext();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        try {
-            DateTime dtCurrent = new DateTime(sdf.parse(mAssignments.getString(dueDateIndex)));
-
-            String assignmentType = mAssignments.getString(typeIndex);
+            String assignmentType = assignment.getType();
 
             switch (assignmentType) {
-                case PlannerContract.TYPE_HOMEWORK:
+                case Assignment.TYPE_HOMEWORK:
                     assignmentType = "Homework";
                     break;
-                case PlannerContract.TYPE_TEST:
+                case Assignment.TYPE_TEST:
                     assignmentType = "Test/Quiz";
                     break;
-                case PlannerContract.TYPE_PROJECT:
+                case Assignment.TYPE_PROJECT:
                     assignmentType = "Project";
                     break;
             }
@@ -219,6 +194,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             String dueDate = ddSdf.format(dtCurrent.toDate());
 
             holder.textDueDate.setText(dueDate);
+            holder.assignment = assignment;
 
             if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
                     holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES) {
@@ -240,61 +216,47 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
                     holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
                 holder.iconExpand.setVisibility(View.VISIBLE);
-                holder.textNotes.setText(mAssignments.getString(notesIndex));
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (holder.isExpanded) {
-                            holder.shrinkNotes();
-                        } else {
-                            holder.expandNotes();
-                        }
+                holder.textNotes.setText(assignment.getNotes());
+                holder.itemView.setOnClickListener(view -> {
+                    if (holder.isExpanded) {
+                        holder.shrinkNotes();
+                    } else {
+                        holder.expandNotes();
                     }
                 });
             }
 
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if (mContext instanceof MainActivity) {
-                        MainActivity activity = (MainActivity) mContext;
-                        DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.id,
-                                mListener);
+            holder.itemView.setOnLongClickListener(view -> {
+                if (mContext instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) mContext;
+                    DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.assignment);
 
-                        editFragment.show(activity.getSupportFragmentManager(), null);
+                    editFragment.show(activity.getSupportFragmentManager(), null);
 
-                        Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                        if (v != null) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                                v.vibrate(VibrationEffect
-                                        .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                            else v.vibrate(500);
-                        }
+                    Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (v != null) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            v.vibrate(VibrationEffect
+                                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                        else v.vibrate(500);
                     }
-                    return true;
                 }
+                return true;
             });
 
             String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
-                    mClasses.getString(mClasses.getColumnIndex(PlannerContract.ClassColumns.NAME)),
+                    assignmentClass.getName(),
                     assignmentType);
 
-            holder.imageClassColor.setBackgroundColor(Color.parseColor(mClasses.getString(
-                    mClasses.getColumnIndex(PlannerContract.ClassColumns.COLOR)
-            )));
+            holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
 
-            holder.textAssignmentName.setText(mAssignments.getString(
-                    mAssignments.getColumnIndex(PlannerContract.AssignmentColumns.TITLE)
-            ));
+            holder.textAssignmentName.setText(assignment.getTitle());
 
             if (mShowAssignmnentsCompleted) {
                 holder.textAssignmentName.setPaintFlags(holder.textAssignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
             holder.textClassType.setText(classAndTypeText);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
 
@@ -309,7 +271,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public int getItemCount() {
-        if (mAssignments != null) return mAssignments.getCount();
+        if (mAssignments != null) return mAssignments.size();
         else return 0;
     }
 

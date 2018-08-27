@@ -9,6 +9,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
+import io.eodc.planit.db.Assignment;
 
 /**
  * Holder for information and attributes of the assignment view
@@ -17,7 +18,7 @@ import io.eodc.planit.R;
  */
 public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     boolean isExpanded = false;
-    int     id;
+    Assignment assignment;
 
     @BindView(R.id.header)              LinearLayout    layoutHeader;
     @BindView(R.id.ic_due_date)         ImageView       iconDueDate;
@@ -39,13 +40,8 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    /**
-     * Returns the row of the assignment in the table
-     *
-     * @see io.eodc.planit.db.PlannerContract.AssignmentColumns
-     */
-    public int getId() {
-        return id;
+    public Assignment getAssignment() {
+        return assignment;
     }
 
     /**

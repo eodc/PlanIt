@@ -1,12 +1,10 @@
 package io.eodc.planit.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.database.Cursor;
+import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,26 +14,20 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import org.joda.time.DateTime;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,8 +35,9 @@ import butterknife.OnClick;
 import io.eodc.planit.R;
 import io.eodc.planit.adapter.AssignmentType;
 import io.eodc.planit.adapter.AssignmentTypeAdapter;
-import io.eodc.planit.db.PlannerContract;
-import io.eodc.planit.listener.OnAssignmentChangeListener;
+import io.eodc.planit.db.Assignment;
+import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment that is a bottom sheet. It is the main interface the user interacts with to add
@@ -54,13 +47,13 @@ import io.eodc.planit.listener.OnAssignmentChangeListener;
  */
 public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         AdapterView.OnItemSelectedListener,
-        DatePickerDialog.OnDateSetListener,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        DatePickerDialog.OnDateSetListener {
 
     @BindView(R.id.due_date_chooser)    EditText    mEditDueDate;
     @BindView(R.id.type_chooser)        Spinner     mTypeSpinner;
     @BindView(R.id.class_chooser)       Spinner     mClassSpinner;
 
+    @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.create_button) void addAssignment() {
         if (getView() != null) {
             TextInputLayout editTitleLayout = getView().findViewById(R.id.edit_layout_assignment_name);
@@ -72,32 +65,36 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
             String dueDateText = mEditDueDate.getText().toString().trim();
 
             if (!titleText.equals("") && !dueDateText.equals("")) {
-                ContentResolver provider = mContext.getContentResolver();
-                ContentValues values = new ContentValues();
+                Assignment newAssignment = new Assignment(titleText,
+                        (int) mSelectedClass,
+                        false,
+                        new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0),
+                        editNotes.getText().toString());
 
-                values.put(PlannerContract.AssignmentColumns.TITLE, titleText);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                String dueDate = sdf.format(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0).toDate());
-
-                values.put(PlannerContract.AssignmentColumns.DUE_DATE, dueDate);
                 switch (mSelectedType) {
                     case 0:
-                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_HOMEWORK);
+                        newAssignment.setType(Assignment.TYPE_HOMEWORK);
                         break;
                     case 1:
-                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_TEST);
+                        newAssignment.setType(Assignment.TYPE_TEST);
                         break;
                     case 2:
-                        values.put(PlannerContract.AssignmentColumns.TYPE, PlannerContract.TYPE_PROJECT);
+                        newAssignment.setType(Assignment.TYPE_PROJECT);
                         break;
                 }
-                values.put(PlannerContract.AssignmentColumns.CLASS_ID, mSelectedClass);
-                values.put(PlannerContract.AssignmentColumns.COMPLETED, false);
-                values.put(PlannerContract.AssignmentColumns.NOTES, editNotes.getText().toString());
-                provider.insert(PlannerContract.AssignmentColumns.CONTENT_URI, values);
-                mListener.onAssignmentCreation();
-                this.dismiss();
+
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        PlannerDatabase.getInstance(getContext())
+                                .assignmentDao()
+                                .insertAssignments(newAssignment);
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+
+                dismiss();
             } else {
                 if (titleText.equals("")) {
                     editTitleLayout.setError("Title can't be empty");
@@ -116,105 +113,67 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         }
     }
 
-    private Context                     mContext;
-    private OnAssignmentChangeListener  mListener;
-    private SimpleCursorAdapter         mClassAdapter;
-
     private long    mSelectedClass = 1;
     private int     mSelectedType;
     private int     mDueDay;
     private int     mDueMonth;
     private int     mDueYear;
 
-    /**
-     * Creates a new instance of this AddAssignmentFragment
-     *
-     * @param listener The listener listening for assignment changes
-     * @return A new instance of AddAssignmentFragment
-     */
-    public static AddAssignmentFragment newInstance(OnAssignmentChangeListener listener) {
-        Bundle args = new Bundle();
-
-        AddAssignmentFragment fragment = new AddAssignmentFragment();
-        fragment.setListener(listener);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-        @Override
-        public void onShow(DialogInterface dialog) {
-            BottomSheetDialog d = (BottomSheetDialog) dialog;
+        dialog.setOnShowListener(dialog1 -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
             FrameLayout bottomSheet = d.findViewById(android.support.design.R.id.design_bottom_sheet);
-            int height = (int) Math.ceil(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 290, getResources().getDisplayMetrics()));
-            BottomSheetBehavior.from(bottomSheet).setPeekHeight(height);
-        }
-    });
+            if (bottomSheet != null) {
+                BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+                behavior.setSkipCollapsed(true);
+                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
         return dialog;
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        String[] projection = new String[]{
-                PlannerContract.ClassColumns._ID,
-                PlannerContract.ClassColumns.NAME};
-        return new CursorLoader(requireContext(), PlannerContract.ClassColumns.CONTENT_URI,
-                projection, null, null, null);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        setupClassSpinner(data);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) { }
-
-    /**
-     * Attaches the specified listener to this fragment
-     */
-    private void setListener(OnAssignmentChangeListener listener) {
-        mListener = listener;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
-        mClassAdapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_dropdown_item,
-                null, new String[]{PlannerContract.ClassColumns.NAME},
-                new int[]{android.R.id.text1}, 0);
-
+        if (getContext() != null) {
+            ViewModelProviders.of(this)
+                    .get(ClassListViewModel.class).getClasses().observe(this, classes -> {
+                if (classes != null) {
+                    ArrayAdapter classAdapter = new ArrayAdapter<>(getContext(),
+                            android.R.layout.simple_spinner_dropdown_item,
+                            android.R.id.text1,
+                            classes);
+                    mClassSpinner.setAdapter(classAdapter);
+                }
+            });
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_assignment, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+        View v = inflater.inflate(R.layout.fragment_create_assignment, container, false);
+        ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getActivity() != null && getActivity().getApplicationContext() != null) {
-            mContext = getActivity().getApplicationContext();
-
             setupTypeSpinner();
+            setupClassSpinner();
         }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.equals(mTypeSpinner)) mSelectedType = position;
-        else if (parent.equals(mClassSpinner)) mSelectedClass = id;
+        else if (parent.equals(mClassSpinner)) mSelectedClass = id + 1;
     }
 
     @Override
@@ -225,23 +184,19 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
      * Sets up the type spinner
      */
     private void setupTypeSpinner() {
-        List<AssignmentType> types = new ArrayList<>();
-        types.add(new AssignmentType("Homework", R.drawable.ic_homework_black_24dp));
-        types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
-        types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
-        AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(mContext, R.layout.item_assignment_type, R.id.title, types);
-        mTypeSpinner.setAdapter(typeAdapter);
-        mTypeSpinner.setOnItemSelectedListener(this);
+        if (getContext() != null) {
+            List<AssignmentType> types = new ArrayList<>();
+            types.add(new AssignmentType("Homework", R.drawable.ic_homework_black_24dp));
+            types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
+            types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
+            AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(getContext(), R.layout.item_assignment_type, R.id.title, types);
+            mTypeSpinner.setAdapter(typeAdapter);
+            mTypeSpinner.setSelection(0);
+            mTypeSpinner.setOnItemSelectedListener(this);
+        }
     }
 
-    /**
-     * Setups the class spinner
-     *
-     * @param data A cursor containing all classes
-     */
-    private void setupClassSpinner(Cursor data) {
-        mClassAdapter.swapCursor(data);
-        mClassSpinner.setAdapter(mClassAdapter);
+    private void setupClassSpinner() {
         mClassSpinner.setOnItemSelectedListener(this);
     }
 
