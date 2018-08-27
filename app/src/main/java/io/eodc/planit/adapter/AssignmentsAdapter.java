@@ -27,7 +27,6 @@ import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.db.Assignment;
 import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.EditAssignmentFragment;
-import io.eodc.planit.listener.OnAssignmentChangeListener;
 
 /**
  * Adapter for interfacing mAssignments to {@link RecyclerView}
