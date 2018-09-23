@@ -242,10 +242,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
     private void fillAssignmentInfo() {
         DateTime dtDue = mAssignment.getDueDate();
         mEditTitle.setText(mAssignment.getTitle());
-        mEditDueDate.setText(getString(R.string.date_format,
-                dtDue.getDayOfMonth(),
-                dtDue.getMonthOfYear(),
-                dtDue.getYear()));
+        mEditDueDate.setText(dtDue.toString("dd MMM, YYYY"));
         mEditNotes.setText(mAssignment.getNotes());
 
         mSpinnerClass.setSelection(mAssignment.getClassId() - 1);
@@ -261,7 +258,9 @@ public class ModifyAssignmentFragment extends DialogFragment implements
         mDueMonth = month + 1;
         mDueYear = year;
 
-        mEditDueDate.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
+        DateTime dueDate = new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0);
+
+        mEditDueDate.setText(dueDate.toString(getString(R.string.due_date_pattern)));
     }
 
     @Override

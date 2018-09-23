@@ -20,7 +20,7 @@
     <string name="create_assignment_description">Add an assignment to your planner.</string>
 
     <string name="due_date_label">Due Date</string>
-    <string name="date_format" translatable="false">%1$d/%2$d/%3$d</string>
+    <string name="due_date_pattern">dd MMM, YYYY</string>
 
     <string name="assignment_header_near_future_text" translatable="false">Due %s</string>
     <string name="assignment_header_far_future_text" translatable="false">Due in %s</string>

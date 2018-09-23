@@ -17,9 +17,7 @@ import com.google.common.collect.Iterables;
 
 import org.joda.time.DateTime;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import io.eodc.planit.R;
 import io.eodc.planit.activity.MainActivity;
@@ -182,10 +180,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                         break;
             }
 
-                SimpleDateFormat ddSdf = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
-                String dueDate = ddSdf.format(dtCurrent.toDate());
-
-                holder.textDueDate.setText(dueDate);
+                holder.textDueDate.setText(dtCurrent.toString(mContext.getString(R.string.due_date_pattern)));
                 holder.assignment = assignment;
 
                 if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||

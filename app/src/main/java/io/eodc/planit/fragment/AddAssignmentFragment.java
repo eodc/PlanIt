@@ -264,7 +264,10 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         mDueYear = year;
         mDueMonth = month + 1;
         mDueDay = dayOfMonth;
-        mEditDueDate.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
+
+        DateTime dueDate = new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0);
+
+        mEditDueDate.setText(dueDate.toString(getString(R.string.due_date_pattern)));
     }
 
 }
