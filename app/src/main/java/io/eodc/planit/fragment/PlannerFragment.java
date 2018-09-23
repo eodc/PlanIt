@@ -10,7 +10,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,8 +29,8 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class PlannerFragment extends BaseFragment {
 
-    @BindView(R.id.content)         RecyclerView mRvContent;
-    @BindView(R.id.all_done_layout) LinearLayout mLayoutNoAssignments;
+    @BindView(R.id.content)         RecyclerView    mRvContent;
+    @BindView(R.id.tv_all_done)     TextView        mTvAllDone;
 
     private AssignmentListViewModel assignmentListViewModel;
 
@@ -63,10 +63,10 @@ public class PlannerFragment extends BaseFragment {
             assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
                 if (assignments != null) {
                     if (assignments.size() == 0) {
-                        mLayoutNoAssignments.setVisibility(View.VISIBLE);
+                        mTvAllDone.setVisibility(View.VISIBLE);
                         mRvContent.setVisibility(View.GONE);
                     } else {
-                        mLayoutNoAssignments.setVisibility(View.GONE);
+                        mTvAllDone.setVisibility(View.GONE);
                         mRvContent.setVisibility(View.VISIBLE);
                         adapter.swapAssignmentsList(assignments);
                     }

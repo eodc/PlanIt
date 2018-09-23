@@ -11,7 +11,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -52,7 +52,7 @@ public class CalendarFragment extends BaseFragment implements
 
     @BindView(R.id.calendar)            MaterialCalendarView    mCalendar;
     @BindView(R.id.rv_day_assignments)  RecyclerView            mRvDaysAssignments;
-    @BindView(R.id.layout_nothing_due)  LinearLayout            mLayoutNothingDue;
+    @BindView(R.id.tv_all_done)         TextView                mTvAllDone;
 
     private AssignmentListViewModel     mAssignmentListViewModel;
     private LiveData<List<Assignment>>  mCurrentMonthAssignments;
@@ -125,12 +125,12 @@ public class CalendarFragment extends BaseFragment implements
         if (mRvDaysAssignments.getAdapter() != null) {
             AssignmentsAdapter adapter = (AssignmentsAdapter) mRvDaysAssignments.getAdapter();
             if (assignments != null && assignments.size() > 0) {
-                mLayoutNothingDue.setVisibility(View.GONE);
+                mTvAllDone.setVisibility(View.GONE);
                 mRvDaysAssignments.setVisibility(View.VISIBLE);
                 adapter.swapAssignmentsList(assignments);
             } else {
                 mRvDaysAssignments.setVisibility(View.GONE);
-                mLayoutNothingDue.setVisibility(View.VISIBLE);
+                mTvAllDone.setVisibility(View.VISIBLE);
                 adapter.swapAssignmentsList(null);
             }
         }

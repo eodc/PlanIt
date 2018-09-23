@@ -15,7 +15,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -48,7 +47,7 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class HomeFragment extends BaseFragment {
 
-    @BindView(R.id.all_done_layout)     LinearLayout    mLayoutAllDone;
+    @BindView(R.id.tv_all_done)         TextView        mLayoutAllDone;
     @BindView(R.id.card_overdue)        CardView        mCardOverdue;
     @BindView(R.id.graph_week)          LineChart       mGraphWeek;
     @BindView(R.id.rv_today)            RecyclerView    mRvTodayAssign;
