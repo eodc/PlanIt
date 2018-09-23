@@ -22,8 +22,6 @@ import android.widget.Toast;
 
 import com.thebluealliance.spectrum.SpectrumDialog;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -108,18 +106,18 @@ public class ModifyClassFragment extends DialogFragment implements
                         classListViewModel.getClasses().observe(this, classes -> {
                             if (classes != null) {
                                 if (classes.size() > 1) {
-                                    List<Assignment> assignments = assignmentListViewModel.getAssignmentsByClassId(mClass.getId()).getValue();
+                                    assignmentListViewModel.getAssignmentsByClassId(mClass.getId()).observe(this, assignments -> {
+                                        new Thread(() -> classListViewModel.removeClasses(mClass)).start();
 
-                                    new Thread(() -> classListViewModel.removeClasses(mClass)).start();
-
-                                    if (assignments != null && assignments.size() > 0) {
-                                        new Thread(() ->
-                                                assignmentListViewModel
-                                                        .removeAssignments(
-                                                                assignments.toArray(new Assignment[assignments.size()])
-                                                        )
-                                        ).start();
-                                    }
+                                        if (assignments != null && assignments.size() > 0) {
+                                            new Thread(() ->
+                                                    assignmentListViewModel
+                                                            .removeAssignments(
+                                                                    assignments.toArray(new Assignment[assignments.size()])
+                                                            )
+                                            ).start();
+                                        }
+                                    });
                                     dismiss();
                                 } else {
                                     Toast.makeText(getContext(), "Cannot delete last class from planner!", Toast.LENGTH_SHORT).show();
