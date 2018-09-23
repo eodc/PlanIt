@@ -21,16 +21,13 @@ public class Assignment {
     @ColumnInfo
     private String type;
     @ColumnInfo
-    private boolean completed;
-    @ColumnInfo
     private DateTime dueDate;
     @ColumnInfo
     private String notes;
 
-    public Assignment(String title, int classId, boolean completed, DateTime dueDate, String notes) {
+    public Assignment(String title, int classId, DateTime dueDate, String notes) {
         this.title = title;
         this.classId = classId;
-        this.completed = completed;
         this.dueDate = dueDate;
         this.notes = notes;
     }
@@ -65,14 +62,6 @@ public class Assignment {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
     }
 
     public DateTime getDueDate() {

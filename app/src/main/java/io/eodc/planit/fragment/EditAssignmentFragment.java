@@ -122,15 +122,6 @@ public class EditAssignmentFragment extends DialogFragment implements
         if (getFragmentManager() != null) fragment.show(getFragmentManager(), null);
     }
 
-    @OnClick(R.id.btn_restore)
-    void restoreAssignment() {
-        if (getContext() != null) {
-            mAssignment.setCompleted(false);
-            PlannerDatabase.getInstance(getContext()).assignmentDao().updateAssignment(mAssignment);
-        }
-        dismiss();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -194,10 +185,6 @@ public class EditAssignmentFragment extends DialogFragment implements
                 dtDue.getMonthOfYear(),
                 dtDue.getYear()));
         mEditNotes.setText(mAssignment.getNotes());
-
-        if (mAssignment.isCompleted()) {
-            mBtnRestore.setVisibility(View.VISIBLE);
-        }
 
         mSpinnerClass.setSelection(mAssignment.getClassId() - 1);
 

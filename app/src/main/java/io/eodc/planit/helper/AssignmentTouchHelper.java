@@ -1,15 +1,12 @@
 package io.eodc.planit.helper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import io.eodc.planit.adapter.AssignmentViewHolder;
-import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.listener.OnAssignmentDismissListener;
 
 /**
  * Touch helper that deals with swiping right to "dismiss" assignments
@@ -17,11 +14,11 @@ import io.eodc.planit.db.PlannerDatabase;
  * @author 2n
  */
 public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
-    private Context                     mContext;
+    private OnAssignmentDismissListener mListener;
 
-    public AssignmentTouchHelper(Context context, int dragDirs, int swipeDirs) {
+    public AssignmentTouchHelper(int dragDirs, int swipeDirs, OnAssignmentDismissListener listener) {
         super(dragDirs, swipeDirs);
-        this.mContext = context;
+        this.mListener = listener;
     }
 
     @Override
@@ -35,29 +32,7 @@ public class AssignmentTouchHelper extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         if (direction == ItemTouchHelper.RIGHT) {
-            AssignmentViewHolder holder = (AssignmentViewHolder) viewHolder;
-            Assignment currentAssignment = holder.getAssignment();
-
-            if (currentAssignment.isCompleted()) {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        PlannerDatabase.getInstance(mContext)
-                                .assignmentDao().removeAssignment(currentAssignment);
-                        return null;
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-            } else {
-                currentAssignment.setCompleted(true);
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        PlannerDatabase.getInstance(mContext)
-                                .assignmentDao().updateAssignment(currentAssignment);
-                        return null;
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-            }
+            mListener.onDismiss((AssignmentViewHolder) viewHolder);
         }
     }
 }

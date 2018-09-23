@@ -3,7 +3,6 @@ package io.eodc.planit.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -20,11 +19,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.BuildConfig;
 import io.eodc.planit.R;
-import io.eodc.planit.fragment.BaseFragment;
 import io.eodc.planit.fragment.CalendarFragment;
 import io.eodc.planit.fragment.HomeFragment;
 import io.eodc.planit.fragment.PlannerFragment;
-import io.eodc.planit.listener.AssignmentTypeLoadChangeListener;
 import timber.log.Timber;
 
 /**
@@ -77,19 +74,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.mnu_show_completed:
-                if (!item.isChecked()) {
-                    item.setChecked(true);
-                    mShownAssignmentFlag = BaseFragment.FLAG_SHOW_COMPLETE;
-                } else {
-                    item.setChecked(false);
-                    mShownAssignmentFlag = BaseFragment.FLAG_SHOW_INCOMPLETE;
-                }
-                Fragment currentFragment = mFragmentManager.findFragmentById(R.id.content_fragment);
-                if (currentFragment instanceof AssignmentTypeLoadChangeListener) {
-                    ((AssignmentTypeLoadChangeListener) currentFragment).onTypeChanged(mShownAssignmentFlag);
-                }
-                return true;
             case R.id.mnu_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
@@ -112,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
                         transaction.replace(R.id.content_fragment, new HomeFragment()).commit();
                         break;
                     case 1:
-                        Fragment fragment = PlannerFragment.newInstance(mShownAssignmentFlag);
-                        transaction.replace(R.id.content_fragment, fragment).commit();
+                        transaction.replace(R.id.content_fragment, new PlannerFragment()).commit();
                         break;
                     case 2:
                         transaction.replace(R.id.content_fragment, new CalendarFragment()).commit();

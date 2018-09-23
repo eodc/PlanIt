@@ -16,7 +16,7 @@ public interface AssignmentDao {
     @Query("SELECT * FROM assignments ORDER BY dueDate ASC")
     LiveData<List<Assignment>> getAllAssignments();
 
-    @Query("SELECT * FROM assignments WHERE dueDate BETWEEN :from AND :to AND COMPLETED = 0 ORDER BY dueDate ASC ")
+    @Query("SELECT * FROM assignments WHERE dueDate BETWEEN :from AND :to ORDER BY dueDate ASC ")
     LiveData<List<Assignment>> getAssignmentsDueBetweenDates(DateTime from, DateTime to);
 
     @Query("SELECT * FROM assignments WHERE dueDate < :date")

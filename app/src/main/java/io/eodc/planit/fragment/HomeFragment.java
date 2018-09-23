@@ -1,5 +1,6 @@
 package io.eodc.planit.fragment;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -57,6 +58,9 @@ public class HomeFragment extends BaseFragment {
     private AssignmentsAdapter mTodayAssignmentsAdapter;
     private AssignmentsAdapter mOverdueAssignmentsAdapter;
 
+
+    private AssignmentListViewModel assignmentListViewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +71,7 @@ public class HomeFragment extends BaseFragment {
                     mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
                 });
 
-        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
+        assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
         DateTime today = new DateTime().withTimeAtStartOfDay();
         DateTime dateToRetrieve;
 
@@ -177,11 +181,20 @@ public class HomeFragment extends BaseFragment {
         else adapter.swapAssignmentsList(null);
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(requireContext(), 0,
-                ItemTouchHelper.RIGHT);
+        @SuppressLint("StaticFieldLeak") ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
+                0,
+                ItemTouchHelper.RIGHT,
+                holder -> {
+                    RecyclerView.Adapter currentAdapter = rv.getAdapter();
+                    if (currentAdapter != null) {
+                        currentAdapter.notifyItemRemoved(holder.getAdapterPosition());
+                    }
+                    new Thread(() -> assignmentListViewModel.removeAssignments(holder.getAssignment())).start();
+                });
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
         touchHelper.attachToRecyclerView(rv);
     }
+
 
     /**
      * Sets up the specified data set

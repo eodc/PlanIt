@@ -188,19 +188,21 @@ public class ModifyClassFragment extends DialogFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mClass == null) {
-            mTextTitle.setText(R.string.create_class_title);
-            mTextSubtitle.setText(R.string.create_class_description);
-            mBtnConfirm.setText(R.string.btn_create_label);
-        } else {
-            mBtnDelete.setVisibility(View.VISIBLE);
+        if (getContext() != null) {
+            if (mClass == null) {
+                mTextTitle.setText(R.string.create_class_title);
+                mTextSubtitle.setText(R.string.create_class_description);
+                mBtnConfirm.setText(R.string.btn_create_label);
+            } else {
+                mBtnDelete.setVisibility(View.VISIBLE);
 
-            mEditClassName.setText(mClass.getName());
-            mEditTeacherName.setText(mClass.getTeacher());
-            mColorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(mClass.getColor())));
+                mEditClassName.setText(mClass.getName());
+                mEditTeacherName.setText(mClass.getTeacher());
+                mColorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(mClass.getColor())));
+            }
+
+            mColorChosen = "#" + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.class_red));
         }
-
-        mColorChosen = "#" + ContextCompat.getColor(requireContext(), R.color.class_red);
     }
 
     @Override
@@ -217,7 +219,7 @@ public class ModifyClassFragment extends DialogFragment implements
     public void onColorSelected(boolean positiveResult, int color) {
         if (positiveResult) {
             mColorPicker.setImageDrawable(new ColorDrawable(color));
-            mColorChosen = "#" + Integer.toHexString(color).toUpperCase();
+            mColorChosen = "#" + Integer.toHexString(color);
         }
     }
 }

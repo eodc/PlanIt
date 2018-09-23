@@ -3,7 +3,6 @@ package io.eodc.planit.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -47,7 +46,6 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     private List<Assignment>  mAssignments;
     private List<Class>       mClasses;
 
-    private boolean mShowAssignmnentsCompleted;
     private int     mShowDividerFlag;
 
     /**
@@ -60,13 +58,11 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * @param context     The context to use for grabbing strings, colors, etc.
      * @param classes     The LiveData containing all the user's classes.
      * @see AssignmentViewHolder
-     * @see OnAssignmentChangeListener
      **/
     public AssignmentsAdapter(Context context, List<Class> classes) {
         this.mContext = context;
         this.mClasses = classes;
         this.mShowDividerFlag = -1;
-        mShowAssignmnentsCompleted = false;
     }
 
     /**
@@ -82,7 +78,6 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
         this.mContext = context;
         this.mClasses = classes;
         this.mShowDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
-        mShowAssignmnentsCompleted = false;
     }
 
     /**
@@ -170,26 +165,22 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     @Override
     public void onBindViewHolder(@NonNull final AssignmentViewHolder holder, int position) {
             Assignment assignment = mAssignments.get(position);
-            if (assignment.isCompleted() && mShowAssignmnentsCompleted ||
-                    !assignment.isCompleted() && mShowAssignmnentsCompleted ||
-                    !assignment.isCompleted() && !mShowAssignmnentsCompleted) {
-                Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
+            Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
 
-                DateTime dtCurrent = assignment.getDueDate();
+            DateTime dtCurrent = assignment.getDueDate();
+            String assignmentType = assignment.getType();
 
-                String assignmentType = assignment.getType();
-
-                switch (assignmentType) {
-                    case Assignment.TYPE_HOMEWORK:
-                        assignmentType = "Homework";
-                        break;
+            switch (assignmentType) {
+                case Assignment.TYPE_HOMEWORK:
+                    assignmentType = "Homework";
+                    break;
                     case Assignment.TYPE_TEST:
                         assignmentType = "Test/Quiz";
                         break;
                     case Assignment.TYPE_PROJECT:
                         assignmentType = "Project";
                         break;
-                }
+            }
 
                 SimpleDateFormat ddSdf = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
                 String dueDate = ddSdf.format(dtCurrent.toDate());
@@ -253,39 +244,13 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
                 holder.textAssignmentName.setText(assignment.getTitle());
 
-                if (assignment.isCompleted() && mShowAssignmnentsCompleted) {
-                    holder.textAssignmentName.setPaintFlags(holder.textAssignmentName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                }
-
                 holder.textClassType.setText(classAndTypeText);
-            }
     }
 
-
-    /**
-     * Specifies whether to show completed mAssignments
-     *
-     * @param showAssignmnentsCompleted Whether to show completed mAssignments
-     */
-    public void setShowAssignmnentsCompleted(boolean showAssignmnentsCompleted) {
-        this.mShowAssignmnentsCompleted = showAssignmnentsCompleted;
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getItemCount() {
-        if (mAssignments != null) {
-            if (mShowAssignmnentsCompleted) {
-                return mAssignments.size();
-            } else {
-                int count = 0;
-                for (Assignment assignment: mAssignments) {
-                    if (!assignment.isCompleted()) count++;
-                }
-                return count;
-            }
-        }
-        else return 0;
+        return mAssignments == null ? 0 : mAssignments.size();
     }
 
     /**

@@ -16,23 +16,23 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
+import io.eodc.planit.adapter.AssignmentViewHolder;
 import io.eodc.planit.adapter.AssignmentsAdapter;
 import io.eodc.planit.helper.AssignmentTouchHelper;
-import io.eodc.planit.listener.AssignmentTypeLoadChangeListener;
 import io.eodc.planit.model.AssignmentListViewModel;
 import io.eodc.planit.model.ClassListViewModel;
-import timber.log.Timber;
 
 /**
  * Fragment showing all of the user's inputted assignments
  *
  * @author 2n
  */
-public class PlannerFragment extends BaseFragment implements
-        AssignmentTypeLoadChangeListener {
+public class PlannerFragment extends BaseFragment {
 
     @BindView(R.id.content)         RecyclerView mRvContent;
     @BindView(R.id.all_done_layout) LinearLayout mLayoutNoAssignments;
+
+    private AssignmentListViewModel assignmentListViewModel;
 
     @OnClick(R.id.create_fab) void handleCreateFab() {
         if (getFragmentManager() != null) {
@@ -40,24 +40,12 @@ public class PlannerFragment extends BaseFragment implements
         }
     }
 
-    /**
-     * Creates a new instance of Planner Fragment
-     *
-     * @param flag Whether to show completed assignments or incomplete
-     * @return A new instance of PlannerFragment
-     */
-    public static PlannerFragment newInstance(int flag) {
-        PlannerFragment fragment = new PlannerFragment();
-        fragment.onTypeChanged(flag);
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ClassListViewModel classListViewModel = ViewModelProviders.of(this)
                 .get(ClassListViewModel.class);
-        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this)
+        assignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
         classListViewModel.getClasses().observe(this, classes -> {
             AssignmentsAdapter adapter = new AssignmentsAdapter(getContext(), classes);
@@ -65,18 +53,35 @@ public class PlannerFragment extends BaseFragment implements
             mRvContent.setAdapter(adapter);
             mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            ItemTouchHelper.SimpleCallback callback = new AssignmentTouchHelper(getContext(), 0,
-                    ItemTouchHelper.RIGHT);
+            ItemTouchHelper.SimpleCallback callback = new AssignmentTouchHelper(
+                    0,
+                    ItemTouchHelper.RIGHT,
+                    this::onDismiss);
             ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
             touchHelper.attachToRecyclerView(mRvContent);
+
+            assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
+                if (assignments != null) {
+                    if (assignments.size() == 0) {
+                        mLayoutNoAssignments.setVisibility(View.VISIBLE);
+                        mRvContent.setVisibility(View.GONE);
+                    } else {
+                        mLayoutNoAssignments.setVisibility(View.GONE);
+                        mRvContent.setVisibility(View.VISIBLE);
+                        adapter.swapAssignmentsList(assignments);
+                    }
+                }
+            });
         });
 
-        assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
-            AssignmentsAdapter adapter = (AssignmentsAdapter) mRvContent.getAdapter();
-            if (adapter != null) {
-                adapter.swapAssignmentsList(assignments);
-            }
-        });
+    }
+
+    private void onDismiss(AssignmentViewHolder holder) {
+        RecyclerView.Adapter adapter = mRvContent.getAdapter();
+        if (adapter != null) {
+            adapter.notifyItemRemoved(holder.getAdapterPosition());
+        }
+        new Thread(() -> assignmentListViewModel.removeAssignments(holder.getAssignment())).start();
     }
 
     @Nullable
@@ -85,17 +90,5 @@ public class PlannerFragment extends BaseFragment implements
         View view = inflater.inflate(R.layout.fragment_planner, container, false);
         ButterKnife.bind(this, view);
         return view;
-    }
-
-    @Override
-    public void onTypeChanged(int flag) {
-        try {
-            if (mRvContent.getAdapter() != null) {
-                ((AssignmentsAdapter) mRvContent.getAdapter())
-                        .setShowAssignmnentsCompleted(flag == BaseFragment.FLAG_SHOW_COMPLETE);
-            }
-        } catch (Exception e) {
-            Timber.i(e, "May just be inserting fragment");
-        }
     }
 }

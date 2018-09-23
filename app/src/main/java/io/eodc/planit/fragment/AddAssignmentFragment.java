@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -67,7 +66,6 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
             if (!titleText.equals("") && !dueDateText.equals("")) {
                 Assignment newAssignment = new Assignment(titleText,
                         (int) mSelectedClass,
-                        false,
                         new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0),
                         editNotes.getText().toString());
 
@@ -84,16 +82,9 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
                         break;
                 }
 
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        PlannerDatabase.getInstance(getContext())
-                                .assignmentDao()
-                                .insertAssignments(newAssignment);
-                        return null;
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-
+                new Thread(() -> PlannerDatabase.getInstance(getContext())
+                        .assignmentDao()
+                        .insertAssignments(newAssignment)).start();
                 dismiss();
             } else {
                 if (titleText.equals("")) {

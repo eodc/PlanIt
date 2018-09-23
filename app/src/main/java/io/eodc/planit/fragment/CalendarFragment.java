@@ -32,6 +32,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
+import io.eodc.planit.adapter.AssignmentViewHolder;
 import io.eodc.planit.adapter.AssignmentsAdapter;
 import io.eodc.planit.db.Assignment;
 import io.eodc.planit.db.Class;
@@ -103,11 +104,21 @@ public class CalendarFragment extends BaseFragment implements
             mCurrentDayAssignments = mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()));
             mCurrentDayAssignments.observe(this, this::onSingleDayAssignmentsChange);
 
-            ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(getContext(), 0,
-                    ItemTouchHelper.RIGHT);
+            ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
+                    0,
+                    ItemTouchHelper.RIGHT,
+                    this::onDismiss);
             ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
             touchHelper.attachToRecyclerView(mRvDaysAssignments);
         }
+    }
+
+    private void onDismiss(AssignmentViewHolder holder) {
+        RecyclerView.Adapter adapter = mRvDaysAssignments.getAdapter();
+        if (adapter != null) {
+            adapter.notifyItemRemoved(holder.getAdapterPosition());
+        }
+        new Thread(() -> mAssignmentListViewModel.removeAssignments(holder.getAssignment())).start();
     }
 
     private void onSingleDayAssignmentsChange(List<Assignment> assignments) {
