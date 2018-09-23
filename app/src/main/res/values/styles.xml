@@ -10,6 +10,10 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
+    <style name="AppTheme.BottomSheet" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.EventLabel">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/colorAccent</item>

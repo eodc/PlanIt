@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_behavior=""
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:background="@color/white">
 
     <TextView
@@ -45,7 +47,6 @@
             android:id="@+id/edit_assignment_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:alpha="1"
             android:hint="@string/edit_assignment_name_label"
             android:inputType="text" />
     </android.support.design.widget.TextInputLayout>

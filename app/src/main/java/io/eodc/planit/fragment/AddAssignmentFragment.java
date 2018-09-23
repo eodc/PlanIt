@@ -4,18 +4,22 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -48,26 +52,25 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         AdapterView.OnItemSelectedListener,
         DatePickerDialog.OnDateSetListener {
 
-    @BindView(R.id.due_date_chooser)    EditText    mEditDueDate;
-    @BindView(R.id.type_chooser)        Spinner     mTypeSpinner;
-    @BindView(R.id.class_chooser)       Spinner     mClassSpinner;
+    @BindView(R.id.due_date_chooser)            EditText        mEditDueDate;
+    @BindView(R.id.edit_assignment_name)        EditText        mEditTitle;
+    @BindView(R.id.edit_notes)                  EditText        mEditNotes;
+    @BindView(R.id.edit_layout_assignment_name) TextInputLayout mLayoutEditTitle;
+    @BindView(R.id.edit_layout_due_date)        TextInputLayout mLayoutEditDueDate;
+    @BindView(R.id.type_chooser)                Spinner         mTypeSpinner;
+    @BindView(R.id.class_chooser)               Spinner         mClassSpinner;
 
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.create_button) void addAssignment() {
         if (getView() != null) {
-            TextInputLayout editTitleLayout = getView().findViewById(R.id.edit_layout_assignment_name);
-            TextInputLayout editDueDateLayout = getView().findViewById(R.id.edit_layout_due_date);
-            TextInputEditText editTitle = getView().findViewById(R.id.edit_assignment_name);
-            TextInputEditText editNotes = getView().findViewById(R.id.edit_notes);
-
-            String titleText = editTitle.getText().toString().trim();
+            String titleText = mEditTitle.getText().toString().trim();
             String dueDateText = mEditDueDate.getText().toString().trim();
 
             if (!titleText.equals("") && !dueDateText.equals("")) {
                 Assignment newAssignment = new Assignment(titleText,
                         (int) mSelectedClass,
                         new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0),
-                        editNotes.getText().toString());
+                        mEditNotes.getText().toString());
 
 
                 switch (mSelectedType) {
@@ -88,10 +91,10 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
                 dismiss();
             } else {
                 if (titleText.equals("")) {
-                    editTitleLayout.setError("Title can't be empty");
+                    mLayoutEditTitle.setError("Title can't be empty");
                 }
                 if (dueDateText.equals("")) {
-                    editDueDateLayout.setError("Due date can't be empty");
+                    mLayoutEditDueDate.setError("Due date can't be empty");
                 }
             }
         }
@@ -113,7 +116,7 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        Dialog dialog = new BottomSheetDialog(requireContext(), R.style.AppTheme_BottomSheet);
         dialog.setOnShowListener(dialog1 -> {
             BottomSheetDialog d = (BottomSheetDialog) dialog1;
 
@@ -158,6 +161,71 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         if (getActivity() != null && getActivity().getApplicationContext() != null) {
             setupTypeSpinner();
             setupClassSpinner();
+            setupInputListeners();
+        }
+    }
+
+    private void setupInputListeners() {
+        mEditTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    mLayoutEditTitle.setError("Title can't be empty");
+                } else {
+                    mLayoutEditTitle.setError("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        mEditDueDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    mLayoutEditDueDate.setError("Due date can't be empty");
+                } else {
+                    mLayoutEditDueDate.setError("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        if (getView() != null) {
+            getView().setOnTouchListener((v, motionEvent) -> {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (getContext() != null) {
+                            InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (inputManager != null) {
+                                inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                mEditTitle.clearFocus();
+                                mEditDueDate.clearFocus();
+                                mEditNotes.clearFocus();
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.performClick();
+                        break;
+                }
+                return true;
+            });
         }
     }
 
