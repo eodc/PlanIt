@@ -23,7 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
-import io.eodc.planit.db.Class;
 import io.eodc.planit.fragment.OnboardingAddClassesFragment;
 import io.eodc.planit.fragment.OnboardingFragment;
 import io.eodc.planit.model.ClassListViewModel;
@@ -118,11 +117,12 @@ public class OnboardingActivity extends AppCompatActivity implements
         if (position == 0) mBtnBack.setVisibility(View.GONE);
         else if (position == mTabLayout.getTabCount() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
-            List<Class> classes = ViewModelProviders
+            ViewModelProviders
                     .of(this).get(ClassListViewModel.class)
-                    .getClasses().getValue();
-            if (classes != null && classes.size() == 0 || classes == null)
-                mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                    .getClasses().observe(this, classes -> {
+                        if (classes != null && classes.size() == 0 || classes == null)
+                        mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                    });
         } else {
             mBtnBack.setVisibility(View.VISIBLE);
             mBtnNext.setText(getString(R.string.btn_next_label));
