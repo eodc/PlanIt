@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.eodc.planit.R;
 import io.eodc.planit.adapter.AssignmentViewHolder;
 import io.eodc.planit.adapter.AssignmentsAdapter;
@@ -33,12 +32,6 @@ public class PlannerFragment extends BaseFragment {
     @BindView(R.id.tv_all_done)     TextView        mTvAllDone;
 
     private AssignmentListViewModel assignmentListViewModel;
-
-    @OnClick(R.id.create_fab) void handleCreateFab() {
-        if (getFragmentManager() != null) {
-            new AddAssignmentFragment().show(getFragmentManager(), null);
-        }
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
