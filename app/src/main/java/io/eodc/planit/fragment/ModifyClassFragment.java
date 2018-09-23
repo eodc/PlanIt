@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -107,22 +106,15 @@ public class ModifyClassFragment extends DialogFragment implements
                                         .get(ClassListViewModel.class);
                         List<Assignment> assignments = assignmentListViewModel.getAssignmentsByClassId(mClass.getId()).getValue();
 
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                classListViewModel.removeClasses(mClass);
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+                        new Thread(() -> classListViewModel.removeClasses(mClass)).start();
 
                         if (assignments != null && assignments.size() > 0) {
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    assignmentListViewModel.removeAssignments(assignments.toArray(new Assignment[assignments.size()]));
-                                    return null;
-                                }
-                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+                            new Thread(() ->
+                                    assignmentListViewModel
+                                            .removeAssignments(
+                                                    assignments.toArray(new Assignment[assignments.size()])
+                                            )
+                            ).start();
                         }
                         dismiss();
                     })
@@ -145,24 +137,12 @@ public class ModifyClassFragment extends DialogFragment implements
             ClassListViewModel viewModel = ViewModelProviders.of(this).get(ClassListViewModel.class);
             if (mClass == null) {
                 Class newClass = new Class(className, teacherName, mColorChosen);
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        viewModel.insertClasses(newClass);
-                        return null;
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+                new Thread(() -> viewModel.insertClasses(newClass)).start();
             } else {
                 mClass.setName(className);
                 mClass.setTeacher(teacherName);
                 mClass.setColor(mColorChosen);
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        viewModel.updateClasses(mClass);
-                        return null;
-                    }
-                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
+                new Thread(() -> viewModel.updateClasses(mClass)).start();
             }
             dismiss();
         } else if (getView() != null) {

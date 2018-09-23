@@ -3,7 +3,6 @@ package io.eodc.planit.fragment;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -103,14 +102,7 @@ public class EditAssignmentFragment extends DialogFragment implements
 
             mAssignment.setDueDate(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0));
 
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    PlannerDatabase.getInstance(getContext()).assignmentDao().updateAssignment(mAssignment);
-                    return null;
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void) null);
-
+            new Thread(() -> PlannerDatabase.getInstance(getContext()).assignmentDao().updateAssignment(mAssignment)).start();
             dismiss();
         }
     }
