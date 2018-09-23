@@ -25,7 +25,7 @@ import io.eodc.planit.R;
 import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.db.Assignment;
 import io.eodc.planit.db.Class;
-import io.eodc.planit.fragment.EditAssignmentFragment;
+import io.eodc.planit.fragment.ModifyAssignmentFragment;
 
 /**
  * Adapter for interfacing mAssignments to {@link RecyclerView}
@@ -221,7 +221,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 holder.itemView.setOnLongClickListener(view -> {
                     if (mContext instanceof MainActivity) {
                         MainActivity activity = (MainActivity) mContext;
-                        DialogFragment editFragment = EditAssignmentFragment.newInstance(holder.assignment);
+                        DialogFragment editFragment = ModifyAssignmentFragment.newInstance(holder.assignment);
 
                         editFragment.show(activity.getSupportFragmentManager(), null);
 

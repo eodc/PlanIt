@@ -3,14 +3,19 @@ package io.eodc.planit.fragment;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -38,7 +43,7 @@ import io.eodc.planit.model.ClassListViewModel;
  * Created by 2n on 5/16/18.
  */
 
-public class EditAssignmentFragment extends DialogFragment implements
+public class ModifyAssignmentFragment extends DialogFragment implements
         DatePickerDialog.OnDateSetListener,
         AdapterView.OnItemSelectedListener {
 
@@ -46,10 +51,10 @@ public class EditAssignmentFragment extends DialogFragment implements
     @BindView(R.id.type_chooser)                Spinner             mSpinnerType;
     @BindView(R.id.class_chooser)               Spinner             mSpinnerClass;
     @BindView(R.id.edit_assignment_name)        EditText            mEditTitle;
-    @BindView(R.id.edit_due_date)               EditText            mEditDue;
+    @BindView(R.id.edit_due_date)               EditText            mEditDueDate;
     @BindView(R.id.edit_notes)                  EditText            mEditNotes;
-    @BindView(R.id.edit_layout_assignment_name) TextInputLayout     mEditNameLayout;
-    @BindView(R.id.edit_layout_due_date)        TextInputLayout     mEditDueLayout;
+    @BindView(R.id.edit_layout_assignment_name) TextInputLayout     mLayoutEditTitle;
+    @BindView(R.id.edit_layout_due_date)        TextInputLayout     mLayoutEditDueDate;
 
     private Assignment  mAssignment;
 
@@ -59,8 +64,8 @@ public class EditAssignmentFragment extends DialogFragment implements
     private int     mDueMonth;
     private int     mDueYear;
 
-    public static EditAssignmentFragment newInstance(Assignment assignment) {
-        EditAssignmentFragment fragment = new EditAssignmentFragment();
+    public static ModifyAssignmentFragment newInstance(Assignment assignment) {
+        ModifyAssignmentFragment fragment = new ModifyAssignmentFragment();
         fragment.mAssignment = assignment;
         return fragment;
     }
@@ -75,14 +80,14 @@ public class EditAssignmentFragment extends DialogFragment implements
     void editAssignment() {
         String title = mEditTitle.getText().toString().trim();
         String notes = mEditNotes.getText().toString().trim();
-        String dueDate = mEditDue.getText().toString().trim();
+        String dueDate = mEditDueDate.getText().toString().trim();
 
-        if (title.equals("") || mEditDue.getText().toString().trim().equals("")) {
+        if (title.equals("") || mEditDueDate.getText().toString().trim().equals("")) {
             if (title.equals("")) {
-                mEditNameLayout.setError("Title cannot be empty.");
+                mLayoutEditTitle.setError("Title cannot be empty.");
             }
             if (dueDate.equals("")) {
-                mEditDueLayout.setError("Due date can't be empty");
+                mLayoutEditDueDate.setError("Due date can't be empty");
             }
         } else {
             mAssignment.setTitle(title);
@@ -141,6 +146,71 @@ public class EditAssignmentFragment extends DialogFragment implements
 
         setupTypeSpinner();
         fillAssignmentInfo();
+        setupInputListeners();
+    }
+
+    private void setupInputListeners() {
+        mEditTitle.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    mLayoutEditTitle.setError("Title can't be empty");
+                } else {
+                    mLayoutEditTitle.setError("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        mEditDueDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("")) {
+                    mLayoutEditDueDate.setError("Due date can't be empty");
+                } else {
+                    mLayoutEditDueDate.setError("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        if (getView() != null) {
+            getView().setOnTouchListener((v, motionEvent) -> {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (getContext() != null) {
+                            InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (inputManager != null) {
+                                inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                mEditTitle.clearFocus();
+                                mEditDueDate.clearFocus();
+                                mEditNotes.clearFocus();
+                            }
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        v.performClick();
+                        break;
+                }
+                return true;
+            });
+        }
     }
 
     private void setupTypeSpinner() {
@@ -172,7 +242,7 @@ public class EditAssignmentFragment extends DialogFragment implements
     private void fillAssignmentInfo() {
         DateTime dtDue = mAssignment.getDueDate();
         mEditTitle.setText(mAssignment.getTitle());
-        mEditDue.setText(getString(R.string.date_format,
+        mEditDueDate.setText(getString(R.string.date_format,
                 dtDue.getDayOfMonth(),
                 dtDue.getMonthOfYear(),
                 dtDue.getYear()));
@@ -191,7 +261,7 @@ public class EditAssignmentFragment extends DialogFragment implements
         mDueMonth = month + 1;
         mDueYear = year;
 
-        mEditDue.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
+        mEditDueDate.setText(getString(R.string.date_format, mDueDay, mDueMonth, mDueYear));
     }
 
     @Override
