@@ -109,7 +109,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 DateTime dtCurrent = currentAssignment.getDueDate();
                 DateTime dtNow = new DateTime();
 
-                if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 1) { // Overdue
+                if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() >= 1) { // Overdue
                     if (notes.equals("")) return VIEW_TYPE_NORMAL;
                     else return VIEW_TYPE_NORMAL_NOTES;
                 }
@@ -188,16 +188,21 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                     String headerText = getHeaderText(dtCurrent);
                     holder.textHeader.setText(headerText);
                     holder.layoutHeader.setVisibility(View.VISIBLE);
-                    holder.iconDueDate.setVisibility(View.VISIBLE);
-                    holder.textDueDate.setVisibility(View.VISIBLE);
                 } else {
                     DateTime dtNow = new DateTime();
                     if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
-                            dtCurrent.isAfterNow() && dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
+                            dtCurrent.isAfterNow() &&
+                                    dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
                                     mShowDividerFlag != NEVER_SHOW_DIVIDER) {
-                        holder.iconDueDate.setVisibility(View.VISIBLE);
-                        holder.textDueDate.setVisibility(View.VISIBLE);
+                        holder.iconDueDate.setVisibility(View.GONE);
+                        holder.textDueDate.setVisibility(View.GONE);
                     }
+                }
+                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
+                        holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
+                        dtCurrent.isBeforeNow()) {
+                    holder.iconDueDate.setVisibility(View.VISIBLE);
+                    holder.textDueDate.setVisibility(View.VISIBLE);
                 }
 
                 if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
@@ -236,9 +241,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                         assignmentType);
 
                 holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
-
                 holder.textAssignmentName.setText(assignment.getTitle());
-
                 holder.textClassType.setText(classAndTypeText);
     }
 
