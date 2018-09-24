@@ -106,6 +106,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
             }
 
             mAssignment.setDueDate(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0));
+            mAssignment.setClassId((int) mSelectedClassId);
 
             new Thread(() -> PlannerDatabase.getInstance(getContext()).assignmentDao().updateAssignment(mAssignment)).start();
             dismiss();

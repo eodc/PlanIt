@@ -13,7 +13,6 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
         android:visibility="gone"
         tools:visibility="visible">
 
@@ -22,10 +21,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/black"
+            android:layout_marginLeft="22dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="24dp"
+            android:alpha=".64"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
             tools:text="Due Today" />
     </LinearLayout>
 
@@ -72,7 +72,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
         android:alpha="0.6"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/class_and_type"
         app:layout_constraintStart_toEndOf="@+id/class_color"
         app:layout_constraintTop_toBottomOf="@+id/assignment_name"
@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/ic_due_date"
         app:layout_constraintStart_toEndOf="@+id/ic_due_date"
         app:layout_constraintTop_toTopOf="@+id/ic_due_date"

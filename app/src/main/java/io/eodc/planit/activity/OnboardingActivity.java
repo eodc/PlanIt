@@ -80,25 +80,6 @@ public class OnboardingActivity extends AppCompatActivity implements
             mTabLayout.setupWithViewPager(mViewPager);
             mViewPager.addOnPageChangeListener(this);
 
-            ViewModelProviders.of(this).get(ClassListViewModel.class)
-                    .getClasses().observe(this, classes -> {
-                        if (classes != null) {
-                            if (mTabLayout.getSelectedTabPosition() == mTabLayout.getTabCount() - 1) {
-                                if (classes.size() == 0) {
-                                    mBtnNext.setOnClickListener(null);
-                                    mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-                                } else {
-                                    mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-                                    mBtnNext.setOnClickListener(v -> {
-                                       preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
-                                       Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
-                                       startActivity(intent);
-                                    });
-                                }
-                            }
-                        }
-            });
-
             preferences.edit()
                     .putString(getString(R.string.pref_show_notif_time_key), "19:00")
                     .apply();
@@ -117,12 +98,26 @@ public class OnboardingActivity extends AppCompatActivity implements
         if (position == 0) mBtnBack.setVisibility(View.GONE);
         else if (position == mTabLayout.getTabCount() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
-            ViewModelProviders
-                    .of(this).get(ClassListViewModel.class)
+            ViewModelProviders.of(this).get(ClassListViewModel.class)
                     .getClasses().observe(this, classes -> {
-                        if (classes != null && classes.size() == 0 || classes == null)
-                        mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                        if (classes != null) {
+                            if (mTabLayout.getSelectedTabPosition() == mTabLayout.getTabCount() - 1) {
+                                if (classes.size() == 0) {
+                                    mBtnNext.setOnClickListener(null);
+                                    mBtnNext.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+                                } else {
+                                    mBtnNext.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+                                    mBtnNext.setOnClickListener(v -> {
+                                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                                        preferences.edit().putBoolean(getString(R.string.pref_first_time_key), false).apply();
+                                        Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    });
+                                }
+                            }
+                        }
                     });
+
         } else {
             mBtnBack.setVisibility(View.VISIBLE);
             mBtnNext.setText(getString(R.string.btn_next_label));
