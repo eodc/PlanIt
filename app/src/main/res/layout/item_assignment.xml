@@ -26,6 +26,7 @@
             android:layout_marginTop="24dp"
             android:alpha=".64"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textStyle="bold"
             tools:text="Due Today" />
     </LinearLayout>
 

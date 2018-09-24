@@ -132,9 +132,11 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                         } else {
                             if (dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() == 1 &&
                                     getItemViewType(position - 1) == VIEW_TYPE_DIVIDER ||
+                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER_NOTES ||
                                     dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
                                             dtCurrent.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
-                                            getItemViewType(position - 1) == VIEW_TYPE_NORMAL) {
+                                            getItemViewType(position - 1) == VIEW_TYPE_NORMAL ||
+                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER_NOTES) {
                                 if (notes.equals("")) return VIEW_TYPE_NORMAL;
                                 else return VIEW_TYPE_NORMAL_NOTES;
                             } else {
@@ -200,7 +202,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 }
                 if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
                         holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
-                        dtCurrent.isBeforeNow()) {
+                        dtCurrent.isBeforeNow() ||
+                        dtCurrent.getWeekOfWeekyear() - new DateTime().getWeekOfWeekyear() > 0) {
                     holder.iconDueDate.setVisibility(View.VISIBLE);
                     holder.textDueDate.setVisibility(View.VISIBLE);
                 }
