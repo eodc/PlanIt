@@ -23,11 +23,9 @@ import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,9 +53,9 @@ public class CalendarFragment extends BaseFragment implements
     @BindView(R.id.tv_all_done)         TextView                mTvAllDone;
 
     private AssignmentListViewModel     mAssignmentListViewModel;
-    private LiveData<List<Assignment>>  mCurrentMonthAssignments;
+    private LiveData<List<Assignment>>  mAllAssignments;
     private LiveData<List<Assignment>>  mCurrentDayAssignments;
-    private HashMap<DateTime, Integer>  mDateAssignmentCountMap;
+    private List<DateTime>              mDateHasAssignmentList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,18 +63,13 @@ public class CalendarFragment extends BaseFragment implements
         ViewModelProviders.of(this).get(ClassListViewModel.class)
                 .getClasses().observe(this, this::onClassesGet);
 
-        DateTime monthBeginning = new DateTime().withDayOfMonth(1).withTimeAtStartOfDay();
 
         mAssignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
 
-        mCurrentMonthAssignments = mAssignmentListViewModel
-                .getAssignmentsBetweenDates(
-                        monthBeginning,
-                        monthBeginning
-                                .plusMonths(1)
-                                .minusDays(1));
-        mCurrentMonthAssignments.observe(this, this::onDateRangeAssignmentsChange);
+        mAllAssignments = mAssignmentListViewModel
+                .getAllAssignments();
+        mAllAssignments.observe(this, this::onDateRangeAssignmentsChange);
     }
 
     @Nullable
@@ -138,29 +131,28 @@ public class CalendarFragment extends BaseFragment implements
 
     private void onDateRangeAssignmentsChange(List<Assignment> assignments) {
         if (assignments != null) {
-            mDateAssignmentCountMap = new HashMap<>();
-            int checkPosition = -1;
-            ListIterator<Assignment> assignmentIterator = assignments.listIterator();
-            while (assignmentIterator.hasNext()) {
-                Assignment currentAssignment = assignments.iterator().next();
-                DateTime currentDate = currentAssignment.getDueDate();
-                DateTime nextDate = new DateTime(currentDate);
-                int count = 0;
-                while (currentDate.getDayOfYear() == nextDate.getDayOfYear() && assignmentIterator.hasNext()) {
-                    nextDate = assignmentIterator.next().getDueDate();
-                    count++;
-                }
-                if (!assignmentIterator.hasNext()) {
-                    count++;
-                }
-                mDateAssignmentCountMap.put(currentDate, count);
-                checkPosition++;
-                if (assignmentIterator.hasNext()) {
-                    assignmentIterator = assignments.listIterator(checkPosition);
+            mDateHasAssignmentList = new ArrayList<DateTime>(){{
+                add(assignments.get(0).getDueDate());
+            }};
+            int currIndex = 0;
+            for (int i = 0; i < assignments.size(); ++i) {
+                Assignment nextAssign = findNextDueAssign(assignments, currIndex);
+                if (nextAssign != null) {
+                    mDateHasAssignmentList.add(nextAssign.getDueDate());
+                    currIndex = assignments.indexOf(nextAssign);
                 }
             }
             mCalendar.addDecorator(this);
         }
+    }
+
+    private Assignment findNextDueAssign(List<Assignment> assignments, int currIndex) {
+        for (int i = currIndex; i < assignments.size(); ++i) {
+            Assignment currAssignment = assignments.get(i);
+            DateTime mostRecent = mDateHasAssignmentList.get(mDateHasAssignmentList.size() - 1);
+            if (mostRecent.isBefore(currAssignment.getDueDate())) return currAssignment;
+        }
+        return null;
     }
 
     @Override
@@ -171,27 +163,18 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     @Override
-    public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
-        DateTime currentMonth = new DateTime().withDayOfMonth(1).withTimeAtStartOfDay();
-        mCurrentMonthAssignments.removeObservers(this);
-        mCurrentMonthAssignments = mAssignmentListViewModel.getAssignmentsBetweenDates(
-                currentMonth,
-                currentMonth
-                        .plusMonths(1)
-                        .minusDays(1));
-    }
-
-    @Override
     public boolean shouldDecorate(CalendarDay day) {
-        for (Object o : mDateAssignmentCountMap.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            DateTime dtCalDay = new DateTime(day.getDate());
-            DateTime dtKey = (DateTime) pair.getKey();
-            if (dtKey.getDayOfMonth() == dtCalDay.getDayOfMonth() && (int) pair.getValue() > 0) return true;
+        for (DateTime date : mDateHasAssignmentList) {
+            if (new DateTime(day.getDate()).equals(date)) return true;
         }
         return false;
     }
 
     @Override
     public void decorate(DayViewFacade view) { view.addSpan(new DotSpan(5f)); }
+
+    @Override
+    public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+
+    }
 }
