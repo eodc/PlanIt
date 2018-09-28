@@ -53,7 +53,6 @@ public class CalendarFragment extends BaseFragment implements
     @BindView(R.id.tv_all_done)         TextView                mTvAllDone;
 
     private AssignmentListViewModel     mAssignmentListViewModel;
-    private LiveData<List<Assignment>>  mAllAssignments;
     private LiveData<List<Assignment>>  mCurrentDayAssignments;
     private List<DateTime>              mDateHasAssignmentList;
 
@@ -67,7 +66,7 @@ public class CalendarFragment extends BaseFragment implements
         mAssignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
 
-        mAllAssignments = mAssignmentListViewModel
+        LiveData<List<Assignment>> mAllAssignments = mAssignmentListViewModel
                 .getAllAssignments();
         mAllAssignments.observe(this, this::onDateRangeAssignmentsChange);
     }

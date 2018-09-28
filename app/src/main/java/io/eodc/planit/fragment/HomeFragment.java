@@ -68,24 +68,24 @@ public class HomeFragment extends BaseFragment {
                 .observe(this, classes -> {
                     mTodayAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
                     mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+
+                    assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
+                    DateTime today = new DateTime().withTimeAtStartOfDay();
+                    DateTime dateToRetrieve;
+
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+                    if (preferences.getString(getString(R.string.pref_what_assign_show_key), "")
+                            .equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
+                        dateToRetrieve = today;
+                    } else {
+                        dateToRetrieve = today.plusDays(1);
+                    }
+
+                    assignmentListViewModel.getAssignmentsDueOnDay(dateToRetrieve).observe(this, this::onDaysAssignmentsGet);
+                    assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
+                    assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
                 });
-
-        assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
-        DateTime today = new DateTime().withTimeAtStartOfDay();
-        DateTime dateToRetrieve;
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-        if (preferences.getString(getString(R.string.pref_what_assign_show_key), "")
-                .equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
-            dateToRetrieve = today;
-        } else {
-            dateToRetrieve = today.plusDays(1);
-        }
-
-        assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
-        assignmentListViewModel.getAssignmentsDueOnDay(dateToRetrieve).observe(this, this::onDaysAssignmentsGet);
-        assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
     }
 
     @Nullable
