@@ -44,10 +44,20 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
         return assignment;
     }
 
+    void hideDueDate() {
+        textDueDate.setVisibility(View.GONE);
+        iconDueDate.setVisibility(View.GONE);
+    }
+
+    void showDueDate() {
+        textDueDate.setVisibility(View.VISIBLE);
+        iconDueDate.setVisibility(View.VISIBLE);
+    }
+
     /**
      * Hides the textNotes section of the view
      */
-    public void shrinkNotes() {
+    void shrinkNotes() {
         iconExpand.animate()
                 .rotation(0f);
         textNotes.setVisibility(View.GONE);
@@ -57,10 +67,18 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     /**
      * Shows the textNotes section of the vie
      */
-    public void expandNotes() {
+    void expandNotes() {
         iconExpand.animate()
                 .rotation(-180f);
         textNotes.setVisibility(View.VISIBLE);
         isExpanded = true;
+    }
+
+    void handleNoteClick() {
+        if (isExpanded) {
+            shrinkNotes();
+        } else {
+            expandNotes();
+        }
     }
 }

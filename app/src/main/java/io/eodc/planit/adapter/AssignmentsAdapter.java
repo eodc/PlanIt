@@ -160,6 +160,10 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     @Override
     public void onBindViewHolder(@NonNull AssignmentViewHolder holder, int position) {
             Assignment assignment = mAssignments.get(position);
+            Assignment previousAssignment = null;
+            if (position > 0) {
+                previousAssignment = mAssignments.get(position - 1);
+            }
             Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
 
             DateTime dtCurrent = assignment.getDueDate();
@@ -190,27 +194,20 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                             dtCurrent.isAfterNow() &&
                                     dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
                                     mShowDividerFlag != NEVER_SHOW_DIVIDER) {
-                        holder.iconDueDate.setVisibility(View.GONE);
-                        holder.textDueDate.setVisibility(View.GONE);
+                        holder.hideDueDate();
                     }
                 }
+
                 if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER ||
-                        dtCurrent.isBeforeNow() ||
-                        dtCurrent.getWeekOfWeekyear() - new DateTime().getWeekOfWeekyear() > 0) {
-                    holder.iconDueDate.setVisibility(View.VISIBLE);
-                    holder.textDueDate.setVisibility(View.VISIBLE);
+                        previousAssignment != null &&
+                        !assignment.getDueDate().dayOfYear().equals(previousAssignment.getDueDate().dayOfYear())) {
+                    holder.showDueDate();
                 }
 
                 if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
                     holder.iconExpand.setVisibility(View.VISIBLE);
                     holder.textNotes.setText(assignment.getNotes());
-                    holder.itemView.setOnClickListener(view -> {
-                        if (holder.isExpanded) {
-                            holder.shrinkNotes();
-                        } else {
-                            holder.expandNotes();
-                        }
-                    });
+                    holder.itemView.setOnClickListener(view -> holder.handleNoteClick());
                 }
 
                 holder.itemView.setOnLongClickListener(view -> {
@@ -239,7 +236,6 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 holder.textAssignmentName.setText(assignment.getTitle());
                 holder.textClassType.setText(classAndTypeText);
     }
-
 
     @Override
     public int getItemCount() {
