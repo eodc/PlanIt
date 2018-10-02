@@ -23,6 +23,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.common.collect.Iterables;
+
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
@@ -106,7 +108,6 @@ public class ModifyAssignmentFragment extends DialogFragment implements
             }
 
             mAssignment.setDueDate(new DateTime(mDueYear, mDueMonth, mDueDay, 0, 0));
-            mAssignment.setClassId((int) mSelectedClassId);
 
             new Thread(() -> PlannerDatabase.getInstance(getContext()).assignmentDao().updateAssignment(mAssignment)).start();
             dismiss();
@@ -145,9 +146,6 @@ public class ModifyAssignmentFragment extends DialogFragment implements
         ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
                 .observe(this, this::setupClassSpinner);
 
-        setupTypeSpinner();
-        fillAssignmentInfo();
-        setupInputListeners();
     }
 
     private void setupInputListeners() {
@@ -233,10 +231,19 @@ public class ModifyAssignmentFragment extends DialogFragment implements
 
     private void setupClassSpinner(List<Class> classes) {
         if (getContext() != null) {
-            ArrayAdapter mClassAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item,
-                    android.R.id.text1, classes);
+            ArrayAdapter mClassAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    android.R.id.text1,
+                    classes);
             mSpinnerClass.setAdapter(mClassAdapter);
             mSpinnerClass.setOnItemSelectedListener(this);
+
+            mSpinnerClass.setSelection(Iterables.indexOf(classes,
+                    c -> c.getId() == mAssignment.getClassId()));
+
+            setupTypeSpinner();
+            fillAssignmentInfo();
+            setupInputListeners();
         }
     }
 
@@ -245,8 +252,6 @@ public class ModifyAssignmentFragment extends DialogFragment implements
         mEditTitle.setText(mAssignment.getTitle());
         mEditDueDate.setText(dtDue.toString("dd MMM, YYYY"));
         mEditNotes.setText(mAssignment.getNotes());
-
-        mSpinnerClass.setSelection(mAssignment.getClassId() - 1);
 
         mDueDay = dtDue.getDayOfMonth();
         mDueMonth = dtDue.getMonthOfYear();
@@ -267,7 +272,10 @@ public class ModifyAssignmentFragment extends DialogFragment implements
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.equals(mSpinnerType)) mSelectedType = position;
-        else if (parent.equals(mSpinnerClass)) mSelectedClassId = id + 1;
+        else if (parent.equals(mSpinnerClass)) {
+            Class selected = (Class) parent.getSelectedItem();
+            mSelectedClassId = selected.getId();
+        }
     }
 
     @Override
