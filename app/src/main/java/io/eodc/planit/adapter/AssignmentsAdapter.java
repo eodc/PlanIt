@@ -34,10 +34,9 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     private static final int NEVER_SHOW_DIVIDER         = 0;
 
-    private static final int VIEW_TYPE_NORMAL           = 0;
-    private static final int VIEW_TYPE_DIVIDER          = 1;
-    private static final int VIEW_TYPE_NORMAL_NOTES     = 2;
-    private static final int VIEW_TYPE_DIVIDER_NOTES    = 3;
+    private static final int VIEW_TYPE_NORMAL           = 1 << 1;
+    private static final int VIEW_TYPE_DIVIDER          = 1 << 2;
+    private static final int VIEW_TYPE_NOTES            = 1 << 3;
 
     private Context                     mContext;
 
@@ -98,61 +97,57 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      */
     @Override
     public int getItemViewType(int position) {
-        if (mShowDividerFlag == NEVER_SHOW_DIVIDER) return VIEW_TYPE_NORMAL;
-            Assignment currentAssignment = mAssignments.get(position);
-            String notes = currentAssignment.getNotes().trim();
+        Assignment currentAssignment = mAssignments.get(position);
+        boolean hasNotes = !currentAssignment.getNotes()
+                .trim()
+                .equals("");
 
-            if (position == 0) {
-                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                else return VIEW_TYPE_DIVIDER_NOTES;
-            } else {
-                DateTime dtCurrent = currentAssignment.getDueDate();
-                DateTime dtNow = new DateTime();
+        if (mShowDividerFlag == NEVER_SHOW_DIVIDER) {
+            return getNormalViewType(hasNotes);
+        }
+        if (position == 0) {
+            return getDividerViewType(hasNotes);
+        } else {
+            DateTime previousDue = mAssignments.get(position - 1)
+                    .getDueDate();
+            DateTime currentDue = currentAssignment.getDueDate();
+            DateTime now = new DateTime();
 
-                if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() >= 1) { // Overdue
-                    if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                    else return VIEW_TYPE_NORMAL_NOTES;
-                }
-
-                DateTime dtLast = mAssignments.get(position - 1).getDueDate();
-                if (dtCurrent.getYear() == dtLast.getYear()) {
-                    if (dtCurrent.getMonthOfYear() != dtNow.getMonthOfYear() &&
-                            dtCurrent.getMonthOfYear() == dtLast.getMonthOfYear()) {
-                        if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                        else return VIEW_TYPE_NORMAL_NOTES;
-                    } else if (dtCurrent.getMonthOfYear() == dtNow.getMonthOfYear()) {
-                        if (dtCurrent.getWeekOfWeekyear() == dtNow.getWeekOfWeekyear()) {
-                            if (dtCurrent.getDayOfYear() == dtLast.getDayOfYear()) {
-                                if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                                else return VIEW_TYPE_NORMAL_NOTES;
-                            } else {
-                                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                                else return VIEW_TYPE_DIVIDER_NOTES;
-                            }
-                        } else {
-                            if (dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() == 1 &&
-                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER ||
-                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER_NOTES ||
-                                    dtLast.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
-                                            dtCurrent.getWeekOfWeekyear() - dtNow.getWeekOfWeekyear() > 0 &&
-                                            getItemViewType(position - 1) == VIEW_TYPE_NORMAL ||
-                                    getItemViewType(position - 1) == VIEW_TYPE_DIVIDER_NOTES) {
-                                if (notes.equals("")) return VIEW_TYPE_NORMAL;
-                                else return VIEW_TYPE_NORMAL_NOTES;
-                            } else {
-                                if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                                else return VIEW_TYPE_DIVIDER_NOTES;
-                            }
-                        }
-                    } else {
-                        if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                        else return VIEW_TYPE_DIVIDER_NOTES;
-                    }
-                } else {
-                    if (notes.equals("")) return VIEW_TYPE_DIVIDER;
-                    else return VIEW_TYPE_DIVIDER_NOTES;
-                }
+            if (currentDue.isBeforeNow() && now.getDayOfYear() - currentDue.getDayOfYear() >= 1) { // Overdue [Don't divide]
+                return getNormalViewType(hasNotes);
             }
+
+            if (currentDue.isBefore(now.plusWeeks(1))) { // Within same week (Now + 7 days) [Divide for every day]
+                return !currentDue.dayOfWeek().equals(previousDue.dayOfWeek()) ?
+                    getDividerViewType(hasNotes) :
+                    getNormalViewType(hasNotes);
+            } else if (currentDue.monthOfYear().equals(now.monthOfYear())) { // Within same month [Divide for every week]
+                return !currentDue.weekOfWeekyear().equals(previousDue.weekOfWeekyear()) ?
+                        getDividerViewType(hasNotes) :
+                        getNormalViewType(hasNotes);
+            } else if (currentDue.year().equals(now.year())) { // Within same year [Divide for every month]
+                return !currentDue.monthOfYear().equals(previousDue.monthOfYear()) ||
+                        previousDue.isBefore(now.plusWeeks(1)) ?
+                        getDividerViewType(hasNotes) :
+                        getNormalViewType(hasNotes);
+            } else {
+                return !currentDue.year().equals(previousDue.year()) ?
+                        getDividerViewType(hasNotes) :
+                        getNormalViewType(hasNotes);
+            }
+        }
+    }
+
+    private int getDividerViewType(boolean hasNotes) {
+        return hasNotes ?
+                VIEW_TYPE_DIVIDER | VIEW_TYPE_NOTES :
+                VIEW_TYPE_DIVIDER;
+    }
+
+    private int getNormalViewType(boolean hasNotes) {
+        return hasNotes ?
+                VIEW_TYPE_NORMAL | VIEW_TYPE_NOTES :
+                VIEW_TYPE_NORMAL;
     }
 
     @NonNull
@@ -163,7 +158,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final AssignmentViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AssignmentViewHolder holder, int position) {
             Assignment assignment = mAssignments.get(position);
             Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
 
@@ -185,8 +180,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 holder.textDueDate.setText(dtCurrent.toString(mContext.getString(R.string.due_date_pattern)));
                 holder.assignment = assignment;
 
-                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
-                        holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES) {
+                if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER) {
                     String headerText = getHeaderText(dtCurrent);
                     holder.textHeader.setText(headerText);
                     holder.layoutHeader.setVisibility(View.VISIBLE);
@@ -200,16 +194,14 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                         holder.textDueDate.setVisibility(View.GONE);
                     }
                 }
-                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER ||
-                        holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
+                if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER ||
                         dtCurrent.isBeforeNow() ||
                         dtCurrent.getWeekOfWeekyear() - new DateTime().getWeekOfWeekyear() > 0) {
                     holder.iconDueDate.setVisibility(View.VISIBLE);
                     holder.textDueDate.setVisibility(View.VISIBLE);
                 }
 
-                if (holder.getItemViewType() == VIEW_TYPE_DIVIDER_NOTES ||
-                        holder.getItemViewType() == VIEW_TYPE_NORMAL_NOTES) {
+                if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
                     holder.iconExpand.setVisibility(View.VISIBLE);
                     holder.textNotes.setText(assignment.getNotes());
                     holder.itemView.setOnClickListener(view -> {
@@ -258,32 +250,53 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
      * Gets the text shown at the divider (layoutHeader) based off of the assignment's due date and the
      * current day.
      *
-     * @param dtCurrent The {@link DateTime} of the assignment with the layoutHeader shown
+     * @param currentDue The {@link DateTime} of the assignment with the layoutHeader shown
      * @return The parsed layoutHeader text
      */
-    private String getHeaderText(DateTime dtCurrent) {
-        DateTime dtNow = new DateTime();
-        if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0) {
+    private String getHeaderText(DateTime currentDue) {
+        DateTime now = new DateTime();
+        if (currentDue.isBeforeNow() && now.getDayOfYear() - currentDue.getDayOfYear() >= 1) { // Overdue
             return "Overdue";
         }
-        if (dtCurrent.getYear() == dtNow.getYear()) {
-            if (dtCurrent.getMonthOfYear() == dtNow.getMonthOfYear()) {
-                if (dtCurrent.getWeekOfWeekyear() == dtNow.getWeekOfWeekyear()) {
-                    if (dtCurrent.getDayOfYear() == dtNow.getDayOfYear()) return mContext.getString(R.string.assignment_header_near_future_text, "Today");
-                    if (dtCurrent.getDayOfYear() - dtNow.getDayOfYear() == 1) return mContext.getString(R.string.assignment_header_near_future_text, "Tomorrow");
-                    else return mContext.getString(R.string.assignment_header_far_future_text,
-                            String.valueOf(dtCurrent.getDayOfYear() - dtNow.getDayOfYear()) + " Days");
-                } else
-                    return mContext.getString(R.string.assignment_header_near_future_text, "This Month");
-            } else return dtCurrent.getMonthOfYear() - dtNow.getMonthOfYear() == 1 ?
-                    mContext.getString(R.string.assignment_header_near_future_text, "Next Month") :
-                    mContext.getString(R.string.assignment_header_far_future_text,
-                            String.valueOf(dtCurrent.getMonthOfYear() - dtNow.getMonthOfYear()) + " Months");
-        } else
-            return dtCurrent.getYear() - dtNow.getYear() == 1 ? mContext.getString(R.string.assignment_header_near_future_text,
-                    "Next Near") :
-                    mContext.getString(R.string.assignment_header_far_future_text,
-                            String.valueOf(dtCurrent.getYear() - dtNow.getYear())) + " Years";
+        if (currentDue.isBefore(now.plusWeeks(1))) { // Within same week (Now + 7 days) [Divide for every day]
+            int daysUntil = currentDue.getDayOfYear() - now.getDayOfYear();
+            switch (daysUntil) {
+                case 0:
+                    return mContext.getString(R.string.assignment_header_near_future_text,
+                            "Today");
+                case 1:
+                    return mContext.getString(R.string.assignment_header_near_future_text,
+                            "Tomorrow");
+                default:
+                    return mContext.getString(R.string.assignment_header_far_future_text,
+                            daysUntil, "Days");
+            }
+        } else if (currentDue.monthOfYear().equals(now.monthOfYear())) { // Within same month [Divide for every week]
+            int weeksUntil = currentDue.getWeekOfWeekyear() - now.getWeekOfWeekyear();
+            switch (weeksUntil) {
+                case 1:
+                    return mContext.getString(R.string.assignment_header_near_future_text,
+                            "Next Week");
+                default:
+                    return mContext.getString(R.string.assignment_header_far_future_text,
+                            weeksUntil,
+                            "Weeks");
+            }
+        } else if (currentDue.year().equals(now.year())) { // Within same year [Divide for every month]
+            return mContext.getString(R.string.assignment_header_near_future_text,
+                    "in " + currentDue.toString(mContext.getString(R.string.assignment_header_month_pattern)));
+        } else {
+            int yearsUntil = currentDue.getYear() - now.getYear();
+            switch (yearsUntil) {
+                case 1:
+                    return mContext.getString(R.string.assignment_header_near_future_text,
+                            "Next Year");
+                default:
+                    return mContext.getString(R.string.assignment_header_far_future_text,
+                            yearsUntil,
+                            "Years");
+            }
+        }
     }
 
 }

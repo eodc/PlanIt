@@ -23,7 +23,8 @@
     <string name="due_date_pattern">dd MMM, YYYY</string>
 
     <string name="assignment_header_near_future_text" translatable="false">Due %s</string>
-    <string name="assignment_header_far_future_text" translatable="false">Due in %s</string>
+    <string name="assignment_header_far_future_text" translatable="false">Due in %d %s</string>
+    <string name="assignment_header_month_pattern">MMMM</string>
 
     <string name="class_name_and_type_text" translatable="false">%1$s %2$s</string>
 

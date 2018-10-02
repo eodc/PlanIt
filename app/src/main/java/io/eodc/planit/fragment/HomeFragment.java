@@ -126,6 +126,7 @@ public class HomeFragment extends BaseFragment {
             }
             iterator = assignments.listIterator(0);
             entries.add(new Entry(checkDate.getMillis(), count));
+            mGraphWeek.getAxisLeft().setAxisMaximum(Math.max(mGraphWeek.getAxisLeft().mAxisMaximum, count));
             checkDate = checkDate.plusDays(1);
             totalCount += count;
         }
@@ -162,6 +163,8 @@ public class HomeFragment extends BaseFragment {
         mGraphWeek.getAxisRight().setDrawLabels(false);
         mGraphWeek.getAxisRight().setDrawGridLines(false);
         mGraphWeek.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        mGraphWeek.getAxisLeft().setAxisMinimum(0);
+        mGraphWeek.getAxisLeft().setAxisMaximum(5);
         mGraphWeek.getDescription().setText("");
         mGraphWeek.getLegend().setEnabled(false);
         mGraphWeek.setDoubleTapToZoomEnabled(false);
