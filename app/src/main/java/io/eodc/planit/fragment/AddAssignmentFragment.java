@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,13 +12,10 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -40,6 +36,8 @@ import io.eodc.planit.adapter.AssignmentType;
 import io.eodc.planit.adapter.AssignmentTypeAdapter;
 import io.eodc.planit.db.Assignment;
 import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.helper.AssignmentInfoInputHelper;
+import io.eodc.planit.helper.KeyboardFocusManager;
 import io.eodc.planit.model.ClassListViewModel;
 
 /**
@@ -166,59 +164,13 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
     }
 
     private void setupInputListeners() {
-        mEditTitle.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    mLayoutEditTitle.setError("Title can't be empty");
-                } else {
-                    mLayoutEditTitle.setError("");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        mEditDueDate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("")) {
-                    mLayoutEditDueDate.setError("Due date can't be empty");
-                } else {
-                    mLayoutEditDueDate.setError("");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mEditTitle.addTextChangedListener(new AssignmentInfoInputHelper(mLayoutEditTitle));
         if (getView() != null) {
             getView().setOnTouchListener((v, motionEvent) -> {
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        if (getContext() != null) {
-                            InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            if (inputManager != null) {
-                                inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                mEditTitle.clearFocus();
-                                mEditDueDate.clearFocus();
-                                mEditNotes.clearFocus();
-                            }
-                        }
+                        KeyboardFocusManager.clearTextFocus(getContext(),
+                                v, mEditDueDate, mEditNotes, mEditTitle);
                         break;
                     case MotionEvent.ACTION_UP:
                         v.performClick();
