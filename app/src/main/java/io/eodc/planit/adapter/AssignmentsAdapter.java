@@ -197,18 +197,9 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             holder.textHeader.setText(headerText);
             holder.layoutHeader.setVisibility(View.VISIBLE);
             holder.showDueDate();
-        } else {
-            DateTime dtNow = new DateTime();
-            if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
-                    dtCurrent.isAfterNow() &&
-                            dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
-                            mShowDividerFlag != NEVER_SHOW_DIVIDER) {
-                holder.hideDueDate();
-            } else if (previousAssignment != null &&
-                    !assignment.getDueDate().dayOfYear()
-                            .equals(previousAssignment.getDueDate().dayOfYear())) {
-                holder.showDueDate();
-            }
+        } else if (!assignment.getDueDate().dayOfYear()
+                .equals(previousAssignment.getDueDate().dayOfYear())) {
+            holder.showDueDate();
         }
 
         if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
