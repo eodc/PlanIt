@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.eodc.planit">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop" />
 
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/activity_settings_title"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.MainActivity" />
 
         <activity
             android:name=".activity.ClassesActivity"
             android:label="@string/activity_classes_title"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.SettingsActivity" />
 
         <activity
             android:name=".activity.OnboardingActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +49,8 @@
         <activity
             android:name=".activity.LicensesActivity"
             android:label="@string/activity_licenses_title"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.SettingsActivity" />
 

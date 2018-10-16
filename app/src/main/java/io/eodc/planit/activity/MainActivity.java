@@ -65,10 +65,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String initScreen = sharedPreferences.getString(getString(R.string.pref_init_page_key), getString(R.string.pref_init_page_home_value));
 
+        mBottomNav.setCurrentItem(-1); // Set nav to out of bounds so that callback for home is fired. Makes for consistent code in the if-block
         if (initScreen.equals(getString(R.string.pref_init_page_home_value))) {
-            mFragmentManager.beginTransaction().add(R.id.content_fragment, new HomeFragment()).commit();
-        }  else if (initScreen.equals(getString(R.string.pref_init_page_planner_value))) mBottomNav.setCurrentItem(1);
-        else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value))) mBottomNav.setCurrentItem(2);
+            mBottomNav.setCurrentItem(0);
+        } else if (initScreen.equals(getString(R.string.pref_init_page_planner_value))) {
+            mBottomNav.setCurrentItem(1);
+        } else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value))) {
+            mBottomNav.setCurrentItem(2);
+        }
 
     }
 
