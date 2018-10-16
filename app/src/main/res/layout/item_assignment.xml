@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:animateLayoutChanges="true">
 
     <LinearLayout
         android:id="@+id/header"
@@ -55,40 +56,28 @@
         android:id="@+id/class_and_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
         android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/notes_text"
         app:layout_constraintStart_toEndOf="@+id/class_color"
-        app:layout_constraintTop_toBottomOf="@+id/ic_due_date"
+        app:layout_constraintTop_toBottomOf="@+id/due_date"
         tools:text="Example Class Homework" />
-
-    <ImageView
-        android:id="@+id/ic_due_date"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:alpha="0.6"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/class_and_type"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
-        app:layout_constraintTop_toBottomOf="@+id/assignment_name"
-        app:srcCompat="@drawable/ic_due_date_24dp" />
 
     <TextView
         android:id="@+id/due_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/ic_due_date"
-        app:layout_constraintStart_toEndOf="@+id/ic_due_date"
-        app:layout_constraintTop_toTopOf="@+id/ic_due_date"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        android:drawableStart="@drawable/ic_due_date_20dp"
+        android:drawableLeft="@drawable/ic_due_date_20dp"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toEndOf="@+id/class_color"
+        app:layout_constraintTop_toBottomOf="@+id/assignment_name"
         tools:text="Apr 20, 2018" />
 
     <ImageView
