@@ -129,10 +129,9 @@ public class CalendarFragment extends BaseFragment implements
     }
 
     private void onDateRangeAssignmentsChange(List<Assignment> assignments) {
-        if (assignments != null) {
-            mDateHasAssignmentList = new ArrayList<DateTime>(){{
-                add(assignments.get(0).getDueDate());
-            }};
+        mDateHasAssignmentList = new ArrayList<>();
+        if (assignments != null && assignments.size() > 0) {
+            mDateHasAssignmentList.add(assignments.get(0).getDueDate());
             int currIndex = 0;
             for (int i = 0; i < assignments.size(); ++i) {
                 Assignment nextAssign = findNextDueAssign(assignments, currIndex);
@@ -141,8 +140,8 @@ public class CalendarFragment extends BaseFragment implements
                     currIndex = assignments.indexOf(nextAssign);
                 }
             }
-            mCalendar.addDecorator(this);
         }
+        mCalendar.addDecorator(this);
     }
 
     private Assignment findNextDueAssign(List<Assignment> assignments, int currIndex) {
