@@ -50,16 +50,16 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         AdapterView.OnItemSelectedListener,
         DatePickerDialog.OnDateSetListener {
 
-    @BindView(R.id.due_date_chooser)            EditText        mEditDueDate;
-    @BindView(R.id.edit_assignment_name)        EditText        mEditTitle;
+    @BindView(R.id.edit_due)            EditText        mEditDueDate;
+    @BindView(R.id.edit_title)        EditText        mEditTitle;
     @BindView(R.id.edit_notes)                  EditText        mEditNotes;
-    @BindView(R.id.edit_layout_assignment_name) TextInputLayout mLayoutEditTitle;
-    @BindView(R.id.edit_layout_due_date)        TextInputLayout mLayoutEditDueDate;
-    @BindView(R.id.type_chooser)                Spinner         mTypeSpinner;
-    @BindView(R.id.class_chooser)               Spinner         mClassSpinner;
+    @BindView(R.id.layout_edit_title) TextInputLayout mLayoutEditTitle;
+    @BindView(R.id.layout_edit_due)        TextInputLayout mLayoutEditDueDate;
+    @BindView(R.id.spinner_type)                Spinner         mTypeSpinner;
+    @BindView(R.id.spinner_class)               Spinner         mClassSpinner;
 
     @SuppressLint("StaticFieldLeak")
-    @OnClick(R.id.create_button) void addAssignment() {
+    @OnClick(R.id.btn_create) void addAssignment() {
         if (getView() != null) {
             String titleText = mEditTitle.getText().toString().trim();
             String dueDateText = mEditDueDate.getText().toString().trim();
@@ -98,7 +98,7 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         }
     }
 
-    @OnClick(R.id.due_date_chooser) void handleDueDateChooser() {
+    @OnClick(R.id.edit_due) void handleDueDateChooser() {
         if (getFragmentManager() != null) {
             DialogFragment datePicker = DatePickerFragment.newInstance(this);
             datePicker.show(getFragmentManager(), "datePicker");
@@ -200,7 +200,7 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
             types.add(new AssignmentType("Homework", R.drawable.ic_homework_black_24dp));
             types.add(new AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp));
             types.add(new AssignmentType("Project", R.drawable.ic_group_black_24dp));
-            AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(getContext(), R.layout.item_assignment_type, R.id.title, types);
+            AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(getContext(), R.layout.item_assignment_type, R.id.text_title, types);
             mTypeSpinner.setAdapter(typeAdapter);
             mTypeSpinner.setSelection(0);
             mTypeSpinner.setOnItemSelectedListener(this);

@@ -15,7 +15,7 @@ import io.eodc.planit.R;
  * @see io.eodc.planit.fragment.SettingsFragment
  */
 public class SettingsActivity extends AppCompatActivity {
-    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.tb) Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -7,14 +7,14 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/icon"
+        android:id="@+id/ic_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         tools:srcCompat="@drawable/ic_homework_black_24dp" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/text_title"
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -50,7 +50,7 @@ public class CalendarFragment extends BaseFragment implements
 
     @BindView(R.id.calendar)            MaterialCalendarView    mCalendar;
     @BindView(R.id.rv_day_assignments)  RecyclerView            mRvDaysAssignments;
-    @BindView(R.id.tv_all_done)         TextView                mTvAllDone;
+    @BindView(R.id.text_done)         TextView                mTvAllDone;
 
     private AssignmentListViewModel     mAssignmentListViewModel;
     private LiveData<List<Assignment>>  mCurrentDayAssignments;

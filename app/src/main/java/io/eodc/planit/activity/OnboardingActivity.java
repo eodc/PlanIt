@@ -36,8 +36,8 @@ import io.eodc.planit.model.ClassListViewModel;
 public class OnboardingActivity extends AppCompatActivity implements
         ViewPager.OnPageChangeListener {
 
-    @BindView(R.id.viewPager)   ViewPager   mViewPager;
-    @BindView(R.id.tabLayout)   TabLayout   mTabLayout;
+    @BindView(R.id.pager)   ViewPager   mViewPager;
+    @BindView(R.id.layout_tab)   TabLayout   mTabLayout;
     @BindView(R.id.btn_back)    Button      mBtnBack;
     @BindView(R.id.btn_next)    Button      mBtnNext;
 

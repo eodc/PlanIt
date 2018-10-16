@@ -48,13 +48,13 @@ public class ModifyAssignmentFragment extends DialogFragment implements
         AdapterView.OnItemSelectedListener {
 
     @BindView(R.id.btn_restore)                 Button              mBtnRestore;
-    @BindView(R.id.type_chooser)                Spinner             mSpinnerType;
-    @BindView(R.id.class_chooser)               Spinner             mSpinnerClass;
-    @BindView(R.id.edit_assignment_name)        EditText            mEditTitle;
+    @BindView(R.id.spinner_type)                Spinner             mSpinnerType;
+    @BindView(R.id.spinner_class)               Spinner             mSpinnerClass;
+    @BindView(R.id.edit_title)        EditText            mEditTitle;
     @BindView(R.id.edit_due_date)               EditText            mEditDueDate;
     @BindView(R.id.edit_notes)                  EditText            mEditNotes;
-    @BindView(R.id.edit_layout_assignment_name) TextInputLayout     mLayoutEditTitle;
-    @BindView(R.id.edit_layout_due_date)        TextInputLayout     mLayoutEditDueDate;
+    @BindView(R.id.layout_edit_title) TextInputLayout     mLayoutEditTitle;
+    @BindView(R.id.layout_edit_due)        TextInputLayout     mLayoutEditDueDate;
 
     private Assignment  mAssignment;
 
@@ -76,7 +76,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
     }
 
     @SuppressLint("StaticFieldLeak")
-    @OnClick(R.id.btn_edit)
+    @OnClick(R.id.btn_confirm)
     void editAssignment() {
         String title = mEditTitle.getText().toString().trim();
         String notes = mEditNotes.getText().toString().trim();
@@ -174,7 +174,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
 
             AssignmentTypeAdapter typeAdapter = new AssignmentTypeAdapter(getContext(),
                     R.layout.item_assignment_type,
-                    R.id.title,
+                    R.id.text_title,
                     types);
             mSpinnerType.setAdapter(typeAdapter);
             mSpinnerType.setOnItemSelectedListener(this);

@@ -39,11 +39,11 @@ import io.eodc.planit.model.ClassListViewModel;
 public class ModifyClassFragment extends DialogFragment implements
         SpectrumDialog.OnColorSelectedListener {
 
-    @BindView(R.id.tv_title)            TextView    mTextTitle;
-    @BindView(R.id.tv_subtitle)         TextView    mTextSubtitle;
-    @BindView(R.id.edit_class_name)     EditText    mEditClassName;
-    @BindView(R.id.edit_teacher_name)   EditText    mEditTeacherName;
-    @BindView(R.id.color_picker)        ImageView   mColorPicker;
+    @BindView(R.id.text_title)            TextView    mTextTitle;
+    @BindView(R.id.text_subtitle)         TextView    mTextSubtitle;
+    @BindView(R.id.edit_title)     EditText    mEditClassName;
+    @BindView(R.id.edit_teacher)   EditText    mEditTeacherName;
+    @BindView(R.id.picker_class_color)        ImageView   mColorPicker;
     @BindView(R.id.btn_confirm)         Button      mBtnConfirm;
     @BindView(R.id.btn_delete)          Button      mBtnDelete;
 
@@ -66,7 +66,7 @@ public class ModifyClassFragment extends DialogFragment implements
     /**
      * Shows the color picker dialog when the color picker button is clicked
      */
-    @OnClick(R.id.color_picker)
+    @OnClick(R.id.picker_class_color)
     void showColorPicker() {
         if (getFragmentManager() != null) {
             new SpectrumDialog.Builder(getContext())
@@ -153,11 +153,11 @@ public class ModifyClassFragment extends DialogFragment implements
             dismiss();
         } else if (getView() != null) {
             if (className.equals("")) {
-                TextInputLayout layout = getView().findViewById(R.id.layout_class_name);
+                TextInputLayout layout = getView().findViewById(R.id.layout_edit_title);
                 layout.setError("Class name can't be empty");
             }
             if (teacherName.equals("")) {
-                TextInputLayout layout = getView().findViewById(R.id.layout_teacher_name);
+                TextInputLayout layout = getView().findViewById(R.id.layout_edit_teacher);
                 layout.setError("Teacher name can't be empty");
             }
         }

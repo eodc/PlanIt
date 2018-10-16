@@ -47,11 +47,11 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class HomeFragment extends BaseFragment {
 
-    @BindView(R.id.tv_all_done)         TextView        mLayoutAllDone;
+    @BindView(R.id.text_done)         TextView        mLayoutAllDone;
     @BindView(R.id.card_overdue)        CardView        mCardOverdue;
     @BindView(R.id.graph_week)          LineChart       mGraphWeek;
-    @BindView(R.id.rv_today)            RecyclerView    mRvTodayAssign;
-    @BindView(R.id.rv_overdue)          RecyclerView    mRvOverdueAssign;
+    @BindView(R.id.recycle_today)            RecyclerView    mRvTodayAssign;
+    @BindView(R.id.recycle_overdue)          RecyclerView    mRvOverdueAssign;
     @BindView(R.id.text_event_count)    TextView        mTextEventCount;
 
     private AssignmentsAdapter mTodayAssignmentsAdapter;

@@ -21,13 +21,13 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     Assignment assignment;
 
     @BindView(R.id.header)              LinearLayout    layoutHeader;
-    @BindView(R.id.expand_button)       ImageView       iconExpand;
-    @BindView(R.id.class_color)         ImageView       imageClassColor;
-    @BindView(R.id.header_label)        TextView        textHeader;
-    @BindView(R.id.assignment_name)     TextView        textAssignmentName;
-    @BindView(R.id.class_and_type)      TextView        textClassType;
-    @BindView(R.id.due_date)            TextView        textDueDate;
-    @BindView(R.id.notes_text)          TextView        textNotes;
+    @BindView(R.id.btn_expand)       ImageView       iconExpand;
+    @BindView(R.id.border_class_color)         ImageView       imageClassColor;
+    @BindView(R.id.text_header)        TextView        textHeader;
+    @BindView(R.id.text_title)     TextView        textAssignmentName;
+    @BindView(R.id.text_class_type)      TextView        textClassType;
+    @BindView(R.id.text_due)            TextView        textDueDate;
+    @BindView(R.id.text_notes)          TextView        textNotes;
 
     /**
      * Constructs an instance of an AssignmentViewHolder

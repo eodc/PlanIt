@@ -34,13 +34,13 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.bottom_navigation)   AHBottomNavigation      mBottomNav;
-    @BindView(R.id.create_fab)          FloatingActionButton    mFab;
-    @BindView(R.id.toolbar)             Toolbar                 mToolbar;
+    @BindView(R.id.nav_bottom)   AHBottomNavigation      mBottomNav;
+    @BindView(R.id.fab_create_assign)          FloatingActionButton    mFab;
+    @BindView(R.id.tb)             Toolbar                 mToolbar;
 
     private FragmentManager         mFragmentManager;
 
-    @OnClick(R.id.create_fab) void handleCreateFab() {
+    @OnClick(R.id.fab_create_assign) void handleCreateFab() {
         if (getFragmentManager() != null) {
             new AddAssignmentFragment().show(getSupportFragmentManager(), null);
         }
@@ -106,15 +106,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         mFab.hide();
-                        transaction.replace(R.id.content_fragment, new HomeFragment()).commit();
+                        transaction.replace(R.id.fragment_content, new HomeFragment()).commit();
                         break;
                     case 1:
                         mFab.show();
-                        transaction.replace(R.id.content_fragment, new PlannerFragment()).commit();
+                        transaction.replace(R.id.fragment_content, new PlannerFragment()).commit();
                         break;
                     case 2:
                         mFab.hide();
-                        transaction.replace(R.id.content_fragment, new CalendarFragment()).commit();
+                        transaction.replace(R.id.fragment_content, new CalendarFragment()).commit();
                         break;
                 }
             }

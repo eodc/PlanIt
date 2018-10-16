@@ -71,8 +71,8 @@ public class AssignmentTypeAdapter extends ArrayAdapter<AssignmentType> {
         if (v == null) {
             v = LayoutInflater.from(mContext).inflate(mResource, null);
             holder = new ViewHolder();
-            holder.icon = v.findViewById(R.id.icon);
-            holder.title = v.findViewById(R.id.title);
+            holder.icon = v.findViewById(R.id.ic_type);
+            holder.title = v.findViewById(R.id.text_title);
             v.setTag(holder);
         } else {
             holder = (ViewHolder) v.getTag();

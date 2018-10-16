@@ -28,8 +28,8 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class PlannerFragment extends BaseFragment {
 
-    @BindView(R.id.content)         RecyclerView    mRvContent;
-    @BindView(R.id.tv_all_done)     TextView        mTvAllDone;
+    @BindView(R.id.recycle_assignment)         RecyclerView    mRvContent;
+    @BindView(R.id.text_done)     TextView        mTvAllDone;
 
     private AssignmentListViewModel assignmentListViewModel;
 

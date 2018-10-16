@@ -22,8 +22,8 @@ import io.eodc.planit.adapter.LicenseAdapter;
  * @author 2n
  */
 public class LicensesActivity extends AppCompatActivity {
-    @BindView(R.id.toolbar)     Toolbar         mToolbar;
-    @BindView(R.id.rv_licenses) RecyclerView    mRvLicenses;
+    @BindView(R.id.tb)     Toolbar         mToolbar;
+    @BindView(R.id.recycle_licence) RecyclerView    mRvLicenses;
 
     // If there's a better way to grab licenses from dependencies, pls push
     @Override

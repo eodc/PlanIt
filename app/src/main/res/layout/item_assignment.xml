@@ -18,7 +18,7 @@
         tools:visibility="visible">
 
         <TextView
-            android:id="@+id/header_label"
+            android:id="@+id/text_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
@@ -32,7 +32,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/class_color"
+        android:id="@+id/border_class_color"
         android:layout_width="4dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
@@ -41,7 +41,7 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/assignment_name"
+        android:id="@+id/text_title"
         style="@style/Base.TextAppearance.AppCompat.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -52,12 +52,12 @@
         android:layout_marginRight="64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/class_color"
+        app:layout_constraintStart_toEndOf="@id/border_class_color"
         app:layout_constraintTop_toBottomOf="@+id/header"
         tools:text="Example Homework" />
 
     <TextView
-        android:id="@+id/class_and_type"
+        android:id="@+id/text_class_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -65,13 +65,13 @@
         android:layout_marginTop="2dp"
         android:layout_marginBottom="16dp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/notes_text"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
-        app:layout_constraintTop_toBottomOf="@+id/due_date"
+        app:layout_constraintBottom_toTopOf="@+id/text_notes"
+        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintTop_toBottomOf="@+id/text_due"
         tools:text="Example Class Homework" />
 
     <TextView
-        android:id="@+id/due_date"
+        android:id="@+id/text_due"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -82,12 +82,12 @@
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
-        app:layout_constraintTop_toBottomOf="@+id/assignment_name"
+        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintTop_toBottomOf="@+id/text_title"
         tools:text="Apr 20, 2018" />
 
     <ImageView
-        android:id="@+id/expand_button"
+        android:id="@+id/btn_expand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -96,14 +96,14 @@
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/btn_expand_content_desc"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/class_and_type"
+        app:layout_constraintBottom_toBottomOf="@+id/text_class_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/assignment_name"
+        app:layout_constraintTop_toTopOf="@+id/text_title"
         app:srcCompat="@drawable/ic_arrow_expand_black_24dp"
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/notes_text"
+        android:id="@+id/text_notes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -112,6 +112,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
+        app:layout_constraintStart_toEndOf="@+id/border_class_color"
         tools:visibility="gone" />
 </android.support.constraint.ConstraintLayout>

@@ -62,8 +62,8 @@ public class LicenseAdapter extends RecyclerView.Adapter<LicenseAdapter.LicenseV
     }
 
     class LicenseViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_name)         TextView    textName;
-        @BindView(R.id.tv_copyright)    TextView    textCopyright;
+        @BindView(R.id.text_title)         TextView    textName;
+        @BindView(R.id.text_copyright)    TextView    textCopyright;
         @BindView(R.id.btn_license)     Button      btnLicense;
         @BindView(R.id.btn_project)     Button      btnProject;
 

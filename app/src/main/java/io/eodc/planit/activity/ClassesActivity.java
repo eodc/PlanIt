@@ -27,8 +27,8 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class ClassesActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)     Toolbar         mToolbar;
-    @BindView(R.id.rv_classes)  RecyclerView    mRvClasses;
+    @BindView(R.id.tb)     Toolbar         mToolbar;
+    @BindView(R.id.recycle_class)  RecyclerView    mRvClasses;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -26,11 +26,11 @@ import io.eodc.planit.model.ClassListViewModel;
  */
 public class OnboardingAddClassesFragment extends OnboardingFragment {
 
-    @BindView(R.id.rv_classes)      RecyclerView    mRvClasses;
-    @BindView(R.id.no_classes)      ImageView       mImageNoClass;
-    @BindView(R.id.tv_no_classes)   TextView        mTextNoClass;
+    @BindView(R.id.recycle_class)      RecyclerView    mRvClasses;
+    @BindView(R.id.image_no_class)      ImageView       mImageNoClass;
+    @BindView(R.id.text_no_class)   TextView        mTextNoClass;
 
-    @OnClick(R.id.btn_add)
+    @OnClick(R.id.btn_add_class)
     void addClass() {
         if (getFragmentManager() != null) {
             ModifyClassFragment.newInstance(null)

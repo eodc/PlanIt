@@ -65,9 +65,9 @@ public class OnboardingFragment extends Fragment {
             int drawable = args.getInt(ARG_DRAWABLE);
             String description = args.getString(ARG_DESC);
 
-            TextView tvTitle = view.findViewById(R.id.tv_title);
-            ImageView image = view.findViewById(R.id.image);
-            TextView tvDesc = view.findViewById(R.id.tv_description);
+            TextView tvTitle = view.findViewById(R.id.text_title);
+            ImageView image = view.findViewById(R.id.image_main);
+            TextView tvDesc = view.findViewById(R.id.text_description);
 
             tvTitle.setText(title);
             if (drawable != 0) image.setImageResource(drawable);

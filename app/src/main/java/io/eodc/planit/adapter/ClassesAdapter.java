@@ -87,9 +87,9 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
      * Holder for information and attributes for the class view
      */
     class ClassViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.class_color) ImageView   imageClassColor;
-        @BindView(R.id.tv_title)    TextView    textClassName;
-        @BindView(R.id.tv_teacher)  TextView    textTeacherName;
+        @BindView(R.id.border_class_color) ImageView   imageClassColor;
+        @BindView(R.id.text_title)    TextView    textClassName;
+        @BindView(R.id.text_teacher)  TextView    textTeacherName;
 
         /**
          * Constructs a new instance of ClassViewHolder

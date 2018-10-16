@@ -12,7 +12,7 @@
         app:mcv_selectionColor="@color/colorAccent" />
 
     <TextView
-        android:id="@+id/tv_all_done"
+        android:id="@+id/text_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableTop="@drawable/ic_today_nothing_due_75dp"

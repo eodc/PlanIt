@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/class_color"
+        android:id="@+id/border_class_color"
         android:layout_width="4dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -15,27 +15,27 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/text_title"
         style="@style/Base.TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
+        app:layout_constraintStart_toEndOf="@+id/border_class_color"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Calculus" />
 
     <TextView
-        android:id="@+id/tv_teacher"
+        android:id="@+id/text_teacher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/class_color"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"
+        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintTop_toBottomOf="@+id/text_title"
         tools:text="Mr. Tsuchiyama" />
 
 </android.support.constraint.ConstraintLayout>
