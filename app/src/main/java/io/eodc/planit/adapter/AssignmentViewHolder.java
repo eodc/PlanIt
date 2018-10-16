@@ -17,11 +17,10 @@ import io.eodc.planit.db.Assignment;
  * @author 2n
  */
 public class AssignmentViewHolder extends RecyclerView.ViewHolder {
-    boolean isExpanded = false;
+    private boolean isExpanded = false;
     Assignment assignment;
 
     @BindView(R.id.header)              LinearLayout    layoutHeader;
-    @BindView(R.id.ic_due_date)         ImageView       iconDueDate;
     @BindView(R.id.expand_button)       ImageView       iconExpand;
     @BindView(R.id.class_color)         ImageView       imageClassColor;
     @BindView(R.id.header_label)        TextView        textHeader;
@@ -46,18 +45,16 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
 
     void hideDueDate() {
         textDueDate.setVisibility(View.GONE);
-        iconDueDate.setVisibility(View.GONE);
     }
 
     void showDueDate() {
         textDueDate.setVisibility(View.VISIBLE);
-        iconDueDate.setVisibility(View.VISIBLE);
     }
 
     /**
      * Hides the textNotes section of the view
      */
-    void shrinkNotes() {
+    private void shrinkNotes() {
         iconExpand.animate()
                 .rotation(0f);
         textNotes.setVisibility(View.GONE);
@@ -67,7 +64,7 @@ public class AssignmentViewHolder extends RecyclerView.ViewHolder {
     /**
      * Shows the textNotes section of the vie
      */
-    void expandNotes() {
+    private void expandNotes() {
         iconExpand.animate()
                 .rotation(-180f);
         textNotes.setVisibility(View.VISIBLE);

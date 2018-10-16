@@ -8,9 +8,9 @@ import org.joda.time.DateTime;
 
 @Entity(tableName = "assignments")
 public class Assignment {
-    public static final String TYPE_HOMEWORK    = "homework";
-    public static final String TYPE_TEST        = "test";
-    public static final String TYPE_PROJECT     = "project";
+    public static final int TYPE_TEST        = 1 << 1;
+    public static final int TYPE_PROJECT     = 1 << 2;
+    public static final int TYPE_HOMEWORK    = 1 << 3;
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -19,7 +19,7 @@ public class Assignment {
     @ColumnInfo
     private int classId;
     @ColumnInfo
-    private String type;
+    private int type;
     @ColumnInfo
     private DateTime dueDate;
     @ColumnInfo
@@ -56,11 +56,11 @@ public class Assignment {
         this.classId = classId;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 

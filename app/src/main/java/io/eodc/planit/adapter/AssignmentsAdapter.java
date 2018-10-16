@@ -159,82 +159,84 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull AssignmentViewHolder holder, int position) {
-            Assignment assignment = mAssignments.get(position);
-            Assignment previousAssignment = null;
-            if (position > 0) {
-                previousAssignment = mAssignments.get(position - 1);
+        Assignment assignment = mAssignments.get(position);
+        Assignment previousAssignment = null;
+        if (position > 0) {
+            previousAssignment = mAssignments.get(position - 1);
+        }
+        Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
+
+        DateTime dtCurrent = assignment.getDueDate();
+        int assignmentTypeFlag = assignment.getType();
+
+        String assignmentType = "";
+
+        switch (assignmentTypeFlag) {
+            case Assignment.TYPE_TEST:
+                assignmentType = "Test/Quiz";
+                break;
+            case Assignment.TYPE_PROJECT:
+                assignmentType = "Project";
+                break;
+            case Assignment.TYPE_HOMEWORK:
+                assignmentType = "Homework";
+                break;
+        }
+
+
+        String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
+                assignmentClass.getName(),
+                assignmentType);
+
+        holder.textClassType.setText(classAndTypeText);
+        holder.textDueDate.setText(dtCurrent.toString(mContext.getString(R.string.due_date_pattern)));
+        holder.assignment = assignment;
+
+        if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER) {
+            String headerText = getHeaderText(dtCurrent);
+            holder.textHeader.setText(headerText);
+            holder.layoutHeader.setVisibility(View.VISIBLE);
+            holder.showDueDate();
+        } else {
+            DateTime dtNow = new DateTime();
+            if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
+                    dtCurrent.isAfterNow() &&
+                            dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
+                            mShowDividerFlag != NEVER_SHOW_DIVIDER) {
+                holder.hideDueDate();
+            } else if (previousAssignment != null &&
+                    !assignment.getDueDate().dayOfYear()
+                            .equals(previousAssignment.getDueDate().dayOfYear())) {
+                holder.showDueDate();
             }
-            Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
+        }
 
-            DateTime dtCurrent = assignment.getDueDate();
-            String assignmentType = assignment.getType();
+        if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
+            holder.iconExpand.setVisibility(View.VISIBLE);
+            holder.textNotes.setText(assignment.getNotes());
+            holder.itemView.setOnClickListener(view -> holder.handleNoteClick());
+        }
 
-            switch (assignmentType) {
-                case Assignment.TYPE_HOMEWORK:
-                    assignmentType = "Homework";
-                    break;
-                    case Assignment.TYPE_TEST:
-                        assignmentType = "Test/Quiz";
-                        break;
-                    case Assignment.TYPE_PROJECT:
-                        assignmentType = "Project";
-                        break;
+        holder.itemView.setOnLongClickListener(view -> {
+            if (mContext instanceof MainActivity) {
+                MainActivity activity = (MainActivity) mContext;
+                DialogFragment editFragment = ModifyAssignmentFragment.newInstance(holder.assignment);
+
+                editFragment.show(activity.getSupportFragmentManager(), null);
+
+                Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                if (v != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                        v.vibrate(VibrationEffect
+                                .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                    else v.vibrate(500);
+                }
             }
+            return true;
+        });
 
-                holder.textDueDate.setText(dtCurrent.toString(mContext.getString(R.string.due_date_pattern)));
-                holder.assignment = assignment;
-
-                if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER) {
-                    String headerText = getHeaderText(dtCurrent);
-                    holder.textHeader.setText(headerText);
-                    holder.layoutHeader.setVisibility(View.VISIBLE);
-                } else {
-                    DateTime dtNow = new DateTime();
-                    if (dtCurrent.isBeforeNow() && dtNow.getDayOfYear() - dtCurrent.getDayOfYear() > 0 ||
-                            dtCurrent.isAfterNow() &&
-                                    dtCurrent.getWeekOfWeekyear() != dtNow.getWeekOfWeekyear() &&
-                                    mShowDividerFlag != NEVER_SHOW_DIVIDER) {
-                        holder.hideDueDate();
-                    }
-                }
-
-                if ((holder.getItemViewType() & VIEW_TYPE_DIVIDER) == VIEW_TYPE_DIVIDER ||
-                        previousAssignment != null &&
-                        !assignment.getDueDate().dayOfYear().equals(previousAssignment.getDueDate().dayOfYear())) {
-                    holder.showDueDate();
-                }
-
-                if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
-                    holder.iconExpand.setVisibility(View.VISIBLE);
-                    holder.textNotes.setText(assignment.getNotes());
-                    holder.itemView.setOnClickListener(view -> holder.handleNoteClick());
-                }
-
-                holder.itemView.setOnLongClickListener(view -> {
-                    if (mContext instanceof MainActivity) {
-                        MainActivity activity = (MainActivity) mContext;
-                        DialogFragment editFragment = ModifyAssignmentFragment.newInstance(holder.assignment);
-
-                        editFragment.show(activity.getSupportFragmentManager(), null);
-
-                        Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-                        if (v != null) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                                v.vibrate(VibrationEffect
-                                        .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                            else v.vibrate(500);
-                        }
-                    }
-                    return true;
-                });
-
-                String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
-                        assignmentClass.getName(),
-                        assignmentType);
-
-                holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
-                holder.textAssignmentName.setText(assignment.getTitle());
-                holder.textClassType.setText(classAndTypeText);
+        holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
+        holder.textAssignmentName.setText(assignment.getTitle());
     }
 
     @Override

@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-@Database(entities = {Assignment.class, Class.class}, version = 2)
+@Database(entities = {Assignment.class, Class.class}, version = 3)
 @TypeConverters(value = DateConverter.class)
 public abstract class PlannerDatabase extends RoomDatabase {
     private static PlannerDatabase instance;
