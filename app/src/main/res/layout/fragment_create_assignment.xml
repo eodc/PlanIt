@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/edit_assignment_name_label"
-            android:inputType="text" />
+            android:inputType="text|textCapWords|textAutoCorrect|textAutoComplete|textMultiLine|textImeMultiLine" />
     </android.support.design.widget.TextInputLayout>
 
     <Spinner
@@ -112,6 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/edit_notes_hint"
+            android:inputType="textCapSentences|textAutoCorrect|textAutoComplete|textMultiLine|textImeMultiLine"
             android:maxLines="5"
             android:minLines="3" />
     </android.support.design.widget.TextInputLayout>
