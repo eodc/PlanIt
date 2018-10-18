@@ -122,7 +122,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                     getDividerViewType(hasNotes) :
                     getNormalViewType(hasNotes);
             } else if (currentDue.monthOfYear().equals(now.monthOfYear())) { // Within same month [Divide for every week]
-                return !currentDue.weekOfWeekyear().equals(previousDue.weekOfWeekyear()) ?
+                return previousDue.isBefore(now.plusWeeks(1)) ||
+                        !currentDue.weekOfWeekyear().equals(previousDue.weekOfWeekyear()) ?
                         getDividerViewType(hasNotes) :
                         getNormalViewType(hasNotes);
             } else if (currentDue.year().equals(now.year())) { // Within same year [Divide for every month]
