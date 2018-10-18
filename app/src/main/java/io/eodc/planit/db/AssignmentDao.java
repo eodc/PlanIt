@@ -16,6 +16,11 @@ public interface AssignmentDao {
     @Query("SELECT * FROM assignments ORDER BY dueDate, type, classId ASC")
     LiveData<List<Assignment>> getAllAssignments();
 
+    // Notification service does not require live updates, and does not follow conventional lifecycle,
+    // so attaching an observer is too complicated. Keep It Simple, Stupid.
+    @Query("SELECT * FROM assignments WHERE dueDate BETWEEN :from AND :to ORDER BY dueDate, type, classId ASC ")
+    List<Assignment> getStaticAssignmentsDueBetweenDates(DateTime from, DateTime to);
+
     @Query("SELECT * FROM assignments WHERE dueDate BETWEEN :from AND :to ORDER BY dueDate, type, classId ASC ")
     LiveData<List<Assignment>> getAssignmentsDueBetweenDates(DateTime from, DateTime to);
 

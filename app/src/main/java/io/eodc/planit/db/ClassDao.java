@@ -12,6 +12,9 @@ import java.util.List;
 @Dao
 public interface ClassDao {
     @Query("SELECT * FROM classes")
+    List<Class> getAllClassesStatically();
+
+    @Query("SELECT * FROM classes")
     LiveData<List<Class>> getAllClasses();
 
     @Query("SELECT * FROM classes WHERE id = :id")

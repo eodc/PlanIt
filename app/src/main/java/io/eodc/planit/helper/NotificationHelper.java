@@ -71,7 +71,7 @@ public class NotificationHelper extends ContextWrapper {
      * Utility method to convert a string set to a list of integers
      *
      * @param set The string set to convert
-     * @return A sorted lsit of
+     * @return A sorted list of integers
      */
     private static List<Integer> stringSetToIntegerList(Set<String> set) {
         if (set != null) {
@@ -94,88 +94,88 @@ public class NotificationHelper extends ContextWrapper {
      * Fires a notification
      */
     public void fireNotification() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showNotification = sharedPreferences.getBoolean(getString(R.string.pref_show_notif_key), true);
-        if (showNotification) {
-            String whatDayValue = sharedPreferences.getString(getString(R.string.pref_what_assign_show_key), "");
-            DateTime dtTimeToShow = new DateTime();
-            if (whatDayValue.equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
-                dtTimeToShow = dtTimeToShow.withTimeAtStartOfDay();
-            } else if (whatDayValue.equals(getString(R.string.pref_what_assign_show_next_day_value))) {
-                dtTimeToShow = dtTimeToShow.plusDays(1).withTimeAtStartOfDay();
-            }
+        new Thread(() -> {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean showNotification = sharedPreferences.getBoolean(getString(R.string.pref_show_notif_key), true);
+            if (showNotification) {
+                String whatDayValue = sharedPreferences.getString(getString(R.string.pref_what_assign_show_key), "");
+                DateTime dtToShow = new DateTime();
+                if (whatDayValue.equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
+                    dtToShow = dtToShow.withTimeAtStartOfDay();
+                } else if (whatDayValue.equals(getString(R.string.pref_what_assign_show_next_day_value))) {
+                    dtToShow = dtToShow.plusDays(1).withTimeAtStartOfDay();
+                }
 
-            List<Assignment> dueAssignments = PlannerDatabase.getInstance(this).assignmentDao()
-                    .getAssignmentsDueBetweenDates(dtTimeToShow, dtTimeToShow.plusDays(1))
-                    .getValue();
+                List<Assignment> dueAssignments = PlannerDatabase.getInstance(this).assignmentDao()
+                        .getStaticAssignmentsDueBetweenDates(dtToShow, dtToShow.plusDays(1));
+                List<Class> classes = PlannerDatabase.getInstance(this).classDao().getAllClassesStatically();
 
-            List<Class> classes = PlannerDatabase.getInstance(this).classDao().getAllClasses().getValue();
-
-            if (dueAssignments != null && classes != null) {
-                NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_book_black_24dp)
-                        .setGroup(GROUP_ID)
-                        .setGroupSummary(true);
-
-                NotificationCompat.InboxStyle summaryStyle = new NotificationCompat.InboxStyle();
-
-                int summaryLineCount = 0;
-                int overflowClasses = 0;
-                int classesWithAssignmentsDue = 0;
-
-                for (Class currentClass : classes) {
-                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
+                if (dueAssignments != null && classes != null) {
+                    NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_book_black_24dp)
-                            .setContentTitle(currentClass.getName())
-                            .setAutoCancel(true)
-                            .setGroup(GROUP_ID);
+                            .setGroup(GROUP_ID)
+                            .setGroupSummary(true);
 
-                    NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-                    StringBuilder sb = new StringBuilder();
-                    String className = currentClass.getName();
-                    int classId = currentClass.getId();
-                    int assignmentsDue = 0;
-                    for (Assignment assign: dueAssignments) {
-                        if (assign.getClassId() == currentClass.getId()) {
-                            sb.append(assign.getTitle())
-                                    .append("\n");
-                            assignmentsDue++;
+                    NotificationCompat.InboxStyle summaryStyle = new NotificationCompat.InboxStyle();
+
+                    int summaryLineCount = 0;
+                    int overflowClasses = 0;
+                    int classesWithAssignmentsDue = 0;
+
+                    for (Class currentClass : classes) {
+                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
+                                .setSmallIcon(R.drawable.ic_book_black_24dp)
+                                .setContentTitle(currentClass.getName())
+                                .setAutoCancel(true)
+                                .setGroup(GROUP_ID);
+
+                        NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+                        StringBuilder sb = new StringBuilder();
+                        String className = currentClass.getName();
+                        int classId = currentClass.getId();
+                        int assignmentsDue = 0;
+                        for (Assignment assign: dueAssignments) {
+                            if (assign.getClassId() == currentClass.getId()) {
+                                sb.append(assign.getTitle())
+                                        .append("\n");
+                                assignmentsDue++;
+                            }
+                        }
+                        if (assignmentsDue > 0) {
+                            summaryStyle.addLine(className + " " + (assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due"));
+                            summaryLineCount++;
+                            if (summaryLineCount > 6) overflowClasses++;
+
+                            notificationStyle.bigText(sb.toString().trim());
+                            Notification notif = notificationBuilder.setContentText(assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due")
+                                    .setStyle(notificationStyle).build();
+                            classesWithAssignmentsDue++;
+                            if (mManager != null) mManager.notify(classId, notif);
+                            else {
+                                NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
+                                notifManagerCompat.notify(classId, notif);
+                            }
                         }
                     }
-                    if (assignmentsDue > 0) {
-                        summaryStyle.addLine(className + " " + (assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due"));
-                        summaryLineCount++;
-                        if (summaryLineCount > 6) overflowClasses++;
+                    summaryStyle
+                            .setBigContentTitle(classesWithAssignmentsDue + (classesWithAssignmentsDue == 1 ? " class " : " classes ") + "with assignments due");
 
-                        notificationStyle.bigText(sb.toString().trim());
-                        Notification notif = notificationBuilder.setContentText(assignmentsDue == 1 ? sb.toString() : assignmentsDue + " assignments due")
-                                .setStyle(notificationStyle).build();
-                        classesWithAssignmentsDue++;
-                        if (mManager != null) mManager.notify(classId, notif);
-                        else {
-                            NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
-                            notifManagerCompat.notify(classId, notif);
-                        }
+                    if (overflowClasses > 0) {
+                        summaryStyle.setSummaryText("+" + overflowClasses + " other " + (overflowClasses == 1 ? "class" : "classes"));
                     }
-                }
-                summaryStyle
-                        .setBigContentTitle(classesWithAssignmentsDue + (classesWithAssignmentsDue == 1 ? " class " : " classes ") + "with assignments due");
 
-                if (overflowClasses > 0) {
-                    summaryStyle.setSummaryText("+" + overflowClasses + " other " + (overflowClasses == 1 ? "class" : "classes"));
-                }
+                    summaryBuilder.setStyle(summaryStyle);
+                    Notification summaryNotif = summaryBuilder.build();
+                    if (mManager != null) mManager.notify(SUMMARY_NOTIF_ID, summaryNotif);
+                    else {
+                        NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
+                        notifManagerCompat.notify(SUMMARY_NOTIF_ID, summaryNotif);
+                    }
 
-                summaryBuilder.setStyle(summaryStyle);
-                Notification summaryNotif = summaryBuilder.build();
-                if (mManager != null) mManager.notify(SUMMARY_NOTIF_ID, summaryNotif);
-                else {
-                    NotificationManagerCompat notifManagerCompat = NotificationManagerCompat.from(this);
-                    notifManagerCompat.notify(SUMMARY_NOTIF_ID, summaryNotif);
+                    scheduleNotification();
                 }
-
-                scheduleNotification();
             }
-        }
+        }).start();
     }
 
     /**
@@ -189,19 +189,21 @@ public class NotificationHelper extends ContextWrapper {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         List<Integer> daysToNotify = stringSetToIntegerList(sharedPreferences.getStringSet(getString(R.string.pref_show_notif_days_key), null));
 
-        for (int i = 0; i < daysToNotify.size(); i++) {
-            int dayOfWeek = daysToNotify.get(i);
-            DateTime dayToNotify = getNotificationTime(dayOfWeek);
-            if (dayOfWeek >= dtNow.getDayOfWeek() && dtNow.isBefore(dayToNotify)) {
-                setAlarm(dayToNotify, pendingIntent);
-                return;
+        if (daysToNotify != null) {
+            for (int i = 0; i < daysToNotify.size(); i++) {
+                int dayOfWeek = daysToNotify.get(i);
+                DateTime dayToNotify = getNotificationTime(dayOfWeek);
+                if (dayOfWeek >= dtNow.getDayOfWeek() && dtNow.isBefore(dayToNotify)) {
+                    setAlarm(dayToNotify, pendingIntent);
+                    return;
+                }
             }
+
+            DateTime dayToNotify = getNotificationTime(daysToNotify.get(0))
+                    .plusWeeks(1);
+
+            setAlarm(dayToNotify, pendingIntent);
         }
-
-        DateTime dayToNotify = getNotificationTime(daysToNotify.get(0))
-                .plusWeeks(1);
-
-        setAlarm(dayToNotify, pendingIntent);
     }
 
     /**
