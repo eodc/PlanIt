@@ -201,6 +201,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
                 !assignment.getDueDate().dayOfYear()
                 .equals(previousAssignment.getDueDate().dayOfYear())) {
             holder.showDueDate();
+        } else {
+            holder.hideDueDate();
         }
 
         if ((holder.getItemViewType() & VIEW_TYPE_NOTES) == VIEW_TYPE_NOTES) {
