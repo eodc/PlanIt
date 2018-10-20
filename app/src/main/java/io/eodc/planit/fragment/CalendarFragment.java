@@ -1,6 +1,5 @@
 package io.eodc.planit.fragment;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
@@ -53,22 +54,23 @@ public class CalendarFragment extends BaseFragment implements
     @BindView(R.id.text_done)         TextView                mTvAllDone;
 
     private AssignmentListViewModel     mAssignmentListViewModel;
-    private LiveData<List<Assignment>>  mCurrentDayAssignments;
     private List<DateTime>              mDateHasAssignmentList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewModelProviders.of(this).get(ClassListViewModel.class)
-                .getClasses().observe(this, this::onClassesGet);
 
+        ViewModelProviders.of(this)
+                .get(ClassListViewModel.class)
+                .getClasses()
+                .observe(this, this::onClassesGet);
 
         mAssignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
 
-        LiveData<List<Assignment>> mAllAssignments = mAssignmentListViewModel
-                .getAllAssignments();
-        mAllAssignments.observe(this, this::onDateRangeAssignmentsChange);
+        mAssignmentListViewModel
+                .getAllAssignments()
+                .observe(this, this::onDateRangeAssignmentsChange);
     }
 
     @Nullable
@@ -93,8 +95,8 @@ public class CalendarFragment extends BaseFragment implements
             mRvDaysAssignments.setAdapter(adapter);
             mRvDaysAssignments.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            mCurrentDayAssignments = mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()));
-            mCurrentDayAssignments.observe(this, this::onSingleDayAssignmentsChange);
+            mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()))
+                    .observe(this, this::onSingleDayAssignmentsChange);
 
             ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
                     0,
@@ -132,32 +134,24 @@ public class CalendarFragment extends BaseFragment implements
         mDateHasAssignmentList = new ArrayList<>();
         if (assignments != null && assignments.size() > 0) {
             mDateHasAssignmentList.add(assignments.get(0).getDueDate());
-            int currIndex = 0;
             for (int i = 0; i < assignments.size(); ++i) {
-                Assignment nextAssign = findNextDueAssign(assignments, currIndex);
-                if (nextAssign != null) {
-                    mDateHasAssignmentList.add(nextAssign.getDueDate());
-                    currIndex = assignments.indexOf(nextAssign);
+                Optional<Assignment> nextAssign = Iterables.tryFind(assignments,
+                        assignment -> {
+                            DateTime mostRecent = mDateHasAssignmentList.get(mDateHasAssignmentList.size() - 1);
+                            return mostRecent.isBefore(assignment.getDueDate());
+                        });
+                if (nextAssign.isPresent()) {
+                    mDateHasAssignmentList.add(nextAssign.get().getDueDate());
                 }
             }
         }
         mCalendar.addDecorator(this);
     }
 
-    private Assignment findNextDueAssign(List<Assignment> assignments, int currIndex) {
-        for (int i = currIndex; i < assignments.size(); ++i) {
-            Assignment currAssignment = assignments.get(i);
-            DateTime mostRecent = mDateHasAssignmentList.get(mDateHasAssignmentList.size() - 1);
-            if (mostRecent.isBefore(currAssignment.getDueDate())) return currAssignment;
-        }
-        return null;
-    }
-
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        mCurrentDayAssignments.removeObservers(this);
-        mCurrentDayAssignments = mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(date.getDate()));
-        mCurrentDayAssignments.observe(this, this::onSingleDayAssignmentsChange);
+        mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(date.getDate()))
+                .observe(this, this::onSingleDayAssignmentsChange);
     }
 
     @Override
