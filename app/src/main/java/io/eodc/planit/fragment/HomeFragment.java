@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,7 +46,7 @@ import io.eodc.planit.model.ClassListViewModel;
  *
  * @author 2n
  */
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends Fragment {
 
     @BindView(R.id.text_done)         TextView        mLayoutAllDone;
     @BindView(R.id.card_overdue)        CardView        mCardOverdue;
