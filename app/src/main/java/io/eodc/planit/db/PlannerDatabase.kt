@@ -8,8 +8,8 @@ import android.arch.persistence.room.TypeConverters
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
-@Database(entities = arrayOf(Assignment::class, Subject::class), version = 4)
-@TypeConverters(value = DateConverter::class)
+@Database(entities = [Assignment::class, Subject::class], version = 4)
+@TypeConverters(value = [DateConverter::class])
 abstract class PlannerDatabase : RoomDatabase() {
 
     abstract fun assignmentDao(): AssignmentDao
@@ -34,7 +34,7 @@ abstract class PlannerDatabase : RoomDatabase() {
 
         private fun createInstance(context: Context) {
             instance = Room.databaseBuilder<PlannerDatabase>(context,
-                    PlannerDatabase::class.java!!,
+                    PlannerDatabase::class.java,
                     "assignments.db")
                     .addMigrations(MIGRATION_3_4)
                     .build()
