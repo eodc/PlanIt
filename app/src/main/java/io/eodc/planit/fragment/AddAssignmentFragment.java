@@ -3,7 +3,6 @@ package io.eodc.planit.fragment;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,13 +31,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
+import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.adapter.AssignmentType;
 import io.eodc.planit.adapter.AssignmentTypeAdapter;
 import io.eodc.planit.db.Assignment;
 import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.helper.AssignmentInfoInputHelper;
 import io.eodc.planit.helper.KeyboardFocusManager;
-import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment that is a bottom sheet. It is the main interface the user interacts with to add
@@ -128,23 +128,6 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
         return dialog;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getContext() != null) {
-            ViewModelProviders.of(this)
-                    .get(ClassListViewModel.class).getClasses().observe(this, classes -> {
-                if (classes != null) {
-                    ArrayAdapter classAdapter = new ArrayAdapter<>(getContext(),
-                            android.R.layout.simple_spinner_dropdown_item,
-                            android.R.id.text1,
-                            classes);
-                    mClassSpinner.setAdapter(classAdapter);
-                }
-            });
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -156,11 +139,9 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (getActivity() != null && getActivity().getApplicationContext() != null) {
-            setupTypeSpinner();
-            setupClassSpinner();
-            setupInputListeners();
-        }
+        setupTypeSpinner();
+        setupClassSpinner();
+        setupInputListeners();
     }
 
     private void setupInputListeners() {
@@ -208,7 +189,15 @@ public class AddAssignmentFragment extends BottomSheetDialogFragment implements
     }
 
     private void setupClassSpinner() {
-        mClassSpinner.setOnItemSelectedListener(this);
+        if (getActivity() != null && getContext() != null) {
+            mClassSpinner.setOnItemSelectedListener(this);
+            List<Subject> subjects = ((MainActivity) getActivity()).getClasses();
+            ArrayAdapter subjectAdapter = new ArrayAdapter<>(getContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    android.R.id.text1,
+                    subjects);
+            mClassSpinner.setAdapter(subjectAdapter);
+        }
     }
 
     @Override

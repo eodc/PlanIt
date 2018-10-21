@@ -4,8 +4,8 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "classes")
-public class Class {
+@Entity(tableName = "subjects")
+public class Subject {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @ColumnInfo
@@ -15,7 +15,7 @@ public class Class {
     @ColumnInfo
     private String color;
 
-    public Class(String name, String teacher, String color) {
+    public Subject(String name, String teacher, String color) {
         this.name = name;
         this.teacher = teacher;
         this.color = color;

@@ -24,8 +24,8 @@ import java.util.Set;
 
 import io.eodc.planit.R;
 import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.Class;
 import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.receiver.NotificationPublishReceiver;
 
 /**
@@ -108,9 +108,9 @@ public class NotificationHelper extends ContextWrapper {
 
                 List<Assignment> dueAssignments = PlannerDatabase.getInstance(this).assignmentDao()
                         .getStaticAssignmentsDueBetweenDates(dtToShow, dtToShow.plusDays(1));
-                List<Class> classes = PlannerDatabase.getInstance(this).classDao().getAllClassesStatically();
+                List<Subject> subjects = PlannerDatabase.getInstance(this).classDao().getAllSubjects();
 
-                if (dueAssignments != null && classes != null) {
+                if (dueAssignments != null && subjects != null) {
                     NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_book_black_24dp)
                             .setGroup(GROUP_ID)
@@ -122,20 +122,20 @@ public class NotificationHelper extends ContextWrapper {
                     int overflowClasses = 0;
                     int classesWithAssignmentsDue = 0;
 
-                    for (Class currentClass : classes) {
+                    for (Subject currentSubject : subjects) {
                         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
                                 .setSmallIcon(R.drawable.ic_book_black_24dp)
-                                .setContentTitle(currentClass.getName())
+                                .setContentTitle(currentSubject.getName())
                                 .setAutoCancel(true)
                                 .setGroup(GROUP_ID);
 
                         NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
                         StringBuilder sb = new StringBuilder();
-                        String className = currentClass.getName();
-                        int classId = currentClass.getId();
+                        String className = currentSubject.getName();
+                        int classId = currentSubject.getId();
                         int assignmentsDue = 0;
                         for (Assignment assign: dueAssignments) {
-                            if (assign.getClassId() == currentClass.getId()) {
+                            if (assign.getClassId() == currentSubject.getId()) {
                                 sb.append(assign.getTitle())
                                         .append("\n");
                                 assignmentsDue++;
@@ -158,10 +158,10 @@ public class NotificationHelper extends ContextWrapper {
                         }
                     }
                     summaryStyle
-                            .setBigContentTitle(classesWithAssignmentsDue + (classesWithAssignmentsDue == 1 ? " class " : " classes ") + "with assignments due");
+                            .setBigContentTitle(classesWithAssignmentsDue + (classesWithAssignmentsDue == 1 ? " class " : " subjects ") + "with assignments due");
 
                     if (overflowClasses > 0) {
-                        summaryStyle.setSummaryText("+" + overflowClasses + " other " + (overflowClasses == 1 ? "class" : "classes"));
+                        summaryStyle.setSummaryText("+" + overflowClasses + " other " + (overflowClasses == 1 ? "class" : "subjects"));
                     }
 
                     summaryBuilder.setStyle(summaryStyle);

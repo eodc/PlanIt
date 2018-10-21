@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import io.eodc.planit.R;
-import io.eodc.planit.activity.ClassesActivity;
+import io.eodc.planit.activity.SubjectsActivity;
 import io.eodc.planit.helper.NotificationHelper;
 import io.eodc.planit.preference.DialogPreferenceContainer;
 import io.eodc.planit.preference.NotificationTimeChooserPreference;
@@ -55,7 +55,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         findPreference(getString(R.string.pref_classes_key)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getContext(), ClassesActivity.class);
+                Intent intent = new Intent(getContext(), SubjectsActivity.class);
                 startActivity(intent);
                 return true;
             }

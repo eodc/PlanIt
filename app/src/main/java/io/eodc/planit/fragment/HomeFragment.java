@@ -1,13 +1,11 @@
 package io.eodc.planit.fragment;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,12 +31,14 @@ import java.util.ListIterator;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
-import io.eodc.planit.adapter.AssignmentsAdapter;
+import io.eodc.planit.activity.MainActivity;
+import io.eodc.planit.adapter.AssignmentAdapter;
+import io.eodc.planit.adapter.AssignmentViewHolder;
 import io.eodc.planit.db.Assignment;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.helper.AssignmentTouchHelper;
 import io.eodc.planit.helper.DateValueFormatter;
 import io.eodc.planit.model.AssignmentListViewModel;
-import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment that shows a week's overview of assignments, the current day's assignments, and any
@@ -46,47 +46,44 @@ import io.eodc.planit.model.ClassListViewModel;
  *
  * @author 2n
  */
-public class HomeFragment extends Fragment {
-
-    @BindView(R.id.text_done)         TextView        mLayoutAllDone;
+public class HomeFragment extends NavigableFragment {
+    @BindView(R.id.text_done)
+    TextView mLayoutAllDone;
     @BindView(R.id.card_overdue)        CardView        mCardOverdue;
     @BindView(R.id.graph_week)          LineChart       mGraphWeek;
     @BindView(R.id.recycle_today)            RecyclerView    mRvTodayAssign;
     @BindView(R.id.recycle_overdue)          RecyclerView    mRvOverdueAssign;
     @BindView(R.id.text_event_count)    TextView        mTextEventCount;
 
-    private AssignmentsAdapter mTodayAssignmentsAdapter;
-    private AssignmentsAdapter mOverdueAssignmentsAdapter;
-
-
-    private AssignmentListViewModel assignmentListViewModel;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
-                .observe(this, classes -> {
-                    mTodayAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
-                    mOverdueAssignmentsAdapter = new AssignmentsAdapter(getContext(), classes, false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        AssignmentListViewModel assignmentListViewModel = ViewModelProviders.of(this)
+                .get(AssignmentListViewModel.class);
 
-                    assignmentListViewModel = ViewModelProviders.of(this).get(AssignmentListViewModel.class);
-                    DateTime today = new DateTime().withTimeAtStartOfDay();
-                    DateTime dateToRetrieve;
+        DateTime today = new DateTime().withTimeAtStartOfDay();
+        DateTime dateToRetrieve;
 
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        if (preferences.getString(getString(R.string.pref_what_assign_show_key), "")
+                .equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
+            dateToRetrieve = today;
+        } else {
+            dateToRetrieve = today.plusDays(1);
+        }
 
-                    if (preferences.getString(getString(R.string.pref_what_assign_show_key), "")
-                            .equals(getString(R.string.pref_what_assign_show_curr_day_value))) {
-                        dateToRetrieve = today;
-                    } else {
-                        dateToRetrieve = today.plusDays(1);
-                    }
+        assignmentListViewModel
+                .getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1))
+                .observe(this, this::onWeekAssignmentsGet);
+        assignmentListViewModel
+                .getAssignmentsDueOnDay(dateToRetrieve)
+                .observe(this, this::onDaysAssignmentsGet);
+        assignmentListViewModel
+                .getOverdueAssignments(today)
+                .observe(this, this::onOverdueAssignmentsGet);
 
-                    assignmentListViewModel.getAssignmentsDueOnDay(dateToRetrieve).observe(this, this::onDaysAssignmentsGet);
-                    assignmentListViewModel.getAssignmentsBetweenDates(today, today.plusWeeks(1).minusDays(1)).observe(this, this::onWeekAssignmentsGet);
-                    assignmentListViewModel.getOverdueAssignments(today).observe(this, this::onOverdueAssignmentsGet);
-                });
+
     }
 
     @Nullable
@@ -100,15 +97,43 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mRvTodayAssign.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRvOverdueAssign.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        ItemTouchHelper.SimpleCallback overdueHelperCallback = new AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT, holder -> {
+            RecyclerView.Adapter adapter = mRvOverdueAssign.getAdapter();
+            onDismiss(adapter, holder);
+        });
+        ItemTouchHelper.SimpleCallback todayHelperCallback = new AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT, holder -> {
+            RecyclerView.Adapter adapter = mRvTodayAssign.getAdapter();
+            onDismiss(adapter, holder);
+        });
+        ItemTouchHelper overdueHelper = new ItemTouchHelper(overdueHelperCallback);
+        ItemTouchHelper todayHelper = new ItemTouchHelper(todayHelperCallback);
+
+        overdueHelper.attachToRecyclerView(mRvOverdueAssign);
+        todayHelper.attachToRecyclerView(mRvTodayAssign);
+
         setupGraph();
     }
 
+    private void onDismiss(RecyclerView.Adapter adapter, AssignmentViewHolder holder) {
+        if (adapter != null) {
+            adapter.notifyItemRemoved(holder.getAdapterPosition());
+        }
+        new Thread(() -> ViewModelProviders.of(this)
+                .get(AssignmentListViewModel.class)
+                .removeAssignments(holder.getAssignment())).start();
+    }
+
     private void onOverdueAssignmentsGet(List<Assignment> assignments) {
-        if (assignments.size() > 0) {
-            mCardOverdue.setVisibility(View.VISIBLE);
-            populateRecyclerView(assignments, mOverdueAssignmentsAdapter, mRvOverdueAssign);
-        } else {
-            mCardOverdue.setVisibility(View.GONE);
+        if (getActivity() != null) {
+            if (assignments.size() > 0) {
+                mCardOverdue.setVisibility(View.VISIBLE);
+                populateRecyclerView(assignments, mRvOverdueAssign);
+            } else {
+                mCardOverdue.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -149,7 +174,20 @@ public class HomeFragment extends Fragment {
     private void onDaysAssignmentsGet(List<Assignment> assignments) {
         if (assignments.size() > 0) mLayoutAllDone.setVisibility(View.GONE);
         else mLayoutAllDone.setVisibility(View.VISIBLE);
-        populateRecyclerView(assignments, mTodayAssignmentsAdapter, mRvTodayAssign);
+        populateRecyclerView(assignments, mRvTodayAssign);
+    }
+
+    private void populateRecyclerView(List<Assignment> assignments, RecyclerView recyclerView) {
+        if (getActivity() != null) {
+            List<Subject> subjects = ((MainActivity) getActivity()).getClasses();
+            if (recyclerView.getAdapter() == null) {
+                AssignmentAdapter adapter = new AssignmentAdapter(getContext(), assignments, subjects, false);
+                recyclerView.setAdapter(adapter);
+            } else {
+                AssignmentAdapter adapter = (AssignmentAdapter) recyclerView.getAdapter();
+                adapter.swapAssignmentsList(assignments);
+            }
+        }
     }
 
     /**
@@ -170,34 +208,6 @@ public class HomeFragment extends Fragment {
         mGraphWeek.getLegend().setEnabled(false);
         mGraphWeek.setDoubleTapToZoomEnabled(false);
     }
-
-    /**
-     * Populates the specified RecyclerView with data from the specified cursor
-     *
-     * @param assignments       The cursor containing information from the assignments table to populate the
-     *                          {@link RecyclerView} with
-     * @param adapter           The adapter to bind information from the cursor to
-     * @param rv                The RecyclerView to populate
-     */
-    private void populateRecyclerView(List<Assignment> assignments, AssignmentsAdapter adapter, RecyclerView rv) {
-        if (assignments.size() > 0) adapter.swapAssignmentsList(assignments);
-        else adapter.swapAssignmentsList(null);
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        @SuppressLint("StaticFieldLeak") ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
-                0,
-                ItemTouchHelper.RIGHT,
-                holder -> {
-                    RecyclerView.Adapter currentAdapter = rv.getAdapter();
-                    if (currentAdapter != null) {
-                        currentAdapter.notifyItemRemoved(holder.getAdapterPosition());
-                    }
-                    new Thread(() -> assignmentListViewModel.removeAssignments(holder.getAssignment())).start();
-                });
-        ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
-        touchHelper.attachToRecyclerView(rv);
-    }
-
 
     /**
      * Sets up the specified data set

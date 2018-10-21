@@ -25,7 +25,7 @@ import butterknife.OnClick;
 import io.eodc.planit.R;
 import io.eodc.planit.fragment.OnboardingAddClassesFragment;
 import io.eodc.planit.fragment.OnboardingFragment;
-import io.eodc.planit.model.ClassListViewModel;
+import io.eodc.planit.model.SubjectListViewModel;
 
 /**
  * Activity that is shown the first time the app is opened. Due to this, it is the default activity
@@ -98,8 +98,8 @@ public class OnboardingActivity extends AppCompatActivity implements
         if (position == 0) mBtnBack.setVisibility(View.GONE);
         else if (position == mTabLayout.getTabCount() - 1) {
             mBtnNext.setText(R.string.btn_finish_label);
-            ViewModelProviders.of(this).get(ClassListViewModel.class)
-                    .getClasses().observe(this, classes -> {
+            ViewModelProviders.of(this).get(SubjectListViewModel.class)
+                    .getSubjectsObservable().observe(this, classes -> {
                         if (classes != null) {
                             if (mTabLayout.getSelectedTabPosition() == mTabLayout.getTabCount() - 1) {
                                 if (classes.size() == 0) {

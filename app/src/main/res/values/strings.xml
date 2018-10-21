@@ -50,7 +50,7 @@
     <string name="edit_class_description">Change this class.</string>
 
     <string name="nothing_due_text">Nothing due on this day!</string>
-    <string name="no_classes_text">You don\'t have any classes. Add some to continue!</string>
+    <string name="no_classes_text">You don\'t have any subjects. Add some to continue!</string>
     <string name="no_assignments_due_text">No Assignments Due!</string>
 
     <string name="btn_edit_label">Edit</string>
@@ -77,7 +77,7 @@
 
     <string name="license_cpyrght">%s %d</string>
 
-    <string name="no_classes_content_desc">No classes</string>
+    <string name="no_classes_content_desc">No subjects</string>
     <string name="nothing_due_content_desc">Nothing is due on this day.</string>
     <string name="no_assignments_due_content_desc">No assignments are due.</string>
     <string name="btn_expand_content_desc">Show notes</string>
@@ -90,7 +90,7 @@
     <string name="pref_show_notif_days_key" translatable="false">show_notif_days</string>
     <string name="pref_show_notif_time_key" translatable="false">show_notif_time</string>
     <string name="pref_what_assign_show_key" translatable="false">show_what_notif</string>
-    <string name="pref_classes_key" translatable="false">classes</string>
+    <string name="pref_classes_key" translatable="false">subjects</string>
     <string name="pref_first_time_key" translatable="false">first_time</string>
 
 

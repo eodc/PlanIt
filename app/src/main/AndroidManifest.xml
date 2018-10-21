@@ -29,7 +29,7 @@
             android:parentActivityName=".activity.MainActivity" />
 
         <activity
-            android:name=".activity.ClassesActivity"
+            android:name=".activity.SubjectsActivity"
             android:label="@string/activity_classes_title"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden"

@@ -15,17 +15,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
-import io.eodc.planit.adapter.ClassesAdapter;
-import io.eodc.planit.db.Class;
+import io.eodc.planit.adapter.SubjectAdapter;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.fragment.ModifyClassFragment;
-import io.eodc.planit.model.ClassListViewModel;
+import io.eodc.planit.model.SubjectListViewModel;
 
 /**
  * Activity for adding or modifying classes
  *
  * @author 2n
  */
-public class ClassesActivity extends AppCompatActivity {
+public class SubjectsActivity extends AppCompatActivity {
 
     @BindView(R.id.tb)     Toolbar         mToolbar;
     @BindView(R.id.recycle_class)  RecyclerView    mRvClasses;
@@ -39,18 +39,18 @@ public class ClassesActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ViewModelProviders.of(this).get(ClassListViewModel.class)
-                .getClasses().observe(this, this::onClassListChanged);
+        ViewModelProviders.of(this).get(SubjectListViewModel.class)
+                .getSubjectsObservable().observe(this, this::onClassListChanged);
 
         mRvClasses.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void onClassListChanged(List<Class> classes) {
-        ClassesAdapter classesAdapter = (ClassesAdapter) mRvClasses.getAdapter();
-        if (classesAdapter != null) {
-            classesAdapter.swapClassesList(classes);
+    private void onClassListChanged(List<Subject> subjects) {
+        SubjectAdapter subjectAdapter = (SubjectAdapter) mRvClasses.getAdapter();
+        if (subjectAdapter != null) {
+            subjectAdapter.swapClassesList(subjects);
         } else {
-            mRvClasses.setAdapter(new ClassesAdapter(classes, this));
+            mRvClasses.setAdapter(new SubjectAdapter(subjects, this));
         }
     }
 

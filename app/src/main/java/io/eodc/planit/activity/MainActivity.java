@@ -1,5 +1,6 @@
 package io.eodc.planit.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,15 +17,19 @@ import android.view.MenuItem;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.BuildConfig;
 import io.eodc.planit.R;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.fragment.AddAssignmentFragment;
 import io.eodc.planit.fragment.CalendarFragment;
 import io.eodc.planit.fragment.HomeFragment;
 import io.eodc.planit.fragment.PlannerFragment;
+import io.eodc.planit.model.SubjectListViewModel;
 import timber.log.Timber;
 
 /**
@@ -34,11 +39,18 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.nav_bottom)   AHBottomNavigation      mBottomNav;
-    @BindView(R.id.fab_create_assign)          FloatingActionButton    mFab;
-    @BindView(R.id.tb)             Toolbar                 mToolbar;
+    @BindView(R.id.nav_bottom)
+    AHBottomNavigation mBottomNav;
 
-    private FragmentManager         mFragmentManager;
+    @BindView(R.id.fab_create_assign)
+    FloatingActionButton mFab;
+
+    @BindView(R.id.tb)
+    Toolbar mToolbar;
+
+    private FragmentManager mFragmentManager;
+
+    private List<Subject> mSubjects;
 
     @OnClick(R.id.fab_create_assign) void handleCreateFab() {
         if (getFragmentManager() != null) {
@@ -51,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        new Thread(() -> mSubjects = ViewModelProviders.of(MainActivity.this)
+                .get(SubjectListViewModel.class)
+                .getSubjects()).start();
 
         mFragmentManager = getSupportFragmentManager();
 
@@ -73,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (initScreen.equals(getString(R.string.pref_init_page_calendar_value))) {
             mBottomNav.setCurrentItem(2);
         }
+    }
 
+    public List<Subject> getClasses() {
+        return mSubjects;
     }
 
     @Override
@@ -120,6 +139,5 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
-
     }
 }

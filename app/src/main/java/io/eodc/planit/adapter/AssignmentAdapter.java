@@ -1,7 +1,6 @@
 package io.eodc.planit.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -22,7 +21,7 @@ import java.util.List;
 import io.eodc.planit.R;
 import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.Class;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.fragment.ModifyAssignmentFragment;
 
 /**
@@ -30,7 +29,7 @@ import io.eodc.planit.fragment.ModifyAssignmentFragment;
  *
  * @author 2n
  */
-public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolder> {
+public class AssignmentAdapter extends RecyclerView.Adapter<AssignmentViewHolder> {
 
     private static final int NEVER_SHOW_DIVIDER         = 0;
 
@@ -40,51 +39,49 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
     private Context                     mContext;
 
+
+    private final List<Subject> mSubjects;
+
     private List<Assignment>  mAssignments;
-    private List<Class>       mClasses;
 
     private int     mShowDividerFlag;
 
     /**
-     * Constructs a new instance of AssignmentsAdapter. Dynamically displays relevant information
+     * Constructs a new instance of AssignmentAdapter. Dynamically displays relevant information
      * about the assignment in its view depending on its position in the list and it due date.
-     * <p>
-     * {@link #swapAssignmentsList(List)} should be called as soon as the mAssignments cursor is
-     * available, or else nothing will be shown.
      *
      * @param context     The context to use for grabbing strings, colors, etc.
-     * @param classes     The LiveData containing all the user's classes.
+     * @param assignments The list of assignments to show
+     * @param subjects     The LiveData containing all the user's subjects.
      * @see AssignmentViewHolder
      **/
-    public AssignmentsAdapter(Context context, List<Class> classes) {
+    public AssignmentAdapter(Context context, List<Assignment> assignments, List<Subject> subjects) {
         this.mContext = context;
-        this.mClasses = classes;
+        this.mAssignments = assignments;
+        this.mSubjects = subjects;
         this.mShowDividerFlag = -1;
+        setHasStableIds(true);
     }
 
     /**
-     * Constructs a new instance of AssignmentsAdapter while specifying if dividers should be shown.
+     * Constructs a new instance of AssignmentAdapter while specifying if dividers should be shown.
      * This constructor should be used in instances where the full list of mAssignments is not being
      * displayed, or the context of when the mAssignments are due have been established.
-     *
      * @param context      The context to use for grabbing strings, colors, etc.
-     * @param classes     The LiveData containing all the user's classes.
+     * @param assignments The list of assignments to show
+     * @param subjects     The LiveData containing all the user's subjects.
      * @param showDividers Whether or not dividers should be shown.
      */
-    public AssignmentsAdapter(Context context, List<Class> classes, boolean showDividers) {
+    public AssignmentAdapter(Context context, List<Assignment> assignments, List<Subject> subjects, boolean showDividers) {
         this.mContext = context;
-        this.mClasses = classes;
+        this.mAssignments = assignments;
+        this.mSubjects = subjects;
         this.mShowDividerFlag = showDividers ? -1 : NEVER_SHOW_DIVIDER;
+        setHasStableIds(true);
     }
 
-    /**
-     * Swaps the current assignment cursor, then notifies the parent {@link RecyclerView} that the
-     * current data set has been changed.
-     *
-     * @param liveData The new {@link Cursor} that should be used as the data set.
-     */
-    public void swapAssignmentsList(List<Assignment> liveData) {
-        mAssignments = liveData;
+    public void swapAssignmentsList(List<Assignment> newList) {
+        mAssignments = newList;
         notifyDataSetChanged();
     }
 
@@ -165,7 +162,8 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
         if (position > 0) {
             previousAssignment = mAssignments.get(position - 1);
         }
-        Class assignmentClass = Iterables.find(mClasses, value -> value.getId() == assignment.getClassId());
+
+        Subject assignmentSubject = Iterables.find(mSubjects, value -> value.getId() == assignment.getClassId());
 
         DateTime dtCurrent = assignment.getDueDate();
         int assignmentTypeFlag = assignment.getType();
@@ -186,7 +184,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
 
 
         String classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
-                assignmentClass.getName(),
+                assignmentSubject.getName(),
                 assignmentType);
 
         holder.textClassType.setText(classAndTypeText);
@@ -230,7 +228,7 @@ public class AssignmentsAdapter extends RecyclerView.Adapter<AssignmentViewHolde
             return true;
         });
 
-        holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentClass.getColor()));
+        holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentSubject.getColor()));
         holder.textAssignmentName.setText(assignment.getTitle());
     }
 

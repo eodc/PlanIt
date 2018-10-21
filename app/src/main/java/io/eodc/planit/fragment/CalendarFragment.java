@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -32,20 +31,18 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
+import io.eodc.planit.adapter.AssignmentAdapter;
 import io.eodc.planit.adapter.AssignmentViewHolder;
-import io.eodc.planit.adapter.AssignmentsAdapter;
 import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.Class;
 import io.eodc.planit.helper.AssignmentTouchHelper;
 import io.eodc.planit.model.AssignmentListViewModel;
-import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment that displays a month's assignments, as well as the information on those assignments.
  *
  * @author 2n
  */
-public class CalendarFragment extends Fragment implements
+public class CalendarFragment extends NavigableFragment implements
         OnDateSelectedListener,
         OnMonthChangedListener,
         DayViewDecorator {
@@ -60,11 +57,6 @@ public class CalendarFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        ViewModelProviders.of(this)
-                .get(ClassListViewModel.class)
-                .getClasses()
-                .observe(this, this::onClassesGet);
 
         mAssignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
@@ -88,24 +80,19 @@ public class CalendarFragment extends Fragment implements
         mCalendar.setSelectedDate(new Date());
         mCalendar.setOnMonthChangedListener(this);
         mCalendar.setOnDateChangedListener(this);
-    }
 
-    private void onClassesGet(List<Class> classes) {
-        if (getContext() != null) {
-            AssignmentsAdapter adapter = new AssignmentsAdapter(getContext(), classes, false);
-            mRvDaysAssignments.setAdapter(adapter);
-            mRvDaysAssignments.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()))
-                    .observe(this, this::onSingleDayAssignmentsChange);
+        mRvDaysAssignments.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
-                    0,
-                    ItemTouchHelper.RIGHT,
-                    this::onDismiss);
-            ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
-            touchHelper.attachToRecyclerView(mRvDaysAssignments);
-        }
+        mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(mCalendar.getSelectedDate().getDate()))
+                .observe(this, this::onSingleDayAssignmentsChange);
+
+        ItemTouchHelper.SimpleCallback touchSimpleCallback = new AssignmentTouchHelper(
+                0,
+                ItemTouchHelper.RIGHT,
+                this::onDismiss);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(touchSimpleCallback);
+        touchHelper.attachToRecyclerView(mRvDaysAssignments);
     }
 
     private void onDismiss(AssignmentViewHolder holder) {
@@ -114,21 +101,6 @@ public class CalendarFragment extends Fragment implements
             adapter.notifyItemRemoved(holder.getAdapterPosition());
         }
         new Thread(() -> mAssignmentListViewModel.removeAssignments(holder.getAssignment())).start();
-    }
-
-    private void onSingleDayAssignmentsChange(List<Assignment> assignments) {
-        if (mRvDaysAssignments.getAdapter() != null) {
-            AssignmentsAdapter adapter = (AssignmentsAdapter) mRvDaysAssignments.getAdapter();
-            if (assignments != null && assignments.size() > 0) {
-                mTvAllDone.setVisibility(View.GONE);
-                mRvDaysAssignments.setVisibility(View.VISIBLE);
-                adapter.swapAssignmentsList(assignments);
-            } else {
-                mRvDaysAssignments.setVisibility(View.GONE);
-                mTvAllDone.setVisibility(View.VISIBLE);
-                adapter.swapAssignmentsList(null);
-            }
-        }
     }
 
     private void onDateRangeAssignmentsChange(List<Assignment> assignments) {
@@ -153,6 +125,24 @@ public class CalendarFragment extends Fragment implements
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         mAssignmentListViewModel.getAssignmentsDueOnDay(new DateTime(date.getDate()))
                 .observe(this, this::onSingleDayAssignmentsChange);
+    }
+
+    private void onSingleDayAssignmentsChange(List<Assignment> assignments) {
+        if (assignments != null && assignments.size() > 0) {
+            if (mRvDaysAssignments.getAdapter() == null) {
+                AssignmentAdapter adapter = new AssignmentAdapter(getContext(), assignments, getSubjects());
+                mRvDaysAssignments.swapAdapter(adapter, true);
+            } else {
+                AssignmentAdapter adapter = (AssignmentAdapter) mRvDaysAssignments.getAdapter();
+                adapter.swapAssignmentsList(assignments);
+            }
+            mTvAllDone.setVisibility(View.GONE);
+            mRvDaysAssignments.setVisibility(View.VISIBLE);
+        } else {
+            mRvDaysAssignments.setVisibility(View.GONE);
+            mTvAllDone.setVisibility(View.VISIBLE);
+            mRvDaysAssignments.setAdapter(null);
+        }
     }
 
     @Override

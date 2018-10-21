@@ -2,7 +2,6 @@ package io.eodc.planit.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,14 +29,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
+import io.eodc.planit.activity.MainActivity;
 import io.eodc.planit.adapter.AssignmentType;
 import io.eodc.planit.adapter.AssignmentTypeAdapter;
 import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.Class;
 import io.eodc.planit.db.PlannerDatabase;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.helper.AssignmentInfoInputHelper;
 import io.eodc.planit.helper.KeyboardFocusManager;
-import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Created by 2n on 5/16/18.
@@ -141,9 +140,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ViewModelProviders.of(this).get(ClassListViewModel.class).getClasses()
-                .observe(this, this::setupClassSpinner);
-
+        setupClassSpinner();
     }
 
     private void setupInputListeners() {
@@ -181,16 +178,17 @@ public class ModifyAssignmentFragment extends DialogFragment implements
         }
     }
 
-    private void setupClassSpinner(List<Class> classes) {
-        if (getContext() != null) {
+    private void setupClassSpinner() {
+        if (getContext() != null && getActivity() != null) {
+            List<Subject> subjects = ((MainActivity) getActivity()).getClasses();
             ArrayAdapter mClassAdapter = new ArrayAdapter<>(getContext(),
                     android.R.layout.simple_spinner_dropdown_item,
                     android.R.id.text1,
-                    classes);
+                    subjects);
             mSpinnerClass.setAdapter(mClassAdapter);
             mSpinnerClass.setOnItemSelectedListener(this);
 
-            mSpinnerClass.setSelection(Iterables.indexOf(classes,
+            mSpinnerClass.setSelection(Iterables.indexOf(subjects,
                     c -> c.getId() == mAssignment.getClassId()));
 
             setupTypeSpinner();
@@ -225,7 +223,7 @@ public class ModifyAssignmentFragment extends DialogFragment implements
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.equals(mSpinnerType)) mSelectedType = position;
         else if (parent.equals(mSpinnerClass)) {
-            Class selected = (Class) parent.getSelectedItem();
+            Subject selected = (Subject) parent.getSelectedItem();
             mSelectedClassId = selected.getId();
         }
     }

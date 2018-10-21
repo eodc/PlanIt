@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
-import io.eodc.planit.db.Class;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.fragment.ModifyClassFragment;
 
 /**
@@ -28,18 +28,18 @@ import io.eodc.planit.fragment.ModifyClassFragment;
  * @author 2n
  */
 
-public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassViewHolder> {
-    private List<Class>       mClasses;
+public class SubjectAdapter extends RecyclerView.Adapter<SubjectAdapter.ClassViewHolder> {
+    private List<Subject> mSubjects;
     private Context           mContext;
 
     /**
      * Constructs a new instance of ClassAdapter
      *
-     * @param classes      A LiveData Model containing the classes to show
+     * @param subjects      A LiveData Model containing the subjects to show
      * @param mContext     The context to pull strings, colors, etc. from
      */
-    public ClassesAdapter(List<Class> classes, Context mContext) {
-        this.mClasses = classes;
+    public SubjectAdapter(List<Subject> subjects, Context mContext) {
+        this.mSubjects = subjects;
         this.mContext = mContext;
     }
 
@@ -51,14 +51,14 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
 
     @Override
     public void onBindViewHolder(@NonNull ClassViewHolder holder, int position) {
-        if (mClasses != null) {
-            Class currentClass = mClasses.get(position);
+        if (mSubjects != null) {
+            Subject currentSubject = mSubjects.get(position);
 
-            holder.imageClassColor.setBackgroundColor(Color.parseColor(currentClass.getColor()));
-            holder.textClassName.setText(currentClass.getName());
-            holder.textTeacherName.setText(currentClass.getTeacher());
+            holder.imageClassColor.setBackgroundColor(Color.parseColor(currentSubject.getColor()));
+            holder.textClassName.setText(currentSubject.getName());
+            holder.textTeacherName.setText(currentSubject.getTeacher());
             holder.itemView.setOnLongClickListener(view -> {
-                ModifyClassFragment.newInstance(currentClass)
+                ModifyClassFragment.newInstance(currentSubject)
                         .show(((AppCompatActivity) mContext).getSupportFragmentManager(), null);
 
                 Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
@@ -72,14 +72,14 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.ClassVie
         }
     }
 
-    public void swapClassesList(List<Class> mClasses) {
-        this.mClasses = mClasses;
+    public void swapClassesList(List<Subject> mSubjects) {
+        this.mSubjects = mSubjects;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        if (mClasses != null) return mClasses.size();
+        if (mSubjects != null) return mSubjects.size();
         else return 0;
     }
 

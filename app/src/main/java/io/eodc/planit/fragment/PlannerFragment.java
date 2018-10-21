@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -16,18 +15,17 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.eodc.planit.R;
+import io.eodc.planit.adapter.AssignmentAdapter;
 import io.eodc.planit.adapter.AssignmentViewHolder;
-import io.eodc.planit.adapter.AssignmentsAdapter;
 import io.eodc.planit.helper.AssignmentTouchHelper;
 import io.eodc.planit.model.AssignmentListViewModel;
-import io.eodc.planit.model.ClassListViewModel;
 
 /**
  * Fragment showing all of the user's inputted assignments
  *
  * @author 2n
  */
-public class PlannerFragment extends Fragment {
+public class PlannerFragment extends NavigableFragment {
 
     @BindView(R.id.recycle_assignment)         RecyclerView    mRvContent;
     @BindView(R.id.text_done)     TextView        mTvAllDone;
@@ -37,37 +35,27 @@ public class PlannerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ClassListViewModel classListViewModel = ViewModelProviders.of(this)
-                .get(ClassListViewModel.class);
         assignmentListViewModel = ViewModelProviders.of(this)
                 .get(AssignmentListViewModel.class);
-        classListViewModel.getClasses().observe(this, classes -> {
-            AssignmentsAdapter adapter = new AssignmentsAdapter(getContext(), classes);
-            adapter.swapAssignmentsList(assignmentListViewModel.getAllAssignments().getValue());
-            mRvContent.setAdapter(adapter);
-            mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            ItemTouchHelper.SimpleCallback callback = new AssignmentTouchHelper(
-                    0,
-                    ItemTouchHelper.RIGHT,
-                    this::onDismiss);
-            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-            touchHelper.attachToRecyclerView(mRvContent);
-
-            assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
-                if (assignments != null) {
-                    if (assignments.size() == 0) {
-                        mTvAllDone.setVisibility(View.VISIBLE);
-                        mRvContent.setVisibility(View.GONE);
+        assignmentListViewModel.getAllAssignments().observe(this, assignments -> {
+            if (assignments != null) {
+                if (assignments.size() == 0) {
+                    mTvAllDone.setVisibility(View.VISIBLE);
+                    mRvContent.setVisibility(View.GONE);
+                } else {
+                    mTvAllDone.setVisibility(View.GONE);
+                    mRvContent.setVisibility(View.VISIBLE);
+                    if (mRvContent.getAdapter() == null) {
+                        AssignmentAdapter adapter = new AssignmentAdapter(getContext(), assignments, getSubjects());
+                        mRvContent.swapAdapter(adapter, false);
                     } else {
-                        mTvAllDone.setVisibility(View.GONE);
-                        mRvContent.setVisibility(View.VISIBLE);
+                        AssignmentAdapter adapter = (AssignmentAdapter) mRvContent.getAdapter();
                         adapter.swapAssignmentsList(assignments);
                     }
                 }
-            });
+            }
         });
-
     }
 
     private void onDismiss(AssignmentViewHolder holder) {
@@ -84,5 +72,18 @@ public class PlannerFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_planner, container, false);
         ButterKnife.bind(this, view);
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ItemTouchHelper.SimpleCallback callback = new AssignmentTouchHelper(
+                0,
+                ItemTouchHelper.RIGHT,
+                this::onDismiss);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+
+        touchHelper.attachToRecyclerView(mRvContent);
+        mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

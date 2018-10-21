@@ -16,8 +16,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
-import io.eodc.planit.adapter.ClassesAdapter;
-import io.eodc.planit.model.ClassListViewModel;
+import io.eodc.planit.adapter.SubjectAdapter;
+import io.eodc.planit.model.SubjectListViewModel;
 
 /**
  * The last slide of the onboarding carousel, where the user initially adds their classes
@@ -49,15 +49,15 @@ public class OnboardingAddClassesFragment extends OnboardingFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mRvClasses.setLayoutManager(new LinearLayoutManager(getContext()));
-        ViewModelProviders.of(this).get(ClassListViewModel.class)
-                .getClasses().observe(this, classes -> {
-                    if (classes != null) {
+        ViewModelProviders.of(this).get(SubjectListViewModel.class)
+                .getSubjectsObservable().observe(this, subjects -> {
+            if (subjects != null) {
                         if (mRvClasses.getAdapter() != null) {
-                            ((ClassesAdapter) mRvClasses.getAdapter()).swapClassesList(classes);
+                            ((SubjectAdapter) mRvClasses.getAdapter()).swapClassesList(subjects);
                         } else {
-                            mRvClasses.setAdapter(new ClassesAdapter(classes, getContext()));
+                            mRvClasses.setAdapter(new SubjectAdapter(subjects, getContext()));
                         }
-                        updateNoClassIndicators(classes.size());
+                updateNoClassIndicators(subjects.size());
                     }
         });
     }

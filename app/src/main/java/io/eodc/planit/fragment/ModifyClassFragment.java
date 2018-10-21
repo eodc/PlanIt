@@ -27,9 +27,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.eodc.planit.R;
 import io.eodc.planit.db.Assignment;
-import io.eodc.planit.db.Class;
+import io.eodc.planit.db.Subject;
 import io.eodc.planit.model.AssignmentListViewModel;
-import io.eodc.planit.model.ClassListViewModel;
+import io.eodc.planit.model.SubjectListViewModel;
 
 /**
  * Fragment that shows a dialog prompting the user to either add or modify a class
@@ -49,17 +49,17 @@ public class ModifyClassFragment extends DialogFragment implements
 
     private String  mColorChosen;
 
-    private Class   mClass;
+    private Subject mSubject;
 
     /**
      * Creates an new instance of a ModifyClassFragment
      *
-     * @param inClass     Class to modify, or null if new class.
+     * @param inSubject     Subject to modify, or null if new class.
      * @return A new instance of ModifyClassFragment
      */
-    public static ModifyClassFragment newInstance(Class inClass) {
+    public static ModifyClassFragment newInstance(Subject inSubject) {
         ModifyClassFragment fragment = new ModifyClassFragment();
-        fragment.mClass = inClass;
+        fragment.mSubject = inSubject;
         return fragment;
     }
 
@@ -94,27 +94,26 @@ public class ModifyClassFragment extends DialogFragment implements
     void showDeleteDialog() {
         if (getActivity() != null) {
             new AlertDialog.Builder(getContext())
-                    .setTitle("Delete Class?")
+                    .setTitle("Delete Subject?")
                     .setMessage("Deleting this class will also remove all related assignments from your planner!")
                     .setPositiveButton("Delete", (dialog, which) -> {
                         AssignmentListViewModel assignmentListViewModel =
                                 ViewModelProviders.of(this)
                                         .get(AssignmentListViewModel.class);
-                        ClassListViewModel classListViewModel =
+                        SubjectListViewModel subjectListViewModel =
                                 ViewModelProviders.of(this)
-                                        .get(ClassListViewModel.class);
-                        classListViewModel.getClasses().observe(this, classes -> {
-                            if (classes != null) {
-                                if (classes.size() > 1) {
-                                    assignmentListViewModel.getAssignmentsByClassId(mClass.getId()).observe(this, assignments -> {
-                                        new Thread(() -> classListViewModel.removeClasses(mClass)).start();
+                                        .get(SubjectListViewModel.class);
+                        subjectListViewModel.getSubjectsObservable().observe(this, subjects -> {
+                            if (subjects != null) {
+                                if (subjects.size() > 1) {
+                                    assignmentListViewModel.getAssignmentsByClassId(mSubject.getId()).observe(this, assignments -> {
+                                        new Thread(() -> subjectListViewModel.removeSubjects(mSubject)).start();
 
                                         if (assignments != null && assignments.size() > 0) {
-                                            new Thread(() ->
-                                                    assignmentListViewModel
-                                                            .removeAssignments(
-                                                                    assignments.toArray(new Assignment[assignments.size()])
-                                                            )
+                                            new Thread(() -> assignmentListViewModel
+                                                    .removeAssignments(
+                                                            assignments.toArray(new Assignment[assignments.size()])
+                                                    )
                                             ).start();
                                         }
                                     });
@@ -140,21 +139,21 @@ public class ModifyClassFragment extends DialogFragment implements
         if (!className.equals("") &&
                 !teacherName.equals("") &&
                 getContext() != null) {
-            ClassListViewModel viewModel = ViewModelProviders.of(this).get(ClassListViewModel.class);
-            if (mClass == null) {
-                Class newClass = new Class(className, teacherName, mColorChosen);
-                new Thread(() -> viewModel.insertClasses(newClass)).start();
+            SubjectListViewModel viewModel = ViewModelProviders.of(this).get(SubjectListViewModel.class);
+            if (mSubject == null) {
+                Subject newSubject = new Subject(className, teacherName, mColorChosen);
+                new Thread(() -> viewModel.insertSubjects(newSubject)).start();
             } else {
-                mClass.setName(className);
-                mClass.setTeacher(teacherName);
-                mClass.setColor(mColorChosen);
-                new Thread(() -> viewModel.updateClasses(mClass)).start();
+                mSubject.setName(className);
+                mSubject.setTeacher(teacherName);
+                mSubject.setColor(mColorChosen);
+                new Thread(() -> viewModel.updateSubjects(mSubject)).start();
             }
             dismiss();
         } else if (getView() != null) {
             if (className.equals("")) {
                 TextInputLayout layout = getView().findViewById(R.id.layout_edit_title);
-                layout.setError("Class name can't be empty");
+                layout.setError("Subject name can't be empty");
             }
             if (teacherName.equals("")) {
                 TextInputLayout layout = getView().findViewById(R.id.layout_edit_teacher);
@@ -175,16 +174,16 @@ public class ModifyClassFragment extends DialogFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (getContext() != null) {
-            if (mClass == null) {
+            if (mSubject == null) {
                 mTextTitle.setText(R.string.create_class_title);
                 mTextSubtitle.setText(R.string.create_class_description);
                 mBtnConfirm.setText(R.string.btn_create_label);
             } else {
                 mBtnDelete.setVisibility(View.VISIBLE);
 
-                mEditClassName.setText(mClass.getName());
-                mEditTeacherName.setText(mClass.getTeacher());
-                mColorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(mClass.getColor())));
+                mEditClassName.setText(mSubject.getName());
+                mEditTeacherName.setText(mSubject.getTeacher());
+                mColorPicker.setImageDrawable(new ColorDrawable(Color.parseColor(mSubject.getColor())));
             }
 
             mColorChosen = "#" + Integer.toHexString(ContextCompat.getColor(getContext(), R.color.class_red));
