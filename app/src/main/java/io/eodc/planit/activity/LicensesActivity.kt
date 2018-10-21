@@ -3,14 +3,10 @@ package io.eodc.planit.activity
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.eodc.planit.R
 import io.eodc.planit.adapter.License
 import io.eodc.planit.adapter.LicenseAdapter
-import java.util.*
+import kotlinx.android.synthetic.main.activity_licenses.*
 
 /**
  * Activity for displaying licenses
@@ -18,21 +14,16 @@ import java.util.*
  * @author 2n
  */
 class LicensesActivity : AppCompatActivity() {
-    @BindView(R.id.tb)
-    internal var mToolbar: Toolbar? = null
-    @BindView(R.id.recycle_licence)
-    internal var mRvLicenses: RecyclerView? = null
 
     // If there's a better way to grab licenses from dependencies, pls push
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_licenses)
-        ButterKnife.bind(this)
 
-        setSupportActionBar(mToolbar)
+        setSupportActionBar(tb)
         if (supportActionBar != null) supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        val licenses = ArrayList<License>()
+        val licenses = arrayListOf<License>()
         licenses.add(License("AHBottomNavigation",
                 2017,
                 "Aurelien Hubert",
@@ -73,7 +64,7 @@ class LicensesActivity : AppCompatActivity() {
                 "Joda Stephen",
                 "http://www.apache.org/licenses/LICENSE-2.0",
                 "https://github.com/JodaOrg/joda-time"))
-        mRvLicenses!!.adapter = LicenseAdapter(this, licenses)
-        mRvLicenses!!.layoutManager = LinearLayoutManager(this)
+        recycle_licence.adapter = LicenseAdapter(this, licenses)
+        recycle_licence.layoutManager = LinearLayoutManager(this)
     }
 }

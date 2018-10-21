@@ -1,21 +1,19 @@
 package io.eodc.planit.activity
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.db.Subject
 import io.eodc.planit.fragment.ModifyClassFragment
 import io.eodc.planit.model.SubjectListViewModel
+import kotlinx.android.synthetic.main.activity_subjects.*
 
 /**
  * Activity for adding or modifying classes
@@ -23,32 +21,25 @@ import io.eodc.planit.model.SubjectListViewModel
  * @author 2n
  */
 class SubjectsActivity : AppCompatActivity() {
-
-    @BindView(R.id.tb)
-    internal var mToolbar: Toolbar? = null
-    @BindView(R.id.recycle_class)
-    internal var mRvClasses: RecyclerView? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_classes)
-        ButterKnife.bind(this)
+        setContentView(R.layout.activity_subjects)
 
-        setSupportActionBar(mToolbar)
-        if (supportActionBar != null) supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        setSupportActionBar(tb)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java!!)
-                .subjectsObservable.observe(this, Observer<List<Subject>> { this.onClassListChanged(it) })
+        ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java)
+                .subjectsObservable.observe(this, Observer<List<Subject>> {this.onClassListChanged(it!!); })
 
-        mRvClasses!!.layoutManager = LinearLayoutManager(this)
+        recycle_subject.layoutManager = LinearLayoutManager(this)
     }
 
     private fun onClassListChanged(subjects: List<Subject>) {
-        val subjectAdapter = mRvClasses!!.adapter as SubjectAdapter?
+        val subjectAdapter = recycle_subject.adapter as SubjectAdapter?
         if (subjectAdapter != null) {
             subjectAdapter.swapClassesList(subjects)
         } else {
-            mRvClasses!!.adapter = SubjectAdapter(subjects, this)
+            recycle_subject.adapter = SubjectAdapter(subjects, this)
         }
     }
 
