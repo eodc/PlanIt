@@ -13,11 +13,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.eodc.planit.R
 import io.eodc.planit.db.Subject
 import io.eodc.planit.fragment.ModifyClassFragment
+import kotlinx.android.synthetic.main.item_class.view.*
 
 /**
  * Adapter for interfacing Classes with [RecyclerView]
@@ -29,35 +28,32 @@ class SubjectAdapter
 /**
  * Constructs a new instance of ClassAdapter
  *
- * @param subjects      A LiveData Model containing the subjects to show
+ * @param mSubjects    A list containing the subjects to show
  * @param mContext     The context to pull strings, colors, etc. from
  */
-(private var mSubjects: List<Subject>?, private val mContext: Context) : RecyclerView.Adapter<SubjectAdapter.ClassViewHolder>() {
+(private var mSubjects: List<Subject>, private val mContext: Context) : RecyclerView.Adapter<SubjectAdapter.ClassViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassViewHolder {
         return ClassViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_class, parent, false))
     }
 
     override fun onBindViewHolder(holder: ClassViewHolder, position: Int) {
-        if (mSubjects != null) {
-            val currentSubject = mSubjects!![position]
+        val currentSubject = mSubjects[position]
 
-            holder.imageClassColor!!.setBackgroundColor(Color.parseColor(currentSubject.color))
-            holder.textClassName!!.text = currentSubject.name
-            holder.textTeacherName!!.text = currentSubject.teacher
-            holder.itemView.setOnLongClickListener { view ->
-                ModifyClassFragment.newInstance(currentSubject)
-                        .show((mContext as AppCompatActivity).supportFragmentManager, null)
+        holder.imageClassColor.setBackgroundColor(Color.parseColor(currentSubject.color))
+        holder.textClassName.text = currentSubject.name
+        holder.textTeacherName.text = currentSubject.teacher
+        holder.itemView.setOnLongClickListener {
+            ModifyClassFragment.newInstance(currentSubject)
+                    .show((mContext as AppCompatActivity).supportFragmentManager, null)
 
-                val v = mContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (v != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                    } else
-                        v.vibrate(500)
-                }
-                true
-            }
+            val v = mContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+            @Suppress("DEPRECATION")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else
+                v.vibrate(500)
+            true
         }
     }
 
@@ -67,31 +63,22 @@ class SubjectAdapter
     }
 
     override fun getItemCount(): Int {
-        return if (mSubjects != null)
-            mSubjects!!.size
-        else
-            0
+        return mSubjects.size
     }
 
     /**
      * Holder for information and attributes for the class view
      */
-    internal inner class ClassViewHolder
+    inner class ClassViewHolder
     /**
      * Constructs a new instance of ClassViewHolder
      *
      * @param itemView The view to bind information to this holder
      */
     (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.border_class_color)
-        var imageClassColor: ImageView? = null
-        @BindView(R.id.text_title)
-        var textClassName: TextView? = null
-        @BindView(R.id.text_teacher)
-        var textTeacherName: TextView? = null
+        var imageClassColor: ImageView = itemView.border_class_color
+        var textClassName: TextView = itemView.text_title
+        var textTeacherName: TextView = itemView.text_teacher
 
-        init {
-            ButterKnife.bind(this, itemView)
-        }
     }
 }

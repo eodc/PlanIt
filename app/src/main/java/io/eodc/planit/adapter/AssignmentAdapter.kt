@@ -24,14 +24,13 @@ import org.joda.time.DateTime
  */
 class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
 
-    private var mContext: Context? = null
-
-
-    private val mSubjects: List<Subject>
-
-    private var mAssignments: List<Assignment>? = null
+    private var mContext: Context
 
     private var mShowDividerFlag: Int = 0
+
+    private val mSubjects: List<Subject>
+    private var mAssignments: List<Assignment>
+
 
     /**
      * Constructs a new instance of AssignmentAdapter. Dynamically displays relevant information
@@ -80,8 +79,8 @@ class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
      * @return Type of item view
      */
     override fun getItemViewType(position: Int): Int {
-        val currentAssignment = mAssignments!![position]
-        val hasNotes = currentAssignment.notes!!
+        val currentAssignment = mAssignments[position]
+        val hasNotes = currentAssignment.notes
                 .trim { it <= ' ' } != ""
 
         if (mShowDividerFlag == NEVER_SHOW_DIVIDER) {
@@ -90,32 +89,32 @@ class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
         if (position == 0) {
             return getDividerViewType(hasNotes)
         } else {
-            val previousDue = mAssignments!![position - 1]
+            val previousDue = mAssignments[position - 1]
                     .dueDate
             val currentDue = currentAssignment.dueDate
             val now = DateTime()
 
-            if (currentDue!!.isBeforeNow && now.dayOfYear - currentDue.dayOfYear >= 1) { // Overdue [Don't divide]
+            if (currentDue.isBeforeNow && now.dayOfYear - currentDue.dayOfYear >= 1) { // Overdue [Don't divide]
                 return getNormalViewType(hasNotes)
             }
 
             return if (currentDue.isBefore(now.plusWeeks(1))) { // Within same week (Now + 7 days) [Divide for every day]
-                if (currentDue.dayOfWeek() != previousDue!!.dayOfWeek())
+                if (currentDue.dayOfWeek() != previousDue.dayOfWeek())
                     getDividerViewType(hasNotes)
                 else
                     getNormalViewType(hasNotes)
             } else if (currentDue.monthOfYear() == now.monthOfYear()) { // Within same month [Divide for every week]
-                if (previousDue!!.isBefore(now.plusWeeks(1)) || currentDue.weekOfWeekyear() != previousDue.weekOfWeekyear())
+                if (previousDue.isBefore(now.plusWeeks(1)) || currentDue.weekOfWeekyear() != previousDue.weekOfWeekyear())
                     getDividerViewType(hasNotes)
                 else
                     getNormalViewType(hasNotes)
             } else if (currentDue.year() == now.year()) { // Within same year [Divide for every month]
-                if (currentDue.monthOfYear() != previousDue!!.monthOfYear() || previousDue.isBefore(now.plusWeeks(1)))
+                if (currentDue.monthOfYear() != previousDue.monthOfYear() || previousDue.isBefore(now.plusWeeks(1)))
                     getDividerViewType(hasNotes)
                 else
                     getNormalViewType(hasNotes)
             } else {
-                if (currentDue.year() != previousDue!!.year())
+                if (currentDue.year() != previousDue.year())
                     getDividerViewType(hasNotes)
                 else
                     getNormalViewType(hasNotes)
@@ -143,13 +142,13 @@ class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
     }
 
     override fun onBindViewHolder(holder: AssignmentViewHolder, position: Int) {
-        val assignment = mAssignments!![position]
+        val assignment = mAssignments[position]
         var previousAssignment: Assignment? = null
         if (position > 0) {
-            previousAssignment = mAssignments!![position - 1]
+            previousAssignment = mAssignments[position - 1]
         }
 
-        val assignmentSubject = Iterables.find(mSubjects) { value -> value.id == assignment.classId }
+        val assignmentSubject = Iterables.find(mSubjects) { value -> value?.id == assignment.classId }
 
         val dtCurrent = assignment.dueDate
         val assignmentTypeFlag = assignment.type
@@ -163,56 +162,55 @@ class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
         }
 
 
-        val classAndTypeText = mContext!!.getString(R.string.class_name_and_type_text,
+        val classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
                 assignmentSubject.name,
                 assignmentType)
 
-        holder.textClassType!!.text = classAndTypeText
-        holder.textDueDate!!.text = dtCurrent!!.toString(mContext!!.getString(R.string.due_date_pattern))
+        holder.textClassType.text = classAndTypeText
+        holder.textDueDate.text = dtCurrent.toString(mContext.getString(R.string.due_date_pattern))
         holder.assignment = assignment
 
         if (holder.itemViewType and VIEW_TYPE_DIVIDER == VIEW_TYPE_DIVIDER) {
             val headerText = getHeaderText(dtCurrent)
-            holder.textHeader!!.text = headerText
-            holder.layoutHeader!!.visibility = View.VISIBLE
+            holder.textHeader.text = headerText
+            holder.layoutHeader.visibility = View.VISIBLE
             holder.showDueDate()
-        } else if (previousAssignment != null && assignment.dueDate!!.dayOfYear() != previousAssignment.dueDate!!.dayOfYear()) {
+        } else if (previousAssignment != null && assignment.dueDate.dayOfYear() != previousAssignment.dueDate.dayOfYear()) {
             holder.showDueDate()
         } else {
             holder.hideDueDate()
         }
 
         if (holder.itemViewType and VIEW_TYPE_NOTES == VIEW_TYPE_NOTES) {
-            holder.iconExpand!!.visibility = View.VISIBLE
-            holder.textNotes!!.text = assignment.notes
-            holder.itemView.setOnClickListener { view -> holder.handleNoteClick() }
+            holder.iconExpand.visibility = View.VISIBLE
+            holder.textNotes.text = assignment.notes
+            holder.itemView.setOnClickListener { holder.handleNoteClick() }
         }
 
-        holder.itemView.setOnLongClickListener { view ->
+        holder.itemView.setOnLongClickListener {
             if (mContext is MainActivity) {
                 val activity = mContext as MainActivity?
-                val editFragment = ModifyAssignmentFragment.newInstance(holder.assignment)
+                val editFragment = ModifyAssignmentFragment.newInstance(holder.assignment!!)
 
                 editFragment.show(activity!!.supportFragmentManager, null)
 
-                val v = mContext!!.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (v != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        v.vibrate(VibrationEffect
-                                .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                    else
-                        v.vibrate(500)
-                }
+                val v = mContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                @Suppress("DEPRECATION")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    v.vibrate(VibrationEffect
+                            .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                else
+                    v.vibrate(500)
             }
             true
         }
 
-        holder.imageClassColor!!.setBackgroundColor(Color.parseColor(assignmentSubject.color))
-        holder.textAssignmentName!!.text = assignment.title
+        holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentSubject.color))
+        holder.textAssignmentName.text = assignment.title
     }
 
     override fun getItemCount(): Int {
-        return if (mAssignments == null) 0 else mAssignments!!.size
+        return mAssignments.size
     }
 
     /**
@@ -227,47 +225,51 @@ class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
         if (currentDue.isBeforeNow && now.dayOfYear - currentDue.dayOfYear >= 1) { // Overdue
             return "Overdue"
         }
-        if (currentDue.isBefore(now.plusWeeks(1))) { // Within same week (Now + 7 days) [Divide for every day]
-            val daysUntil = currentDue.dayOfYear - now.dayOfYear
-            when (daysUntil) {
-                0 -> return mContext!!.getString(R.string.assignment_header_near_future_text,
-                        "Today")
-                1 -> return mContext!!.getString(R.string.assignment_header_near_future_text,
-                        "Tomorrow")
-                else -> return mContext!!.getString(R.string.assignment_header_far_future_text,
-                        daysUntil, "Days")
+        when {
+            currentDue.isBefore(now.plusWeeks(1)) -> { // Within same week (Now + 7 days) [Divide for every day]
+                val daysUntil = currentDue.dayOfYear - now.dayOfYear
+                return when (daysUntil) {
+                    0 -> mContext.getString(R.string.assignment_header_near_future_text,
+                            "Today")
+                    1 -> mContext.getString(R.string.assignment_header_near_future_text,
+                            "Tomorrow")
+                    else -> mContext.getString(R.string.assignment_header_far_future_text,
+                            daysUntil, "Days")
+                }
             }
-        } else if (currentDue.monthOfYear() == now.monthOfYear()) { // Within same month [Divide for every week]
-            val weeksUntil = currentDue.weekOfWeekyear - now.weekOfWeekyear
-            when (weeksUntil) {
-                1 -> return mContext!!.getString(R.string.assignment_header_near_future_text,
-                        "Next Week")
-                else -> return mContext!!.getString(R.string.assignment_header_far_future_text,
-                        weeksUntil,
-                        "Weeks")
+            currentDue.monthOfYear() == now.monthOfYear() -> { // Within same month [Divide for every week]
+                val weeksUntil = currentDue.weekOfWeekyear - now.weekOfWeekyear
+                return when (weeksUntil) {
+                    1 -> mContext.getString(R.string.assignment_header_near_future_text,
+                            "Next Week")
+                    else -> mContext.getString(R.string.assignment_header_far_future_text,
+                            weeksUntil,
+                            "Weeks")
+                }
             }
-        } else if (currentDue.year() == now.year()) { // Within same year [Divide for every month]
-            return mContext!!.getString(R.string.assignment_header_near_future_text,
-                    "in " + currentDue.toString(mContext!!.getString(R.string.assignment_header_month_pattern)))
-        } else {
-            val yearsUntil = currentDue.year - now.year
-            when (yearsUntil) {
-                1 -> return mContext!!.getString(R.string.assignment_header_near_future_text,
-                        "Next Year")
-                else -> return mContext!!.getString(R.string.assignment_header_far_future_text,
-                        yearsUntil,
-                        "Years")
+            currentDue.year() == now.year() -> // Within same year [Divide for every month]
+                return mContext.getString(R.string.assignment_header_near_future_text,
+                        "in " + currentDue.toString(mContext.getString(R.string.assignment_header_month_pattern)))
+            else -> {
+                val yearsUntil = currentDue.year - now.year
+                return when (yearsUntil) {
+                    1 -> mContext.getString(R.string.assignment_header_near_future_text,
+                            "Next Year")
+                    else -> mContext.getString(R.string.assignment_header_far_future_text,
+                            yearsUntil,
+                            "Years")
+                }
             }
         }
     }
 
     companion object {
 
-        private val NEVER_SHOW_DIVIDER = 0
+        private const val NEVER_SHOW_DIVIDER = 0
 
-        private val VIEW_TYPE_NORMAL = 1 shl 1
-        private val VIEW_TYPE_DIVIDER = 1 shl 2
-        private val VIEW_TYPE_NOTES = 1 shl 3
+        private const val VIEW_TYPE_NORMAL = 1 shl 1
+        private const val VIEW_TYPE_DIVIDER = 1 shl 2
+        private const val VIEW_TYPE_NOTES = 1 shl 3
     }
 
 }

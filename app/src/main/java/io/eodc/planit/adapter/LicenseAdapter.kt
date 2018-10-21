@@ -10,9 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.eodc.planit.R
+import kotlinx.android.synthetic.main.item_license.view.*
 
 class LicenseAdapter(private val mContext: Context, private val mLicenses: List<License>) : RecyclerView.Adapter<LicenseAdapter.LicenseViewHolder>() {
 
@@ -22,15 +21,15 @@ class LicenseAdapter(private val mContext: Context, private val mLicenses: List<
 
     override fun onBindViewHolder(holder: LicenseViewHolder, position: Int) {
         val license = mLicenses[position]
-        holder.textName!!.text = license.name
-        holder.textCopyright!!.text = mContext.getString(R.string.license_cpyrght,
+        holder.textName.text = license.name
+        holder.textCopyright.text = mContext.getString(R.string.license_cpyrght,
                 license.author, license.year)
-        holder.btnLicense!!.setOnClickListener {
+        holder.btnLicense.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(license.licenseUrl)
             mContext.startActivity(intent)
         }
-        holder.btnProject!!.setOnClickListener {
+        holder.btnProject.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(license.projectUrl)
             mContext.startActivity(intent)
@@ -41,18 +40,10 @@ class LicenseAdapter(private val mContext: Context, private val mLicenses: List<
         return mLicenses.size
     }
 
-    internal inner class LicenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.text_title)
-        var textName: TextView? = null
-        @BindView(R.id.text_copyright)
-        var textCopyright: TextView? = null
-        @BindView(R.id.btn_license)
-        var btnLicense: Button? = null
-        @BindView(R.id.btn_project)
-        var btnProject: Button? = null
-
-        init {
-            ButterKnife.bind(this, itemView)
-        }
+    inner class LicenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var textName: TextView = itemView.text_title
+        var textCopyright: TextView = itemView.text_copyright
+        var btnLicense: Button = itemView.btn_license
+        var btnProject: Button = itemView.btn_project
     }
 }

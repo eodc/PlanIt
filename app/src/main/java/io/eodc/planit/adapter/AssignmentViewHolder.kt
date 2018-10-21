@@ -5,11 +5,9 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-
-import butterknife.BindView
-import butterknife.ButterKnife
 import io.eodc.planit.R
 import io.eodc.planit.db.Assignment
+import kotlinx.android.synthetic.main.item_assignment.view.*
 
 /**
  * Holder for information and attributes of the assignment view
@@ -25,44 +23,31 @@ class AssignmentViewHolder
 internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var isExpanded = false
     var assignment: Assignment? = null
-        internal set
 
-    @BindView(R.id.header)
-    internal var layoutHeader: LinearLayout? = null
-    @BindView(R.id.btn_expand)
-    internal var iconExpand: ImageView? = null
-    @BindView(R.id.border_class_color)
-    internal var imageClassColor: ImageView? = null
-    @BindView(R.id.text_header)
-    internal var textHeader: TextView? = null
-    @BindView(R.id.text_title)
-    internal var textAssignmentName: TextView? = null
-    @BindView(R.id.text_class_type)
-    internal var textClassType: TextView? = null
-    @BindView(R.id.text_due)
-    internal var textDueDate: TextView? = null
-    @BindView(R.id.text_notes)
-    internal var textNotes: TextView? = null
-
-    init {
-        ButterKnife.bind(this, itemView)
-    }
+    internal var layoutHeader: LinearLayout = itemView.header
+    internal var iconExpand: ImageView = itemView.btn_expand
+    internal var imageClassColor: ImageView = itemView.border_class_color
+    internal var textHeader: TextView = itemView.text_header
+    internal var textAssignmentName: TextView = itemView.text_title
+    internal var textClassType: TextView = itemView.text_class_type
+    internal var textDueDate: TextView = itemView.text_due
+    internal var textNotes: TextView = itemView.text_notes
 
     internal fun hideDueDate() {
-        textDueDate!!.visibility = View.GONE
+        textDueDate.visibility = View.GONE
     }
 
     internal fun showDueDate() {
-        textDueDate!!.visibility = View.VISIBLE
+        textDueDate.visibility = View.VISIBLE
     }
 
     /**
      * Hides the textNotes section of the view
      */
     private fun shrinkNotes() {
-        iconExpand!!.animate()
+        iconExpand.animate()
                 .rotation(0f)
-        textNotes!!.visibility = View.GONE
+        textNotes.visibility = View.GONE
         isExpanded = false
     }
 
@@ -70,9 +55,9 @@ internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
      * Shows the textNotes section of the vie
      */
     private fun expandNotes() {
-        iconExpand!!.animate()
+        iconExpand.animate()
                 .rotation(-180f)
-        textNotes!!.visibility = View.VISIBLE
+        textNotes.visibility = View.VISIBLE
         isExpanded = true
     }
 
