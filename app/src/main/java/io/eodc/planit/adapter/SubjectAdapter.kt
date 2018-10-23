@@ -77,7 +77,7 @@ class SubjectAdapter
      */
     (itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageClassColor: ImageView = itemView.border_class_color
-        var textClassName: TextView = itemView.text_title
+        var textClassName: TextView = itemView.textHeaderTitle
         var textTeacherName: TextView = itemView.text_teacher
 
     }

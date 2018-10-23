@@ -41,7 +41,7 @@ class LicenseAdapter(private val mContext: Context, private val mLicenses: List<
     }
 
     inner class LicenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var textName: TextView = itemView.text_title
+        var textName: TextView = itemView.textHeaderTitle
         var textCopyright: TextView = itemView.text_copyright
         var btnLicense: Button = itemView.btn_license
         var btnProject: Button = itemView.btn_project

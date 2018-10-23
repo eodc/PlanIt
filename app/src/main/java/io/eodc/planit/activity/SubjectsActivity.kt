@@ -31,15 +31,15 @@ class SubjectsActivity : AppCompatActivity() {
         ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java)
                 .subjectsObservable.observe(this, Observer<List<Subject>> {this.onClassListChanged(it!!); })
 
-        recycle_subject.layoutManager = LinearLayoutManager(this)
+        recycleSubject.layoutManager = LinearLayoutManager(this)
     }
 
     private fun onClassListChanged(subjects: List<Subject>) {
-        val subjectAdapter = recycle_subject.adapter as SubjectAdapter?
+        val subjectAdapter = recycleSubject.adapter as SubjectAdapter?
         if (subjectAdapter != null) {
             subjectAdapter.swapClassesList(subjects)
         } else {
-            recycle_subject.adapter = SubjectAdapter(subjects, this)
+            recycleSubject.adapter = SubjectAdapter(subjects, this)
         }
     }
 

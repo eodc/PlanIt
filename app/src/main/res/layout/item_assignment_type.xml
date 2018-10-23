@@ -14,7 +14,7 @@
         tools:srcCompat="@drawable/ic_homework_black_24dp" />
 
     <TextView
-        android:id="@+id/text_title"
+        android:id="@+id/textHeaderTitle"
         style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

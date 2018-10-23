@@ -3,14 +3,8 @@ package io.eodc.planit.fragment
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-
-import butterknife.ButterKnife
-import io.eodc.planit.R
+import kotlinx.android.synthetic.main.fragment_onboarding_image.*
 
 /**
  * A standard onboarding fragment, with a title, image, and description.
@@ -18,13 +12,6 @@ import io.eodc.planit.R
  * @author 2n
  */
 open class OnboardingFragment : Fragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_onboarding_image, container, false)
-        ButterKnife.bind(this, v)
-        return v
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments
@@ -34,22 +21,19 @@ open class OnboardingFragment : Fragment() {
             val drawable = args.getInt(ARG_DRAWABLE)
             val description = args.getString(ARG_DESC)
 
-            val tvTitle = view.findViewById<TextView>(R.id.text_title)
-            val image = view.findViewById<ImageView>(R.id.image_main)
-            val tvDesc = view.findViewById<TextView>(R.id.text_description)
 
-            tvTitle.text = title
-            if (drawable != 0) image.setImageResource(drawable)
-            tvDesc.text = description
+            textContentTitle.text = title
+            imageContent.setImageResource(drawable)
+            textContentSubtitle.text = description
 
         }
 
     }
 
     companion object {
-        private val ARG_TITLE = "title"
-        private val ARG_DRAWABLE = "drawable"
-        private val ARG_DESC = "desc"
+        private const val ARG_TITLE = "title"
+        private const val ARG_DRAWABLE = "drawable"
+        private const val ARG_DESC = "desc"
 
         /**
          * Creates a new instance of an OnboardingFragment

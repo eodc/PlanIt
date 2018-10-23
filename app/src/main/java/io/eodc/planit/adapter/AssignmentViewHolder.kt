@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import io.eodc.planit.R
 import io.eodc.planit.db.Assignment
 import kotlinx.android.synthetic.main.item_assignment.view.*
 
@@ -28,7 +27,7 @@ internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
     internal var iconExpand: ImageView = itemView.btn_expand
     internal var imageClassColor: ImageView = itemView.border_class_color
     internal var textHeader: TextView = itemView.text_header
-    internal var textAssignmentName: TextView = itemView.text_title
+    internal var textAssignmentName: TextView = itemView.textHeaderTitle
     internal var textClassType: TextView = itemView.text_class_type
     internal var textDueDate: TextView = itemView.text_due
     internal var textNotes: TextView = itemView.text_notes

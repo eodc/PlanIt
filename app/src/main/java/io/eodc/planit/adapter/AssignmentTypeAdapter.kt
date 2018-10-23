@@ -51,7 +51,7 @@ class AssignmentTypeAdapter
         val holder = ViewHolder()
 
         holder.icon = v.findViewById(R.id.ic_type)
-        holder.title = v.findViewById(R.id.text_title)
+        holder.title = v.findViewById(R.id.textHeaderTitle)
 
         val type = mTypes[position]
 

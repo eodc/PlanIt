@@ -3,7 +3,6 @@ package io.eodc.planit.helper
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import io.eodc.planit.adapter.AssignmentViewHolder
-import io.eodc.planit.listener.OnAssignmentDismissListener
 
 /**
  * Touch helper that deals with swiping right to "dismiss" assignments

@@ -35,13 +35,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             val count = pCat.preferenceCount
             for (j in 0 until count) {
                 val p = pCat.getPreference(j)
-                if (p is ListPreference) {
-                    setPreferenceSummary(p, sharedPreferences.getString(p.getKey(), ""))
-                } else if (p is DialogPreferenceContainer) {
-                    p.setSummary(parseTime(sharedPreferences.getString(p.getKey(), "")!!))
-                } else if (p is MultiSelectListPreference) {
-                    val selectedDays = sharedPreferences.getStringSet(p.getKey(), null)
-                    p.setSummary(getNotificationDays(selectedDays, p))
+                when (p) {
+                    is ListPreference -> setPreferenceSummary(p, sharedPreferences.getString(p.getKey(), ""))
+                    is DialogPreferenceContainer -> p.setSummary(parseTime(sharedPreferences.getString(p.getKey(), "")!!))
+                    is MultiSelectListPreference -> {
+                        val selectedDays = sharedPreferences.getStringSet(p.getKey(), null)
+                        p.setSummary(getNotificationDays(selectedDays, p))
+                    }
                 }
             }
         }
@@ -78,7 +78,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         val pref = findPreference(key)
-        val helper = NotificationHelper(context)
+        val helper = NotificationHelper(context!!)
         if (pref is SwitchPreference) {
             if (pref.isChecked)
                 helper.scheduleNotification()
@@ -105,18 +105,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
      */
     private fun parseTime(time: String): String {
         try {
-            val timeParts = time.split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+            val timeParts = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
             var hour = Integer.parseInt(timeParts[0])
             val min = Integer.parseInt(timeParts[1])
-            if (!DateFormat.is24HourFormat(context)) {
+            return if (!DateFormat.is24HourFormat(context)) {
                 var isAm = true
                 if (hour > 12) {
                     hour -= 12
                     isAm = false
                 }
-                return hour.toString() + ":" + (if (min < 10) "0$min" else min) + if (isAm) "AM" else "PM"
+                hour.toString() + ":" + (if (min < 10) "0$min" else min) + if (isAm) "AM" else "PM"
             } else
-                return hour.toString() + ":" + if (min < 10) "0$min" else min
+                hour.toString() + ":" + if (min < 10) "0$min" else min
         } catch (e: NumberFormatException) {
             return "Not set."
         }

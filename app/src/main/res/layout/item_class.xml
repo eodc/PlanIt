@@ -15,7 +15,7 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/text_title"
+        android:id="@+id/textHeaderTitle"
         style="@style/Base.TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/border_class_color"
-        app:layout_constraintTop_toBottomOf="@+id/text_title"
+        app:layout_constraintTop_toBottomOf="@+id/textHeaderTitle"
         tools:text="Mr. Tsuchiyama" />
 
 </android.support.constraint.ConstraintLayout>

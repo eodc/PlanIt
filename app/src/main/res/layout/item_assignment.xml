@@ -40,7 +40,7 @@
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/text_title"
+        android:id="@+id/textHeaderTitle"
         style="@style/Base.TextAppearance.AppCompat.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
         android:gravity="center_vertical"
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/border_class_color"
-        app:layout_constraintTop_toBottomOf="@+id/text_title"
+        app:layout_constraintTop_toBottomOf="@+id/textHeaderTitle"
         tools:text="Apr 20, 2018" />
 
     <ImageView
@@ -97,7 +97,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/text_class_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/text_title"
+        app:layout_constraintTop_toTopOf="@+id/textHeaderTitle"
         app:srcCompat="@drawable/ic_arrow_expand_black_24dp"
         tools:visibility="visible" />
 
