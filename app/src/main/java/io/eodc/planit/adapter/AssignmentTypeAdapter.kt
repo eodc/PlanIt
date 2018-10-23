@@ -30,12 +30,12 @@ class AssignmentTypeAdapter
  @IdRes textViewId: Int,
  private val mTypes: List<AssignmentType>) : ArrayAdapter<AssignmentType>(mContext, mResource, textViewId, mTypes) {
 
-    override fun getDropDownView(position: Int, convertView: View, parent: ViewGroup): View {
-        return getCustomView(position, convertView)
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return getCustomView(position)
     }
 
-    override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
-        return getCustomView(position, convertView)
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return getCustomView(position)
     }
 
     /**
@@ -43,10 +43,9 @@ class AssignmentTypeAdapter
      * Binds information from [AssignmentType] to the view
      *
      * @param position    Position to get from the list of objects
-     * @param convertView View to replace
      * @return A view with all information and icons bound to it
      */
-    private fun getCustomView(position: Int, convertView: View): View {
+    private fun getCustomView(position: Int): View {
         val v: View = LayoutInflater.from(mContext).inflate(mResource, null)
         val holder = ViewHolder()
 
