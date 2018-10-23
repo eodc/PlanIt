@@ -4,7 +4,7 @@ import android.arch.persistence.room.TypeConverter
 
 import org.joda.time.DateTime
 
-internal object DateConverter {
+class DateConverter {
     @TypeConverter
     fun fromTimestamp(time: Long?): DateTime? {
         return if (time == null) null else DateTime(time)
