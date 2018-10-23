@@ -33,7 +33,7 @@ class NotificationHelper
     private val manager: NotificationManager
         get() {
             if (mManager == null) mManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            return mManager
+            return mManager!!
         }
 
     init {
@@ -75,72 +75,70 @@ class NotificationHelper
                         .getStaticAssignmentsDueBetweenDates(dtToShow, dtToShow.plusDays(1))
                 val subjects = PlannerDatabase.getInstance(this)!!.classDao().allSubjects
 
-                if (dueAssignments != null && subjects != null) {
-                    val summaryBuilder = NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
+                val summaryBuilder = NotificationCompat.Builder(this, REMINDER_CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_book_black_24dp)
+                        .setGroup(GROUP_ID)
+                        .setGroupSummary(true)
+
+                val summaryStyle = NotificationCompat.InboxStyle()
+
+                var summaryLineCount = 0
+                var overflowClasses = 0
+                var classesWithAssignmentsDue = 0
+
+                for (currentSubject in subjects) {
+                    val notificationBuilder = NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_book_black_24dp)
+                            .setContentTitle(currentSubject.name)
+                            .setAutoCancel(true)
                             .setGroup(GROUP_ID)
-                            .setGroupSummary(true)
 
-                    val summaryStyle = NotificationCompat.InboxStyle()
-
-                    var summaryLineCount = 0
-                    var overflowClasses = 0
-                    var classesWithAssignmentsDue = 0
-
-                    for (currentSubject in subjects) {
-                        val notificationBuilder = NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
-                                .setSmallIcon(R.drawable.ic_book_black_24dp)
-                                .setContentTitle(currentSubject.name)
-                                .setAutoCancel(true)
-                                .setGroup(GROUP_ID)
-
-                        val notificationStyle = NotificationCompat.BigTextStyle()
-                        val sb = StringBuilder()
-                        val className = currentSubject.name
-                        val classId = currentSubject.id
-                        var assignmentsDue = 0
-                        for (assign in dueAssignments) {
-                            if (assign.classId == currentSubject.id) {
-                                sb.append(assign.title)
-                                        .append("\n")
-                                assignmentsDue++
-                            }
-                        }
-                        if (assignmentsDue > 0) {
-                            summaryStyle.addLine(className + " " + if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
-                            summaryLineCount++
-                            if (summaryLineCount > 6) overflowClasses++
-
-                            notificationStyle.bigText(sb.toString().trim { it <= ' ' })
-                            val notif = notificationBuilder.setContentText(if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
-                                    .setStyle(notificationStyle).build()
-                            classesWithAssignmentsDue++
-                            if (mManager != null)
-                                mManager!!.notify(classId, notif)
-                            else {
-                                val notifManagerCompat = NotificationManagerCompat.from(this)
-                                notifManagerCompat.notify(classId, notif)
-                            }
+                    val notificationStyle = NotificationCompat.BigTextStyle()
+                    val sb = StringBuilder()
+                    val className = currentSubject.name
+                    val classId = currentSubject.id
+                    var assignmentsDue = 0
+                    for (assign in dueAssignments) {
+                        if (assign.classId == currentSubject.id) {
+                            sb.append(assign.title)
+                                    .append("\n")
+                            assignmentsDue++
                         }
                     }
-                    summaryStyle
-                            .setBigContentTitle(classesWithAssignmentsDue.toString() + (if (classesWithAssignmentsDue == 1) " class " else " subjects ") + "with assignments due")
+                    if (assignmentsDue > 0) {
+                        summaryStyle.addLine(className + " " + if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
+                        summaryLineCount++
+                        if (summaryLineCount > 6) overflowClasses++
 
-                    if (overflowClasses > 0) {
-                        summaryStyle.setSummaryText("+" + overflowClasses + " other " + if (overflowClasses == 1) "class" else "subjects")
+                        notificationStyle.bigText(sb.toString().trim { it <= ' ' })
+                        val notif = notificationBuilder.setContentText(if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
+                                .setStyle(notificationStyle).build()
+                        classesWithAssignmentsDue++
+                        if (mManager != null)
+                            mManager!!.notify(classId, notif)
+                        else {
+                            val notifManagerCompat = NotificationManagerCompat.from(this)
+                            notifManagerCompat.notify(classId, notif)
+                        }
                     }
-
-                    summaryBuilder.setStyle(summaryStyle)
-                    val summaryNotif = summaryBuilder.build()
-                    if (mManager != null)
-                        mManager!!.notify(SUMMARY_NOTIF_ID, summaryNotif)
-                    else {
-                        val notifManagerCompat = NotificationManagerCompat.from(this)
-                        notifManagerCompat.notify(SUMMARY_NOTIF_ID, summaryNotif)
-                    }
-
-                    scheduleNotification()
                 }
+                summaryStyle
+                        .setBigContentTitle(classesWithAssignmentsDue.toString() + (if (classesWithAssignmentsDue == 1) " class " else " subjects ") + "with assignments due")
+
+                if (overflowClasses > 0) {
+                    summaryStyle.setSummaryText("+" + overflowClasses + " other " + if (overflowClasses == 1) "class" else "subjects")
+                }
+
+                summaryBuilder.setStyle(summaryStyle)
+                val summaryNotif = summaryBuilder.build()
+                if (mManager != null)
+                    mManager!!.notify(SUMMARY_NOTIF_ID, summaryNotif)
+                else {
+                    val notifManagerCompat = NotificationManagerCompat.from(this)
+                    notifManagerCompat.notify(SUMMARY_NOTIF_ID, summaryNotif)
+                }
+
+                scheduleNotification()
             }
         }.start()
     }
@@ -181,7 +179,7 @@ class NotificationHelper
      */
     private fun setAlarm(time: DateTime, pendingIntent: PendingIntent) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager?.set(AlarmManager.RTC_WAKEUP, time.millis, pendingIntent)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time.millis, pendingIntent)
     }
 
     /**
@@ -191,7 +189,7 @@ class NotificationHelper
         val intent = Intent(this, NotificationPublishReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager?.cancel(pendingIntent)
+        alarmManager.cancel(pendingIntent)
     }
 
     /**
@@ -209,7 +207,7 @@ class NotificationHelper
 
         var dtNotifyOn = dtNow.withDayOfWeek(dayToNotify)
 
-        val timeParts = timeToNotify!!.split(":".toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()
+        val timeParts = timeToNotify!!.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         dtNotifyOn = dtNotifyOn.withHourOfDay(Integer.valueOf(timeParts[0]))
         dtNotifyOn = dtNotifyOn.withMinuteOfHour(Integer.valueOf(timeParts[1]))
         dtNotifyOn = dtNotifyOn.withSecondOfMinute(0)
@@ -218,11 +216,11 @@ class NotificationHelper
     }
 
     companion object {
-        private val SUMMARY_NOTIF_ID = 99999 // High number in case some person for some reason is taking 99998 classes.....
+        private const val SUMMARY_NOTIF_ID = 99999 // High number in case some person for some reason is taking 99998 classes.....
 
-        private val CLASSES_CHANNEL_ID = "classes"
-        private val REMINDER_CHANNEL_ID = "reminder"
-        private val GROUP_ID = "assignments"
+        private const val CLASSES_CHANNEL_ID = "classes"
+        private const val REMINDER_CHANNEL_ID = "reminder"
+        private const val GROUP_ID = "assignments"
 
         /**
          * Utility method to convert a string set to a list of integers
@@ -236,7 +234,7 @@ class NotificationHelper
                 for (s in set) {
                     list.add(Integer.valueOf(s))
                 }
-                Collections.sort(list)
+                list.sort()
                 return list
             }
             return null

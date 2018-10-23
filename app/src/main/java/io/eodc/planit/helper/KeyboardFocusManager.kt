@@ -11,11 +11,9 @@ object KeyboardFocusManager {
                        vararg editTexts: EditText) {
         if (context != null) {
             val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            if (inputManager != null) {
-                inputManager.hideSoftInputFromWindow(v.windowToken, 0)
-                for (editText in editTexts) {
-                    editText.clearFocus()
-                }
+            inputManager.hideSoftInputFromWindow(v.windowToken, 0)
+            for (editText in editTexts) {
+                editText.clearFocus()
             }
         }
     }
