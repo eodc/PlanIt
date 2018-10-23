@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.DialogFragment
 import android.support.v4.content.ContextCompat
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.thebluealliance.spectrum.SpectrumDialog
 import io.eodc.planit.R
@@ -108,6 +110,10 @@ class ModifyClassFragment : DialogFragment(), SpectrumDialog.OnColorSelectedList
                 layout.error = "Teacher name can't be empty"
             }
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_modify_class, container, false);
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

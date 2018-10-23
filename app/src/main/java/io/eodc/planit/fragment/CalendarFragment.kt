@@ -5,10 +5,13 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import com.google.common.collect.Iterables
 import com.prolificinteractive.materialcalendarview.*
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
+import io.eodc.planit.R
 import io.eodc.planit.adapter.AssignmentAdapter
 import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.db.Assignment
@@ -38,6 +41,10 @@ class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthCha
         mAssignmentListViewModel
                 .allAssignments
                 .observe(this, Observer<List<Assignment>> { this.onDateRangeAssignmentsChange(it) })
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

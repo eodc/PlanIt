@@ -5,7 +5,10 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import io.eodc.planit.R
 import io.eodc.planit.adapter.AssignmentAdapter
 import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.helper.AssignmentTouchHelper
@@ -51,6 +54,10 @@ class PlannerFragment : NavigableFragment() {
         val adapter = recyclePlanner.adapter
         adapter?.notifyItemRemoved(holder.adapterPosition)
         Thread { assignmentListViewModel!!.removeAssignments(holder.assignment!!) }.start()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_planner, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

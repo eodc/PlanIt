@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
 import android.support.design.widget.BottomSheetDialogFragment
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
@@ -94,6 +96,10 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
             }
         }
         return dialog
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_create_assignment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

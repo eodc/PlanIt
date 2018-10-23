@@ -3,8 +3,10 @@ package io.eodc.planit.fragment
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
@@ -34,10 +36,6 @@ class ModifyAssignmentFragment : DialogFragment(), DatePickerDialog.OnDateSetLis
     private var mDueDay: Int = 0
     private var mDueMonth: Int = 0
     private var mDueYear: Int = 0
-
-    private fun dismissDialog() {
-        dismiss()
-    }
 
     private fun editAssignment() {
         val title = editTitle.text.toString().trim { it <= ' ' }
@@ -85,9 +83,12 @@ class ModifyAssignmentFragment : DialogFragment(), DatePickerDialog.OnDateSetLis
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.dialog_edit_assignment, container, false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupClassSpinner()
     }
 
@@ -104,7 +105,7 @@ class ModifyAssignmentFragment : DialogFragment(), DatePickerDialog.OnDateSetLis
             }
         }
 
-        btnCancel.setOnClickListener { dismissDialog() }
+        btnCancel.setOnClickListener { dismiss() }
         btnConfirm.setOnClickListener { editAssignment() }
         editDue.setOnClickListener { showDatePicker() }
     }
