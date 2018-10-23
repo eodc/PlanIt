@@ -153,9 +153,9 @@ class HomeFragment : NavigableFragment() {
 
     private fun onDaysAssignmentsGet(assignments: List<Assignment>?) {
         if (assignments == null || assignments.isEmpty())
-            textHomeDone.visibility = View.GONE
-        else {
             textHomeDone.visibility = View.VISIBLE
+        else {
+            textHomeDone.visibility = View.GONE
             populateRecyclerView(assignments, recycleTodayAssignments)
         }
     }
