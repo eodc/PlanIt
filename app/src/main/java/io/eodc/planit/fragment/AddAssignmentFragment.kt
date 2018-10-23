@@ -2,6 +2,7 @@ package io.eodc.planit.fragment
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.BottomSheetDialog
@@ -17,9 +18,9 @@ import io.eodc.planit.activity.MainActivity
 import io.eodc.planit.adapter.AssignmentType
 import io.eodc.planit.adapter.AssignmentTypeAdapter
 import io.eodc.planit.db.Assignment
-import io.eodc.planit.db.PlannerDatabase
 import io.eodc.planit.helper.AssignmentInfoInputHelper
 import io.eodc.planit.helper.KeyboardFocusManager
+import io.eodc.planit.model.AssignmentListViewModel
 import kotlinx.android.synthetic.main.fragment_create_assignment.*
 import org.joda.time.DateTime
 import java.util.*
@@ -57,9 +58,9 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
                 }
 
                 Thread {
-                    context?.let { PlannerDatabase.getInstance(it) }
-                            ?.assignmentDao()
-                            ?.insertAssignments(newAssignment)
+                            ViewModelProviders.of(this)
+                                    .get(AssignmentListViewModel::class.java)
+                                    .insertAssignments(newAssignment)
                 }.start()
                 dismiss()
             } else {
