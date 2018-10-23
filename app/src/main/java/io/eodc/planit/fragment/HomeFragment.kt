@@ -20,6 +20,7 @@ import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.db.Assignment
 import io.eodc.planit.helper.AssignmentTouchHelper
 import io.eodc.planit.helper.DateValueFormatter
+import io.eodc.planit.listener.OnAssignmentDismissListener
 import io.eodc.planit.model.AssignmentListViewModel
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.joda.time.DateTime
@@ -67,14 +68,16 @@ class HomeFragment : NavigableFragment() {
         recycleTodayAssignments.layoutManager = LinearLayoutManager(context)
         recycleOverdueAssignments.layoutManager = LinearLayoutManager(context)
 
-        val overdueHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) { holder : AssignmentViewHolder ->
-            val adapter = recycleOverdueAssignments.adapter
-            onDismiss(adapter, holder)
-        }
-        val todayHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT) { holder : AssignmentViewHolder ->
-            val adapter = recycleTodayAssignments.adapter
-            onDismiss(adapter, holder)
-        }
+        val overdueHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT,
+                OnAssignmentDismissListener {
+                    val adapter = recycleOverdueAssignments.adapter
+                    onDismiss(adapter, it)
+                })
+        val todayHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT,
+                OnAssignmentDismissListener {
+                    val adapter = recycleTodayAssignments.adapter
+                    onDismiss(adapter, it)
+                })
         val overdueHelper = ItemTouchHelper(overdueHelperCallback)
         val todayHelper = ItemTouchHelper(todayHelperCallback)
 
