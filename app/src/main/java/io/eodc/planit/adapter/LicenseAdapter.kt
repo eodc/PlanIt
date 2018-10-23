@@ -22,7 +22,7 @@ class LicenseAdapter(private val mContext: Context, private val mLicenses: List<
     override fun onBindViewHolder(holder: LicenseViewHolder, position: Int) {
         val license = mLicenses[position]
         holder.textName.text = license.name
-        holder.textCopyright.text = mContext.getString(R.string.license_cpyrght,
+        holder.textCopyright.text = mContext.getString(R.string.license_copyright,
                 license.author, license.year)
         holder.btnLicense.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)

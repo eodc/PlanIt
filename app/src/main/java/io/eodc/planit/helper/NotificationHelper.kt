@@ -40,12 +40,12 @@ class NotificationHelper
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val classes = NotificationChannel(CLASSES_CHANNEL_ID,
-                    getString(R.string.noti_channel_classes),
+                    getString(R.string.notif_channel_classes),
                     NotificationManager.IMPORTANCE_DEFAULT)
             classes.setSound(null, null)
 
             val reminder = NotificationChannel(REMINDER_CHANNEL_ID,
-                    getString(R.string.noti_channel_reminder),
+                    getString(R.string.notif_channel_reminder),
                     NotificationManager.IMPORTANCE_DEFAULT)
             reminder.lightColor = Color.BLUE
             reminder.lockscreenVisibility = Notification.VISIBILITY_PUBLIC

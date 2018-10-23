@@ -53,6 +53,8 @@
     <string name="no_classes_text">You don\'t have any subjects. Add some to continue!</string>
     <string name="no_assignments_due_text">No Assignments Due!</string>
 
+    <string name="nothing_due_on_cal_day_label">Nothing is due on this day!</string>
+
     <string name="btn_edit_label">Edit</string>
     <string name="btn_restore_label">Restore</string>
     <string name="btn_back_label"><![CDATA[< Back]]></string>
@@ -72,10 +74,10 @@
     <string name="num_events_label" translatable="false">%d event</string>
     <string name="num_events_label_plural" translatable="false">%d events</string>
 
-    <string name="noti_channel_classes">Classes</string>
-    <string name="noti_channel_reminder">Reminders</string>
+    <string name="notif_channel_classes">Classes</string>
+    <string name="notif_channel_reminder">Reminders</string>
 
-    <string name="license_cpyrght">%s %d</string>
+    <string name="license_copyright">%s %d</string>
 
     <string name="no_classes_content_desc">No subjects</string>
     <string name="nothing_due_content_desc">Nothing is due on this day.</string>
