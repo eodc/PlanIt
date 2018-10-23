@@ -9,17 +9,13 @@ import io.eodc.planit.db.Subject
 import io.eodc.planit.db.SubjectDao
 
 class SubjectListViewModel(application: Application) : AndroidViewModel(application) {
-    private val mSubjectDao: SubjectDao
+    private val mSubjectDao: SubjectDao = PlannerDatabase.getInstance(application)!!.classDao()
 
     val subjects: List<Subject>
         get() = mSubjectDao.allSubjects
 
     val subjectsObservable: LiveData<List<Subject>>
         get() = mSubjectDao.allSubjectsObservable
-
-    init {
-        mSubjectDao = PlannerDatabase.getInstance(application)!!.classDao()
-    }
 
     fun updateSubjects(vararg subjects: Subject) {
         mSubjectDao.updateSubjects(*subjects)

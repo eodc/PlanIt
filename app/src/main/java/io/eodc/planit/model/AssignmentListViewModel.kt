@@ -9,14 +9,10 @@ import io.eodc.planit.db.PlannerDatabase
 import org.joda.time.DateTime
 
 class AssignmentListViewModel(application: Application) : AndroidViewModel(application) {
-    private val mAssignmentDao: AssignmentDao
+    private val mAssignmentDao: AssignmentDao = PlannerDatabase.getInstance(application)!!.assignmentDao()
 
     val allAssignments: LiveData<List<Assignment>>
         get() = mAssignmentDao.allAssignments
-
-    init {
-        mAssignmentDao = PlannerDatabase.getInstance(application)!!.assignmentDao()
-    }
 
     fun getOverdueAssignments(date: DateTime): LiveData<List<Assignment>> {
         return mAssignmentDao.getOverdueAssignments(date)
