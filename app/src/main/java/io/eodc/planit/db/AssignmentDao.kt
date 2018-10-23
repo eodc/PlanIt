@@ -1,7 +1,7 @@
 package io.eodc.planit.db
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import org.joda.time.DateTime
 
 @Dao

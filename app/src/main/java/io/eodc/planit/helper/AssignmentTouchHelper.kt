@@ -1,7 +1,7 @@
 package io.eodc.planit.helper
 
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.listener.OnAssignmentDismissListener
 
@@ -12,13 +12,13 @@ import io.eodc.planit.listener.OnAssignmentDismissListener
  */
 class AssignmentTouchHelper(dragDirs: Int, swipeDirs: Int, private val mListener: OnAssignmentDismissListener) : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
 
-    override fun onMove(recyclerView: RecyclerView,
-                        viewHolder: RecyclerView.ViewHolder,
-                        target: RecyclerView.ViewHolder): Boolean {
+    override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView,
+                        viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                        target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
         return false
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
         if (direction == ItemTouchHelper.RIGHT) {
             mListener.onDismiss(viewHolder as AssignmentViewHolder)
         }

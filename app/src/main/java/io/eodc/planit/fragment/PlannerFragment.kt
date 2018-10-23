@@ -1,10 +1,10 @@
 package io.eodc.planit.fragment
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,6 +69,6 @@ class PlannerFragment : NavigableFragment() {
         val touchHelper = ItemTouchHelper(callback)
 
         touchHelper.attachToRecyclerView(recyclePlanner)
-        recyclePlanner.layoutManager = LinearLayoutManager(context)
+        recyclePlanner.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
     }
 }

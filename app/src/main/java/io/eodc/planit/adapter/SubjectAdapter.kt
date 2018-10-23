@@ -5,8 +5,8 @@ import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +31,7 @@ class SubjectAdapter
  * @param mSubjects    A list containing the subjects to show
  * @param mContext     The context to pull strings, colors, etc. from
  */
-(private var mSubjects: List<Subject>, private val mContext: Context) : RecyclerView.Adapter<SubjectAdapter.ClassViewHolder>() {
+(private var mSubjects: List<Subject>, private val mContext: Context) : androidx.recyclerview.widget.RecyclerView.Adapter<SubjectAdapter.ClassViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassViewHolder {
         return ClassViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_class, parent, false))
@@ -75,7 +75,7 @@ class SubjectAdapter
      *
      * @param itemView The view to bind information to this holder
      */
-    (itemView: View) : RecyclerView.ViewHolder(itemView) {
+    (itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var imageClassColor: ImageView = itemView.border_class_color
         var textClassName: TextView = itemView.textHeaderTitle
         var textTeacherName: TextView = itemView.text_teacher

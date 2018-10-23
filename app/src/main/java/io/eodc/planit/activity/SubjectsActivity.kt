@@ -1,10 +1,10 @@
 package io.eodc.planit.activity
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 
@@ -31,7 +31,7 @@ class SubjectsActivity : AppCompatActivity() {
         ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java)
                 .subjectsObservable.observe(this, Observer<List<Subject>> {this.onClassListChanged(it!!); })
 
-        recycleSubject.layoutManager = LinearLayoutManager(this)
+        recycleSubject.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     }
 
     private fun onClassListChanged(subjects: List<Subject>) {

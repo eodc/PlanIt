@@ -1,6 +1,6 @@
 package io.eodc.planit.adapter
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -19,7 +19,7 @@ class AssignmentViewHolder
  *
  * @param itemView The view to bind to this holder
  */
-internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+internal constructor(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
     private var isExpanded = false
     var assignment: Assignment? = null
 

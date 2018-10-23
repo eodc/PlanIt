@@ -3,7 +3,7 @@ package io.eodc.planit.fragment
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import java.util.*
 
 /**
@@ -12,7 +12,7 @@ import java.util.*
  *
  * @author 2n
  */
-class DatePickerFragment : DialogFragment() {
+class DatePickerFragment : androidx.fragment.app.DialogFragment() {
 
     private var year: Int = 0
     private var month: Int = 0

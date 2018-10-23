@@ -1,11 +1,11 @@
 package io.eodc.planit.activity
 
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.PreferenceManager
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter

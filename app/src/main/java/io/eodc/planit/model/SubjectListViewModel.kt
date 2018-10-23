@@ -1,8 +1,8 @@
 package io.eodc.planit.model
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 
 import io.eodc.planit.db.PlannerDatabase
 import io.eodc.planit.db.Subject

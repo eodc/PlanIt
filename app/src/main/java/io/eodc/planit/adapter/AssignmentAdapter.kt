@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +22,7 @@ import org.joda.time.DateTime
  *
  * @author 2n
  */
-class AssignmentAdapter : RecyclerView.Adapter<AssignmentViewHolder> {
+class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<AssignmentViewHolder> {
 
     private var mContext: Context
 

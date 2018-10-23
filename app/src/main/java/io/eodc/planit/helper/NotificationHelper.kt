@@ -6,9 +6,9 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v7.preference.PreferenceManager
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
 import io.eodc.planit.R
 import io.eodc.planit.db.PlannerDatabase
 import io.eodc.planit.receiver.NotificationPublishReceiver

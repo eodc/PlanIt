@@ -2,11 +2,11 @@ package io.eodc.planit.fragment
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialog
-import android.support.design.widget.BottomSheetDialogFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -88,7 +88,7 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
         dialog.setOnShowListener { dialog1 ->
             val d = dialog1 as BottomSheetDialog
 
-            val bottomSheet = d.findViewById<FrameLayout>(android.support.design.R.id.design_bottom_sheet)
+            val bottomSheet = d.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
             if (bottomSheet != null) {
                 val behavior = BottomSheetBehavior.from(bottomSheet)
                 behavior.skipCollapsed = true

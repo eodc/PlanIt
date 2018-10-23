@@ -1,9 +1,9 @@
 package io.eodc.planit.fragment
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +31,7 @@ class OnboardingAddClassesFragment : OnboardingFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recycleSubject.layoutManager = LinearLayoutManager(context)
+        recycleSubject.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java)
                 .subjectsObservable.observe(this,
                 Observer {

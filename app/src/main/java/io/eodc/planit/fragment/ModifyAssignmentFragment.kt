@@ -2,7 +2,7 @@ package io.eodc.planit.fragment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -28,7 +28,7 @@ import java.util.*
  * Created by 2n on 5/16/18.
  */
 
-class ModifyAssignmentFragment : DialogFragment(), DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
+class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePickerDialog.OnDateSetListener, AdapterView.OnItemSelectedListener {
     private lateinit var mAssignment: Assignment
 
     private var mSelectedClassId: Long = 1

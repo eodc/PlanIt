@@ -1,6 +1,6 @@
 package io.eodc.planit.adapter
 
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 
 /**
  * Represents an Assignment Type for use in a Spinner

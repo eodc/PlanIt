@@ -1,14 +1,14 @@
 package io.eodc.planit.fragment
 
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
-import android.support.v4.app.DialogFragment
-import android.support.v4.content.ContextCompat
+import com.google.android.material.textfield.TextInputLayout
+import androidx.fragment.app.DialogFragment
+import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.dialog_modify_class.*
  *
  * @author 2n
  */
-class ModifyClassFragment : DialogFragment(), SpectrumDialog.OnColorSelectedListener {
+class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDialog.OnColorSelectedListener {
     private var mSubject: Subject? = null
     private lateinit var mColorChosen: String
 

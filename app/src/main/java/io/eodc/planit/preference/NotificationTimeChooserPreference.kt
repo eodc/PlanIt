@@ -3,7 +3,7 @@ package io.eodc.planit.preference
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.support.v7.preference.PreferenceDialogFragmentCompat
+import androidx.preference.PreferenceDialogFragmentCompat
 import android.text.format.DateFormat
 import android.widget.TimePicker
 

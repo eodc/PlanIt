@@ -1,13 +1,13 @@
 package io.eodc.planit.fragment
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,8 +71,8 @@ class HomeFragment : NavigableFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycleTodayAssignments.layoutManager = LinearLayoutManager(context)
-        recycleOverdueAssignments.layoutManager = LinearLayoutManager(context)
+        recycleTodayAssignments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        recycleOverdueAssignments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
         val overdueHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT,
                 OnAssignmentDismissListener {
@@ -93,7 +93,7 @@ class HomeFragment : NavigableFragment() {
         setupGraph()
     }
 
-    private fun onDismiss(adapter: RecyclerView.Adapter<*>?, holder: AssignmentViewHolder) {
+    private fun onDismiss(adapter: androidx.recyclerview.widget.RecyclerView.Adapter<*>?, holder: AssignmentViewHolder) {
         adapter?.notifyItemRemoved(holder.adapterPosition)
         Thread {
             ViewModelProviders.of(this)
@@ -160,7 +160,7 @@ class HomeFragment : NavigableFragment() {
         }
     }
 
-    private fun populateRecyclerView(assignments: List<Assignment>, recyclerView: RecyclerView?) {
+    private fun populateRecyclerView(assignments: List<Assignment>, recyclerView: androidx.recyclerview.widget.RecyclerView?) {
         if (activity != null) {
             val subjects = (activity as MainActivity).classes
             if (recyclerView!!.adapter == null) {

@@ -1,16 +1,16 @@
 package io.eodc.planit.activity
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import io.eodc.planit.R
 import io.eodc.planit.fragment.OnboardingAddClassesFragment
@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.layout_onboarding_controls.*
  *
  * @author 2n
  */
-class OnboardingActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
+class OnboardingActivity : AppCompatActivity(), androidx.viewpager.widget.ViewPager.OnPageChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,9 +117,9 @@ class OnboardingActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
      * @param fm        Instance of [FragmentManager]
      * @param fragments List of [OnboardingFragment] to insert into the adapter
      */
-    internal constructor(fm: FragmentManager, private val fragments: List<OnboardingFragment>) : FragmentStatePagerAdapter(fm) {
+    internal constructor(fm: androidx.fragment.app.FragmentManager, private val fragments: List<OnboardingFragment>) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
 
-        override fun getItem(position: Int): Fragment {
+        override fun getItem(position: Int): androidx.fragment.app.Fragment {
             return fragments[position]
         }
 

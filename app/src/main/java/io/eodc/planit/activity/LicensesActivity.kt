@@ -1,8 +1,8 @@
 package io.eodc.planit.activity
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.eodc.planit.R
 import io.eodc.planit.adapter.License
 import io.eodc.planit.adapter.LicenseAdapter
@@ -34,6 +34,11 @@ class LicensesActivity : AppCompatActivity() {
                         "Henning Dodenhof",
                         "https://www.apache.org/licenses/LICENSE-2.0.html",
                         "https://github.com/hdodenhof/CircleImageView"),
+                License("DragDropSwipeRecyclerview",
+                        2018,
+                        "ernestoyaquello",
+                        "https://www.apache.org/licenses/LICENSE-2.0.html",
+                        "https://github.com/ernestoyaquello/DragDropSwipeRecyclerview"),
                 License("Material Calendar View",
                         2018,
                         "Prolific Interactive",
@@ -60,6 +65,6 @@ class LicensesActivity : AppCompatActivity() {
                         "http://www.apache.org/licenses/LICENSE-2.0",
                         "https://github.com/JodaOrg/joda-time"))
         recycle_licence.adapter = LicenseAdapter(this, licenses)
-        recycle_licence.layoutManager = LinearLayoutManager(this)
+        recycle_licence.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     }
 }
