@@ -39,7 +39,7 @@ class NotificationTimeChooserPreference : PreferenceDialogFragmentCompat(), Time
     }
 
     companion object {
-        private val ARG_KEY = "key"
+        private const val ARG_KEY = "key"
 
         /**
          * Creates a new instance of a NotificationTimeChooserPreference
