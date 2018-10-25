@@ -55,8 +55,6 @@ class HomeFragment : NavigableFragment() {
         assignmentListViewModel
                 .getOverdueAssignments(today)
                 .observe(this, Observer<List<Assignment>> { this.onOverdueAssignmentsGet(it) })
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
