@@ -2,7 +2,6 @@ package io.eodc.planit.fragment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -105,7 +104,14 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
             }
         }
 
-        btnCancel.setOnClickListener { dismiss() }
+        btnCancel.setOnClickListener { it ->
+            Thread {
+                context?.let { PlannerDatabase.getInstance(it) }
+                        ?.assignmentDao()
+                        ?.updateAssignment(mAssignment)
+            }.start()
+            dismiss()
+        } // Force a redraw of the recyclerview
         btnConfirm.setOnClickListener { editAssignment() }
         editDue.setOnClickListener { showDatePicker() }
     }

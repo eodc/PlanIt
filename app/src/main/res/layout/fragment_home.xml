@@ -26,7 +26,6 @@
                     android:id="@+id/icGraph"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/bg_circle_dark_grey"
@@ -41,7 +40,6 @@
                     style="@android:style/TextAppearance.DialogWindowTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:text="@string/your_week_title"
                     app:layout_constraintBottom_toTopOf="@+id/icGraph"
@@ -68,7 +66,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +100,6 @@
                     android:id="@+id/icOverdue"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:background="@drawable/bg_circle_dark_grey"
                     android:padding="6dp"
@@ -117,18 +113,18 @@
                     style="@android:style/TextAppearance.DialogWindowTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/overdue_label"
                     app:layout_constraintStart_toEndOf="@+id/icOverdue"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
                     android:id="@+id/recycleOverdueAssignments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    app:item_layout="@layout/item_assignment"
                     app:layout_constraintTop_toBottomOf="@+id/textOverdueTitle" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -164,7 +160,6 @@
                     android:id="@+id/icToday"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:background="@drawable/bg_circle_dark_grey"
                     android:padding="6dp"
@@ -178,18 +173,18 @@
                     style="@android:style/TextAppearance.DialogWindowTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/today_title"
                     app:layout_constraintStart_toEndOf="@+id/icToday"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.recyclerview.widget.RecyclerView
+                <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
                     android:id="@+id/recycleTodayAssignments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    app:item_layout="@layout/item_assignment"
                     app:layout_constraintTop_toBottomOf="@+id/bgIcToday"
                     tools:visibility="gone" />
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,17 @@
 package io.eodc.planit.adapter
 
-import androidx.recyclerview.widget.RecyclerView
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
 import io.eodc.planit.db.Assignment
+import io.eodc.planit.fragment.ModifyAssignmentFragment
 import kotlinx.android.synthetic.main.item_assignment.view.*
 
 /**
@@ -19,7 +25,7 @@ class AssignmentViewHolder
  *
  * @param itemView The view to bind to this holder
  */
-internal constructor(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+internal constructor(itemView: View) : DragDropSwipeAdapter.ViewHolder(itemView) {
     private var isExpanded = false
     var assignment: Assignment? = null
 
@@ -48,6 +54,20 @@ internal constructor(itemView: View) : androidx.recyclerview.widget.RecyclerView
                 .rotation(0f)
         textNotes.visibility = View.GONE
         isExpanded = false
+    }
+
+    fun editAssignment(activity: AppCompatActivity) {
+        val editFragment = ModifyAssignmentFragment.newInstance(assignment!!)
+
+        editFragment.show(activity.supportFragmentManager, null)
+
+        val v = activity.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            v.vibrate(VibrationEffect
+                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+        else
+            v.vibrate(500)
     }
 
     /**

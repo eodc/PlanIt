@@ -21,9 +21,10 @@
         android:visibility="gone"
         android:text="@string/nothing_due_on_cal_day_label" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
         android:id="@+id/recycleDaysAssignments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        app:item_layout="@layout/item_assignment" />
 </LinearLayout>

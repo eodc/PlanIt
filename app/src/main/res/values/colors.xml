@@ -30,6 +30,9 @@
     <color name="class_blue_grey">#546e7a</color>
     <color name="class_black">#212121</color>
 
+    <color name="bg_swipe_complete">#43a047</color>
+    <color name="bg_swipe_edit">#1e88e5</color>
+
     <array name="spectrum_colors">
         <item>@color/class_red</item>
         <item>@color/class_pink</item>

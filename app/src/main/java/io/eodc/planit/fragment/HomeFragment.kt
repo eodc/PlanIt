@@ -1,16 +1,13 @@
 package io.eodc.planit.fragment
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -18,11 +15,8 @@ import com.github.mikephil.charting.data.LineDataSet
 import io.eodc.planit.R
 import io.eodc.planit.activity.MainActivity
 import io.eodc.planit.adapter.AssignmentAdapter
-import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.db.Assignment
-import io.eodc.planit.helper.AssignmentTouchHelper
 import io.eodc.planit.helper.DateValueFormatter
-import io.eodc.planit.listener.OnAssignmentDismissListener
 import io.eodc.planit.model.AssignmentListViewModel
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.joda.time.DateTime
@@ -71,35 +65,9 @@ class HomeFragment : NavigableFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recycleTodayAssignments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-        recycleOverdueAssignments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
 
-        val overdueHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT,
-                OnAssignmentDismissListener {
-                    val adapter = recycleOverdueAssignments.adapter
-                    onDismiss(adapter, it)
-                })
-        val todayHelperCallback = AssignmentTouchHelper(ItemTouchHelper.RIGHT, ItemTouchHelper.RIGHT,
-                OnAssignmentDismissListener {
-                    val adapter = recycleTodayAssignments.adapter
-                    onDismiss(adapter, it)
-                })
-        val overdueHelper = ItemTouchHelper(overdueHelperCallback)
-        val todayHelper = ItemTouchHelper(todayHelperCallback)
-
-        overdueHelper.attachToRecyclerView(recycleOverdueAssignments)
-        todayHelper.attachToRecyclerView(recycleTodayAssignments)
-
+        setupRecyclerViews(recycleOverdueAssignments, recycleTodayAssignments)
         setupGraph()
-    }
-
-    private fun onDismiss(adapter: androidx.recyclerview.widget.RecyclerView.Adapter<*>?, holder: AssignmentViewHolder) {
-        adapter?.notifyItemRemoved(holder.adapterPosition)
-        Thread {
-            ViewModelProviders.of(this)
-                    .get<AssignmentListViewModel>(AssignmentListViewModel::class.java)
-                    .removeAssignments(holder.assignment!!)
-        }.start()
     }
 
     private fun onOverdueAssignmentsGet(assignments: List<Assignment>?) {

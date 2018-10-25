@@ -2,19 +2,14 @@ package io.eodc.planit.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
-import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
 import com.google.common.collect.Iterables
 import io.eodc.planit.R
-import io.eodc.planit.activity.MainActivity
 import io.eodc.planit.db.Assignment
 import io.eodc.planit.db.Subject
-import io.eodc.planit.fragment.ModifyAssignmentFragment
 import org.joda.time.DateTime
 
 /**
@@ -22,15 +17,12 @@ import org.joda.time.DateTime
  *
  * @author 2n
  */
-class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<AssignmentViewHolder> {
-
-    private var mContext: Context
+class AssignmentAdapter(dataSet: List<Assignment> = emptyList()) : DragDropSwipeAdapter<Assignment, AssignmentViewHolder>(dataSet) {
+    private lateinit var mContext: Context
 
     private var mShowDividerFlag: Int = 0
 
-    private val mSubjects: List<Subject>
-    private var mAssignments: List<Assignment>
-
+    private lateinit var mSubjects: List<Subject>
 
     /**
      * Constructs a new instance of AssignmentAdapter. Dynamically displays relevant information
@@ -41,9 +33,8 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
      * @param subjects     The LiveData containing all the user's subjects.
      * @see AssignmentViewHolder
      */
-    constructor(context: Context, assignments: List<Assignment>, subjects: List<Subject>) {
+    constructor(context: Context, assignments: List<Assignment>, subjects: List<Subject>) : this(assignments) {
         this.mContext = context
-        this.mAssignments = assignments
         this.mSubjects = subjects
         this.mShowDividerFlag = -1
         setHasStableIds(true)
@@ -58,16 +49,15 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
      * @param subjects     The LiveData containing all the user's subjects.
      * @param showDividers Whether or not dividers should be shown.
      */
-    constructor(context: Context, assignments: List<Assignment>, subjects: List<Subject>, showDividers: Boolean) {
+    constructor(context: Context, assignments: List<Assignment>, subjects: List<Subject>, showDividers: Boolean) : this(assignments) {
         this.mContext = context
-        this.mAssignments = assignments
         this.mSubjects = subjects
         this.mShowDividerFlag = if (showDividers) -1 else NEVER_SHOW_DIVIDER
         setHasStableIds(true)
     }
 
     fun swapAssignmentsList(newList: List<Assignment>) {
-        mAssignments = newList
+        dataSet = newList
         notifyDataSetChanged()
     }
 
@@ -79,7 +69,7 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
      * @return Type of item view
      */
     override fun getItemViewType(position: Int): Int {
-        val currentAssignment = mAssignments[position]
+        val currentAssignment = dataSet[position]
         val hasNotes = currentAssignment.notes
                 .trim { it <= ' ' } != ""
 
@@ -89,7 +79,7 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
         if (position == 0) {
             return getDividerViewType(hasNotes)
         } else {
-            val previousDue = mAssignments[position - 1]
+            val previousDue = dataSet[position - 1]
                     .dueDate
             val currentDue = currentAssignment.dueDate
             val now = DateTime()
@@ -136,22 +126,28 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
             VIEW_TYPE_NORMAL
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AssignmentViewHolder {
-        return AssignmentViewHolder(LayoutInflater.from(mContext)
-                .inflate(R.layout.item_assignment, parent, false))
+    override fun getItemId(position: Int): Long {
+        return dataSet[position].id.toLong()
     }
 
-    override fun onBindViewHolder(holder: AssignmentViewHolder, position: Int) {
-        val assignment = mAssignments[position]
-        var previousAssignment: Assignment? = null
+    override fun getViewHolder(itemView: View): AssignmentViewHolder {
+        return AssignmentViewHolder(itemView)
+    }
+
+    override fun getViewToTouchToStartDraggingItem(item: Assignment, viewHolder: AssignmentViewHolder, position: Int): View? {
+        return viewHolder.itemView
+    }
+
+    override fun onBindViewHolder(item: Assignment, viewHolder: AssignmentViewHolder, position: Int) {
+        var prevItem: Assignment? = null
         if (position > 0) {
-            previousAssignment = mAssignments[position - 1]
+            prevItem = dataSet[position - 1]
         }
 
-        val assignmentSubject = Iterables.find(mSubjects) { value -> value?.id == assignment.classId }
+        val assignmentSubject = Iterables.find(mSubjects) { value -> value?.id == item.classId }
 
-        val dtCurrent = assignment.dueDate
-        val assignmentTypeFlag = assignment.type
+        val dtCurrent = item.dueDate
+        val assignmentTypeFlag = item.type
 
         var assignmentType = ""
 
@@ -166,52 +162,43 @@ class AssignmentAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Assi
                 assignmentSubject.name,
                 assignmentType)
 
-        holder.textClassType.text = classAndTypeText
-        holder.textDueDate.text = dtCurrent.toString(mContext.getString(R.string.due_date_pattern))
-        holder.assignment = assignment
+        viewHolder.textClassType.text = classAndTypeText
+        viewHolder.textDueDate.text = dtCurrent.toString(mContext.getString(R.string.due_date_pattern))
+        viewHolder.assignment = item
 
-        if (holder.itemViewType and VIEW_TYPE_DIVIDER == VIEW_TYPE_DIVIDER) {
+        if (viewHolder.itemViewType and VIEW_TYPE_DIVIDER == VIEW_TYPE_DIVIDER) {
             val headerText = getHeaderText(dtCurrent)
-            holder.textHeader.text = headerText
-            holder.layoutHeader.visibility = View.VISIBLE
-            holder.showDueDate()
-        } else if (previousAssignment != null && assignment.dueDate.dayOfYear() != previousAssignment.dueDate.dayOfYear()) {
-            holder.showDueDate()
+            viewHolder.textHeader.text = headerText
+            viewHolder.layoutHeader.visibility = View.VISIBLE
+            viewHolder.showDueDate()
+        } else if (prevItem != null && item.dueDate.dayOfYear() != prevItem.dueDate.dayOfYear()) {
+            viewHolder.showDueDate()
         } else {
-            holder.hideDueDate()
+            viewHolder.hideDueDate()
         }
 
-        if (holder.itemViewType and VIEW_TYPE_NOTES == VIEW_TYPE_NOTES) {
-            holder.iconExpand.visibility = View.VISIBLE
-            holder.textNotes.text = assignment.notes
-            holder.itemView.setOnClickListener { holder.handleNoteClick() }
+        if (viewHolder.itemViewType and VIEW_TYPE_NOTES == VIEW_TYPE_NOTES) {
+            viewHolder.iconExpand.visibility = View.VISIBLE
+            viewHolder.textNotes.text = item.notes
+            viewHolder.itemView.setOnClickListener { viewHolder.handleNoteClick() }
         }
 
-        holder.itemView.setOnLongClickListener {
-            if (mContext is MainActivity) {
-                val activity = mContext as MainActivity?
-                val editFragment = ModifyAssignmentFragment.newInstance(holder.assignment!!)
-
-                editFragment.show(activity!!.supportFragmentManager, null)
-
-                val v = mContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                @Suppress("DEPRECATION")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    v.vibrate(VibrationEffect
-                            .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-                else
-                    v.vibrate(500)
-            }
+        viewHolder.itemView.setOnLongClickListener {
+            viewHolder.editAssignment(mContext as AppCompatActivity)
             true
         }
 
-        holder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentSubject.color))
-        holder.textAssignmentName.text = assignment.title
+        viewHolder.imageClassColor.setBackgroundColor(Color.parseColor(assignmentSubject.color))
+        viewHolder.textAssignmentName.text = item.title
     }
 
     override fun getItemCount(): Int {
-        return mAssignments.size
+        return dataSet.size
     }
+
+    override fun canBeDragged(item: Assignment, viewHolder: AssignmentViewHolder, position: Int) = false
+
+    override fun canBeDroppedOver(item: Assignment, viewHolder: AssignmentViewHolder, position: Int) = false
 
     /**
      * Gets the text shown at the divider (layoutHeader) based off of the assignment's due date and the

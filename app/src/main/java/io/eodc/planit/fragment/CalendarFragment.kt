@@ -1,23 +1,16 @@
 package io.eodc.planit.fragment
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import com.google.common.collect.Iterables
 import com.prolificinteractive.materialcalendarview.*
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import io.eodc.planit.R
 import io.eodc.planit.adapter.AssignmentAdapter
-import io.eodc.planit.adapter.AssignmentViewHolder
 import io.eodc.planit.db.Assignment
-import io.eodc.planit.helper.AssignmentTouchHelper
-import io.eodc.planit.listener.OnAssignmentDismissListener
-import io.eodc.planit.model.AssignmentListViewModel
 import kotlinx.android.synthetic.main.fragment_calendar.*
 import org.joda.time.DateTime
 import java.util.*
@@ -28,19 +21,17 @@ import java.util.*
  * @author 2n
  */
 class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthChangedListener, DayViewDecorator {
-
-    private lateinit var mAssignmentListViewModel: AssignmentListViewModel
     private lateinit var mDateHasAssignmentList: ArrayList<DateTime>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mAssignmentListViewModel = ViewModelProviders.of(this)
-                .get(AssignmentListViewModel::class.java)
-
         mAssignmentListViewModel
                 .allAssignments
                 .observe(this, Observer<List<Assignment>> { this.onDateRangeAssignmentsChange(it) })
+        mAssignmentListViewModel.getAssignmentsDueOnDay(DateTime().withTimeAtStartOfDay())
+                .observe(this, Observer<List<Assignment>> { this.onSingleDayAssignmentsChange(it) })
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -53,24 +44,7 @@ class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthCha
         calendar.setOnMonthChangedListener(this)
         calendar.setOnDateChangedListener(this)
 
-
-        recycleDaysAssignments.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-
-        mAssignmentListViewModel.getAssignmentsDueOnDay(DateTime(calendar.selectedDate.date))
-                .observe(this, Observer<List<Assignment>> { this.onSingleDayAssignmentsChange(it) })
-
-        val touchSimpleCallback = AssignmentTouchHelper(
-                0,
-                ItemTouchHelper.RIGHT,
-                OnAssignmentDismissListener { this.onDismiss(it) })
-        val touchHelper = ItemTouchHelper(touchSimpleCallback)
-        touchHelper.attachToRecyclerView(recycleDaysAssignments)
-    }
-
-    private fun onDismiss(holder: AssignmentViewHolder) {
-        val adapter = recycleDaysAssignments.adapter
-        adapter?.notifyItemRemoved(holder.adapterPosition)
-        Thread { mAssignmentListViewModel.removeAssignments(holder.assignment!!) }.start()
+        setupRecyclerViews(recycleDaysAssignments)
     }
 
     private fun onDateRangeAssignmentsChange(assignments: List<Assignment>?) {
@@ -78,8 +52,7 @@ class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthCha
         if (assignments != null && assignments.isNotEmpty()) {
             mDateHasAssignmentList.add(assignments[0].dueDate)
             for (i in assignments.indices) {
-                val nextAssign = Iterables.tryFind(assignments
-                ) { assignment ->
+                val nextAssign = Iterables.tryFind(assignments) { assignment ->
                     val mostRecent = mDateHasAssignmentList[mDateHasAssignmentList.size - 1]
                     mostRecent.isBefore(assignment?.dueDate)
                 }
@@ -99,18 +72,17 @@ class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthCha
     private fun onSingleDayAssignmentsChange(assignments: List<Assignment>?) {
         if (assignments != null && assignments.isNotEmpty()) {
             if (recycleDaysAssignments.adapter == null) {
-                val adapter = AssignmentAdapter(context!!, assignments, subjects!!)
-                recycleDaysAssignments.swapAdapter(adapter, true)
+                val adapter = AssignmentAdapter(context!!, assignments, subjects!!, false)
+                recycleDaysAssignments.adapter = adapter
             } else {
-                val adapter = recycleDaysAssignments.adapter as AssignmentAdapter?
-                adapter!!.swapAssignmentsList(assignments)
+                val adapter = recycleDaysAssignments.adapter as AssignmentAdapter
+                adapter.swapAssignmentsList(assignments)
             }
             textCalendarDone.visibility = View.GONE
             recycleDaysAssignments.visibility = View.VISIBLE
         } else {
             recycleDaysAssignments.visibility = View.GONE
             textCalendarDone.visibility = View.VISIBLE
-            recycleDaysAssignments.adapter = null
         }
     }
 
@@ -125,7 +97,5 @@ class CalendarFragment : NavigableFragment(), OnDateSelectedListener, OnMonthCha
         view.addSpan(DotSpan(5f))
     }
 
-    override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {
-
-    }
+    override fun onMonthChanged(widget: MaterialCalendarView, date: CalendarDay) {}
 }
