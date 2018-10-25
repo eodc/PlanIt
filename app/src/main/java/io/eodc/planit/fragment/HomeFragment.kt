@@ -69,13 +69,11 @@ class HomeFragment : NavigableFragment() {
     }
 
     private fun onOverdueAssignmentsGet(assignments: List<Assignment>?) {
-        if (activity != null) {
-            if (assignments != null && assignments.isNotEmpty()) {
-                cardHomeOverdue.visibility = View.VISIBLE
-                populateRecyclerView(assignments, recycleOverdueAssignments)
-            } else {
-                cardHomeOverdue.visibility = View.GONE
-            }
+        if (assignments != null && assignments.isNotEmpty()) {
+            cardHomeOverdue.visibility = View.VISIBLE
+            populateRecyclerView(assignments, recycleOverdueAssignments)
+        } else {
+            cardHomeOverdue.visibility = View.GONE
         }
     }
 
@@ -95,7 +93,6 @@ class HomeFragment : NavigableFragment() {
                 }
                 iterator = assignments.listIterator(0)
                 entries.add(Entry(checkDate.millis.toFloat(), count.toFloat()))
-                graphHomeWeeksAssignments.axisLeft.axisMaximum = Math.max(graphHomeWeeksAssignments.axisLeft.mAxisMaximum, count.toFloat())
                 checkDate = checkDate.plusDays(1)
                 totalCount += count
             }
@@ -127,15 +124,13 @@ class HomeFragment : NavigableFragment() {
     }
 
     private fun populateRecyclerView(assignments: List<Assignment>, recyclerView: androidx.recyclerview.widget.RecyclerView?) {
-        if (activity != null) {
-            val subjects = (activity as MainActivity).classes
-            if (recyclerView!!.adapter == null) {
-                val adapter = AssignmentAdapter(context!!, assignments, subjects!!, false)
-                recyclerView.adapter = adapter
-            } else {
-                val adapter = recyclerView.adapter as AssignmentAdapter?
-                adapter!!.swapAssignmentsList(assignments)
-            }
+        val subjects = (activity as MainActivity).subjects
+        if (recyclerView!!.adapter == null) {
+            val adapter = AssignmentAdapter(context!!, assignments, subjects!!, false)
+            recyclerView.adapter = adapter
+        } else {
+            val adapter = recyclerView.adapter as AssignmentAdapter?
+            adapter!!.swapAssignmentsList(assignments)
         }
     }
 
@@ -167,8 +162,8 @@ class HomeFragment : NavigableFragment() {
         dataSet.isHighlightEnabled = false
         dataSet.setDrawValues(false)
         dataSet.lineWidth = 2f
-        dataSet.color = ContextCompat.getColor(requireContext(), R.color.colorAccent)
-        dataSet.setCircleColor(ContextCompat.getColor(requireContext(), R.color.colorAccentDark))
+        dataSet.color = ContextCompat.getColor(context!!, R.color.colorAccent)
+        dataSet.setCircleColor(ContextCompat.getColor(context!!, R.color.colorAccentDark))
         dataSet.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
         dataSet.setDrawFilled(true)
     }
