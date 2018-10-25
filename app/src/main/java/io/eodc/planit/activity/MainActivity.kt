@@ -1,13 +1,13 @@
 package io.eodc.planit.activity
 
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationAdapter
 import io.eodc.planit.BuildConfig
 import io.eodc.planit.R
@@ -26,14 +26,14 @@ import timber.log.Timber
  * @author 2n
  */
 class MainActivity : AppCompatActivity() {
-    var classes: List<Subject>? = null
+    var subjects: List<Subject>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         Thread {
-            classes = ViewModelProviders.of(this@MainActivity)
+            subjects = ViewModelProviders.of(this@MainActivity)
                     .get<SubjectListViewModel>(SubjectListViewModel::class.java)
                     .subjects
         }.start()

@@ -216,9 +216,9 @@ class NotificationHelper
     }
 
     companion object {
-        private const val SUMMARY_NOTIF_ID = 99999 // High number in case some person for some reason is taking 99998 classes.....
+        private const val SUMMARY_NOTIF_ID = 99999 // High number in case some person for some reason is taking 99998 subjects.....
 
-        private const val CLASSES_CHANNEL_ID = "classes"
+        private const val CLASSES_CHANNEL_ID = "subjects"
         private const val REMINDER_CHANNEL_ID = "reminder"
         private const val GROUP_ID = "assignments"
 

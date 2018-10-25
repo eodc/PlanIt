@@ -1,13 +1,11 @@
 package io.eodc.planit.activity
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.db.Subject
@@ -16,7 +14,7 @@ import io.eodc.planit.model.SubjectListViewModel
 import kotlinx.android.synthetic.main.activity_subjects.*
 
 /**
- * Activity for adding or modifying classes
+ * Activity for adding or modifying subjects
  *
  * @author 2n
  */

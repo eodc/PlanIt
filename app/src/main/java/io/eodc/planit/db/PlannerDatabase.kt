@@ -1,12 +1,12 @@
 package io.eodc.planit.db
 
-import androidx.sqlite.db.SupportSQLiteDatabase
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
-import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [Assignment::class, Subject::class], version = 4)
 @TypeConverters(value = [DateConverter::class])
@@ -21,7 +21,7 @@ abstract class PlannerDatabase : RoomDatabase() {
 
         private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE classes RENAME TO subjects")
+                database.execSQL("ALTER TABLE subjects RENAME TO subjects")
             }
         }
 

@@ -1,19 +1,18 @@
 package io.eodc.planit.fragment
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.model.SubjectListViewModel
 import kotlinx.android.synthetic.main.fragment_onboarding_classes.*
 
 /**
- * The last slide of the onboarding carousel, where the user initially adds their classes
+ * The last slide of the onboarding carousel, where the user initially adds their subjects
  *
  * @author 2n
  */

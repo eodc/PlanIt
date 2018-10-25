@@ -20,7 +20,7 @@ open class NavigableFragment : Fragment() {
     internal val subjects: List<Subject>?
         get() {
             if (activity != null && activity is MainActivity) {
-                val subjects = (activity as MainActivity).classes
+                val subjects = (activity as MainActivity).subjects
                 return subjects ?: subjects
             }
             return null

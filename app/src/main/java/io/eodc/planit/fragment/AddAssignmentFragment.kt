@@ -2,11 +2,7 @@ package io.eodc.planit.fragment
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -15,6 +11,10 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.FrameLayout
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.eodc.planit.R
 import io.eodc.planit.activity.MainActivity
 import io.eodc.planit.adapter.AssignmentType
@@ -151,7 +151,7 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
     private fun setupClassSpinner() {
         if (activity != null && context != null) {
             spinnerClass!!.onItemSelectedListener = this
-            val subjects = (activity as MainActivity).classes
+            val subjects = (activity as MainActivity).subjects
             val subjectAdapter = ArrayAdapter(context!!,
                     android.R.layout.simple_spinner_dropdown_item,
                     android.R.id.text1,

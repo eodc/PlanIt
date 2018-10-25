@@ -137,7 +137,7 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
 
     private fun setupClassSpinner() {
         if (context != null && activity != null) {
-            val subjects = (activity as MainActivity).classes
+            val subjects = (activity as MainActivity).subjects
             val mClassAdapter = ArrayAdapter(context!!,
                     android.R.layout.simple_spinner_dropdown_item,
                     android.R.id.text1,
