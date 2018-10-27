@@ -2,7 +2,6 @@ package io.eodc.planit.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.eodc.planit.R
 import io.eodc.planit.adapter.License
 import io.eodc.planit.adapter.LicenseAdapter
@@ -24,11 +23,6 @@ class LicensesActivity : AppCompatActivity() {
         if (supportActionBar != null) supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         val licenses = arrayListOf(
-                License("AHBottomNavigation",
-                        2017,
-                        "Aurelien Hubert",
-                        "https://www.apache.org/licenses/LICENSE-2.0.html",
-                        "https://github.com/aurelhubert/ahbottomnavigation"),
                 License("CircleImageView",
                         2018,
                         "Henning Dodenhof",
