@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="edit_dialog_width">400dp</dimen>
+    <dimen name="edit_dialog_width">375dp</dimen>
     <dimen name="edit_dialog_height">510dp</dimen>
 
     <dimen name="mod_class_dialog_height">335dp</dimen>
