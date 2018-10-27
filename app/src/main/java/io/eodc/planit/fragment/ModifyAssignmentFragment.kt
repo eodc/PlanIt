@@ -21,7 +21,6 @@ import io.eodc.planit.helper.AssignmentInfoInputHelper
 import io.eodc.planit.helper.KeyboardFocusManager
 import kotlinx.android.synthetic.main.dialog_edit_assignment.*
 import org.joda.time.DateTime
-import java.util.*
 
 /**
  * Created by 2n on 5/16/18.
@@ -118,13 +117,10 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
 
     private fun setupTypeSpinner() {
         if (context != null) {
-            val types = object : ArrayList<AssignmentType>() {
-                init {
-                    add(AssignmentType("Homework", R.drawable.ic_homework_black_24dp))
-                    add(AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp))
-                    add(AssignmentType("Project", R.drawable.ic_group_black_24dp))
-                }
-            }
+            val types = arrayListOf(
+                    AssignmentType("Homework", R.drawable.ic_homework_black_24dp),
+                    AssignmentType("Quiz/Test", R.drawable.ic_test_black_24dp),
+                    AssignmentType("Project", R.drawable.ic_group_black_24dp))
 
             val typeAdapter = AssignmentTypeAdapter(context!!,
                     R.layout.item_assignment_type,
@@ -132,6 +128,15 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
                     types)
             spinnerType.adapter = typeAdapter
             spinnerType.onItemSelectedListener = this
+
+            val position =
+                    when (mAssignment.type) {
+                        Assignment.TYPE_HOMEWORK -> 0
+                        Assignment.TYPE_TEST -> 1
+                        Assignment.TYPE_PROJECT -> 2
+                        else -> 0
+                    }
+            spinnerType.setSelection(position)
         }
     }
 
@@ -145,8 +150,9 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
             spinnerClass.adapter = mClassAdapter
             spinnerClass.onItemSelectedListener = this
 
-            spinnerClass.setSelection(Iterables.indexOf(subjects
-            ) { c -> c?.id == mAssignment.classId })
+            spinnerClass.setSelection(Iterables.indexOf(subjects) { c ->
+                c?.id == mAssignment.classId
+            })
 
             setupTypeSpinner()
             fillAssignmentInfo()
