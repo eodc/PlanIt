@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
@@ -24,21 +25,26 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_create_assign"
+        android:id="@+id/fabCreateAssignment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="72dp"
+        android:layout_gravity="top"
         app:fabSize="normal"
-        app:layout_anchor="@+id/nav_bottom"
+        app:layout_anchor="@+id/bottomNavigation"
+        app:layout_behavior=".behavior.FabBehavior"
         app:layout_anchorGravity="right|top"
         app:srcCompat="@drawable/ic_add_white_24dp"
-        app:layout_behavior=".behavior.FabHideBehavior"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp" />
+        app:useCompatPadding="true" />
 
-    <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
-        android:id="@+id/nav_bottom"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:background="@color/white"
+        app:itemIconTint="@drawable/selector_bnv_tab_item_foreground"
+        app:itemTextColor="@drawable/selector_bnv_tab_item_foreground"
+        app:layout_anchor="@+id/fragment_content"
+        app:layout_anchorGravity="bottom|center"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+        app:menu="@menu/bottom_menu" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

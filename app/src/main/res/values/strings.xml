@@ -68,6 +68,7 @@
     <string name="btn_cancel_label">Cancel</string>
 
     <string name="snckbr_complete_label">Completed %s</string>
+    <string name="snckbr_complete_action_label">UNDO</string>
 
     <string name="this_week_label">next 7 days</string>
 

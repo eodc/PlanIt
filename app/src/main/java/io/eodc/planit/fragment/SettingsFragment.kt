@@ -3,13 +3,8 @@ package io.eodc.planit.fragment
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.MultiSelectListPreference
-import androidx.preference.SwitchPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceCategory
-import androidx.preference.PreferenceFragmentCompat
 import android.text.format.DateFormat
+import androidx.preference.*
 import io.eodc.planit.R
 import io.eodc.planit.activity.SubjectsActivity
 import io.eodc.planit.helper.NotificationHelper
@@ -23,7 +18,7 @@ import io.eodc.planit.preference.NotificationTimeChooserPreference
  */
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    override fun onCreatePreferences(savedInstanceState: Bundle, rootKey: String) {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_planner)
 
         val prefScreen = preferenceScreen

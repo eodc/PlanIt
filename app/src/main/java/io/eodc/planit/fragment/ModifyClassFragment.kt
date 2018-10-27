@@ -1,18 +1,17 @@
 package io.eodc.planit.fragment
 
 import android.app.AlertDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputLayout
-import androidx.fragment.app.DialogFragment
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.textfield.TextInputLayout
 import com.thebluealliance.spectrum.SpectrumDialog
 import io.eodc.planit.R
 import io.eodc.planit.db.Subject
@@ -113,7 +112,7 @@ class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDial
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dialog_modify_class, container, false);
+        return inflater.inflate(R.layout.dialog_modify_class, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
