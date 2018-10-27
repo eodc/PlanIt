@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.db.Subject
@@ -29,7 +30,7 @@ class SubjectsActivity : AppCompatActivity() {
         ViewModelProviders.of(this).get<SubjectListViewModel>(SubjectListViewModel::class.java)
                 .subjectsObservable.observe(this, Observer<List<Subject>> {this.onClassListChanged(it!!); })
 
-        recycleSubject.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        recycleSubject.layoutManager = LinearLayoutManager(this)
     }
 
     private fun onClassListChanged(subjects: List<Subject>) {
