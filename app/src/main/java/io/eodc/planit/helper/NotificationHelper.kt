@@ -13,7 +13,6 @@ import io.eodc.planit.R
 import io.eodc.planit.db.PlannerDatabase
 import io.eodc.planit.receiver.NotificationPublishReceiver
 import org.joda.time.DateTime
-import java.util.*
 
 /**
  * Helper to fire, schedule, and cancel notifications
@@ -39,7 +38,7 @@ class NotificationHelper
     init {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val classes = NotificationChannel(CLASSES_CHANNEL_ID,
+            val classes = NotificationChannel(SUBJECTS_CHANNEL_ID,
                     getString(R.string.notif_channel_classes),
                     NotificationManager.IMPORTANCE_DEFAULT)
             classes.setSound(null, null)
@@ -87,7 +86,7 @@ class NotificationHelper
                 var classesWithAssignmentsDue = 0
 
                 for (currentSubject in subjects) {
-                    val notificationBuilder = NotificationCompat.Builder(this, CLASSES_CHANNEL_ID)
+                    val notificationBuilder = NotificationCompat.Builder(this, SUBJECTS_CHANNEL_ID)
                             .setSmallIcon(R.drawable.ic_book_black_24dp)
                             .setContentTitle(currentSubject.name)
                             .setAutoCancel(true)
@@ -148,23 +147,24 @@ class NotificationHelper
      */
     fun scheduleNotification() {
         val intent = Intent(this, NotificationPublishReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(this,
+                0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val dtNow = DateTime()
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val daysToNotify = stringSetToIntegerList(sharedPreferences.getStringSet(getString(R.string.pref_show_notif_days_key), null))
+        val daysToNotify = sharedPreferences.getStringSet(getString(R.string.pref_show_notif_days_key), null)
 
         if (daysToNotify != null) {
-            for (i in daysToNotify.indices) {
-                val dayOfWeek = daysToNotify[i]
-                val dayToNotify = getNotificationTime(dayOfWeek)
-                if (dayOfWeek >= dtNow.dayOfWeek && dtNow.isBefore(dayToNotify)) {
-                    setAlarm(dayToNotify, pendingIntent)
-                    return
+            if (dtNow.dayOfWeek + 1 < 8) {
+                for (i in dtNow.dayOfWeek + 1..7) {
+                    if (daysToNotify.contains(Integer.toString(i))) {
+                        setAlarm(getNotificationTime(i), pendingIntent)
+                        return
+                    }
                 }
             }
 
-            val dayToNotify = getNotificationTime(daysToNotify[0])
+            val dayToNotify = getNotificationTime(daysToNotify.iterator().next().toInt())
                     .plusWeeks(1)
 
             setAlarm(dayToNotify, pendingIntent)
@@ -201,43 +201,23 @@ class NotificationHelper
      */
     private fun getNotificationTime(dayToNotify: Int): DateTime {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-        val dtNow = DateTime()
         val timeToNotify = sharedPreferences.getString(getString(R.string.pref_show_notif_time_key), "")
 
-        var dtNotifyOn = dtNow.withDayOfWeek(dayToNotify)
-
         val timeParts = timeToNotify!!.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        dtNotifyOn = dtNotifyOn.withHourOfDay(Integer.valueOf(timeParts[0]))
-        dtNotifyOn = dtNotifyOn.withMinuteOfHour(Integer.valueOf(timeParts[1]))
-        dtNotifyOn = dtNotifyOn.withSecondOfMinute(0)
 
-        return dtNotifyOn
+        return DateTime().withDayOfWeek(dayToNotify)
+                .withHourOfDay(Integer.valueOf(timeParts[0]))
+                .withMinuteOfHour(Integer.valueOf(timeParts[1]))
+                .withSecondOfMinute(0)
+                .withMillisOfSecond(0)
     }
 
     companion object {
         private const val SUMMARY_NOTIF_ID = 99999 // High number in case some person for some reason is taking 99998 subjects.....
 
-        private const val CLASSES_CHANNEL_ID = "subjects"
+        private const val SUBJECTS_CHANNEL_ID = "subjects"
         private const val REMINDER_CHANNEL_ID = "reminder"
         private const val GROUP_ID = "assignments"
 
-        /**
-         * Utility method to convert a string set to a list of integers
-         *
-         * @param set The string set to convert
-         * @return A sorted list of integers
-         */
-        private fun stringSetToIntegerList(set: Set<String>?): List<Int>? {
-            if (set != null) {
-                val list = ArrayList<Int>()
-                for (s in set) {
-                    list.add(Integer.valueOf(s))
-                }
-                list.sort()
-                return list
-            }
-            return null
-        }
     }
 }
