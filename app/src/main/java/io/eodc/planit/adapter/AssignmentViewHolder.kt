@@ -65,9 +65,9 @@ internal constructor(itemView: View) : DragDropSwipeAdapter.ViewHolder(itemView)
         @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             v.vibrate(VibrationEffect
-                    .createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                    .createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
         else
-            v.vibrate(500)
+            v.vibrate(10)
     }
 
     /**
