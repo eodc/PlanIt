@@ -5,10 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Assignment::class, Subject::class], version = 4)
+@Database(entities = [Assignment::class, Subject::class], version = 1)
 @TypeConverters(value = [DateConverter::class])
 abstract class PlannerDatabase : RoomDatabase() {
 
@@ -18,12 +16,6 @@ abstract class PlannerDatabase : RoomDatabase() {
 
     companion object {
         private var instance: PlannerDatabase? = null
-
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE subjects RENAME TO subjects")
-            }
-        }
 
         fun getInstance(context: Context): PlannerDatabase? {
             if (instance == null) {
@@ -36,7 +28,6 @@ abstract class PlannerDatabase : RoomDatabase() {
             instance = Room.databaseBuilder<PlannerDatabase>(context,
                     PlannerDatabase::class.java,
                     "assignments.db")
-                    .addMigrations(MIGRATION_3_4)
                     .build()
         }
     }
