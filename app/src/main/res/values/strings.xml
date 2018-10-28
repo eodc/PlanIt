@@ -49,7 +49,9 @@
     <string name="edit_class_description">Change this class.</string>
 
     <string name="nothing_due_text">Nothing due on this day!</string>
-    <string name="no_classes_text">You don\'t have any subjects. Add some to continue!</string>
+
+    <string name="no_classes_text">You don\'t have any classes. Add some to continue!</string>
+
     <string name="no_assignments_due_text">No Assignments Due!</string>
 
     <string name="nothing_due_on_cal_day_label">Nothing is due on this day!</string>
@@ -80,7 +82,7 @@
 
     <string name="license_copyright">%s %d</string>
 
-    <string name="no_classes_content_desc">No subjects</string>
+    <string name="no_classes_content_desc">No classes</string>
     <string name="nothing_due_content_desc">Nothing is due on this day.</string>
     <string name="no_assignments_due_content_desc">No assignments are due.</string>
     <string name="btn_expand_content_desc">Show notes</string>
