@@ -12,7 +12,6 @@
     <string name="mnu_homework_label">Homework</string>
     <string name="mnu_test_quiz_label">Test/Quiz</string>
     <string name="mnu_project_label">Project</string>
-    <string name="mnu_show_completed_label">Show Completed</string>
     <string name="mnu_settings_label">Settings</string>
     <string name="mnu_add_class_label">Add Class</string>
 
