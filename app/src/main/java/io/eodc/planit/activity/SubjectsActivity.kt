@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.db.Subject
-import io.eodc.planit.fragment.ModifyClassFragment
+import io.eodc.planit.fragment.ModifySubjectFragment
 import io.eodc.planit.model.SubjectListViewModel
 import kotlinx.android.synthetic.main.activity_subjects.*
 
@@ -36,21 +36,21 @@ class SubjectsActivity : AppCompatActivity() {
     private fun onClassListChanged(subjects: List<Subject>) {
         val subjectAdapter = recycleSubject.adapter as SubjectAdapter?
         if (subjectAdapter != null) {
-            subjectAdapter.swapClassesList(subjects)
+            subjectAdapter.swapSubjectsList(subjects)
         } else {
             recycleSubject.adapter = SubjectAdapter(subjects, this)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.classes_menu, menu)
+        menuInflater.inflate(R.menu.subjects_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        if (id == R.id.mnu_add_class) {
-            ModifyClassFragment.newInstance(null)
+        if (id == R.id.mnu_add_subject) {
+            ModifySubjectFragment.newInstance(null)
                     .show(supportFragmentManager, null)
             return true
         }

@@ -30,13 +30,13 @@ internal constructor(itemView: View) : DragDropSwipeAdapter.ViewHolder(itemView)
     var assignment: Assignment? = null
 
     internal var layoutHeader: LinearLayout = itemView.header
-    internal var iconExpand: ImageView = itemView.btn_expand
-    internal var imageClassColor: ImageView = itemView.border_class_color
-    internal var textHeader: TextView = itemView.text_header
+    internal var iconExpand: ImageView = itemView.btnExpand
+    internal var imageClassColor: ImageView = itemView.borderColorSubject
+    internal var textHeader: TextView = itemView.textHeader
     internal var textAssignmentName: TextView = itemView.textHeaderTitle
-    internal var textClassType: TextView = itemView.text_class_type
-    internal var textDueDate: TextView = itemView.text_due
-    internal var textNotes: TextView = itemView.text_notes
+    internal var textClassType: TextView = itemView.textSubjectType
+    internal var textDueDate: TextView = itemView.textDue
+    internal var textNotes: TextView = itemView.textNotes
 
     internal fun hideDueDate() {
         textDueDate.visibility = View.GONE

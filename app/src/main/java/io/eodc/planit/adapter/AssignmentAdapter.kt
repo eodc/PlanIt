@@ -158,7 +158,7 @@ class AssignmentAdapter(dataSet: List<Assignment> = emptyList()) : DragDropSwipe
         }
 
 
-        val classAndTypeText = mContext.getString(R.string.class_name_and_type_text,
+        val classAndTypeText = mContext.getString(R.string.subject_name_and_type_text,
                 assignmentSubject.name,
                 assignmentType)
 

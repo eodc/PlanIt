@@ -40,7 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 }
             }
         }
-        findPreference(getString(R.string.pref_classes_key)).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+        findPreference(getString(R.string.pref_subjects_key)).onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val intent = Intent(context, SubjectsActivity::class.java)
             startActivity(intent)
             true

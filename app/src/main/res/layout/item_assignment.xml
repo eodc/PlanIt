@@ -18,7 +18,7 @@
         tools:visibility="visible">
 
         <TextView
-            android:id="@+id/text_header"
+            android:id="@+id/textHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/border_class_color"
+        android:id="@+id/borderColorSubject"
         android:layout_width="4dp"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
@@ -49,25 +49,25 @@
         android:layout_marginEnd="64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/border_class_color"
+        app:layout_constraintStart_toEndOf="@id/borderColorSubject"
         app:layout_constraintTop_toBottomOf="@+id/header"
         tools:text="Example Homework" />
 
     <TextView
-        android:id="@+id/text_class_type"
+        android:id="@+id/textSubjectType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="16dp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/text_notes"
-        app:layout_constraintStart_toEndOf="@+id/border_class_color"
-        app:layout_constraintTop_toBottomOf="@+id/text_due"
+        app:layout_constraintBottom_toTopOf="@+id/textNotes"
+        app:layout_constraintStart_toEndOf="@+id/borderColorSubject"
+        app:layout_constraintTop_toBottomOf="@+id/textDue"
         tools:text="Example Class Homework" />
 
     <TextView
-        android:id="@+id/text_due"
+        android:id="@+id/textDue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -76,12 +76,12 @@
         android:drawablePadding="4dp"
         android:gravity="center_vertical"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintStart_toEndOf="@+id/borderColorSubject"
         app:layout_constraintTop_toBottomOf="@+id/textHeaderTitle"
         tools:text="Apr 20, 2018" />
 
     <ImageView
-        android:id="@+id/btn_expand"
+        android:id="@+id/btnExpand"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -89,14 +89,14 @@
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/btn_expand_content_desc"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/text_class_type"
+        app:layout_constraintBottom_toBottomOf="@+id/textSubjectType"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textHeaderTitle"
         app:srcCompat="@drawable/ic_arrow_expand_black_24dp"
         tools:visibility="visible" />
 
     <TextView
-        android:id="@+id/text_notes"
+        android:id="@+id/textNotes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -105,6 +105,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintStart_toEndOf="@+id/borderColorSubject"
         tools:visibility="gone" />
 </androidx.constraintlayout.widget.ConstraintLayout>

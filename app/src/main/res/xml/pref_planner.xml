@@ -13,9 +13,9 @@
 
         <Preference
             android:icon="@drawable/ic_book_black_24dp"
-            android:key="@string/pref_classes_key"
+            android:key="@string/pref_subjects_key"
             android:summary="Add, remove, or modify subjects"
-            android:title="Classes" />
+            android:title="Subjects" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory android:title="Notifications">

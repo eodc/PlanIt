@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/mnu_add_class"
+        android:id="@+id/mnu_add_subject"
         android:icon="@drawable/ic_add_black_24dp"
-        android:title="@string/mnu_add_class_label"
+        android:title="@string/mnu_add_subject_label"
         app:showAsAction="always" />
 </menu>

@@ -3,7 +3,7 @@
     <string name="tagline">Because it shouldn\'t be hard to get things done on time.</string>
 
     <string name="activity_settings_title">Settings</string>
-    <string name="activity_classes_title">Classes</string>
+    <string name="activity_subjects_title">Classes</string>
     <string name="activity_licenses_title">Licenses</string>
 
     <string name="mnu_home_label">Home</string>
@@ -13,7 +13,7 @@
     <string name="mnu_test_quiz_label">Test/Quiz</string>
     <string name="mnu_project_label">Project</string>
     <string name="mnu_settings_label">Settings</string>
-    <string name="mnu_add_class_label">Add Class</string>
+    <string name="mnu_add_subject_label">Add Class</string>
 
     <string name="create_assignment_title">Create an Assignment</string>
     <string name="create_assignment_description">Add an assignment to your planner.</string>
@@ -25,14 +25,14 @@
     <string name="assignment_header_far_future_text" translatable="false">Due in %d %s</string>
     <string name="assignment_header_month_pattern">MMMM</string>
 
-    <string name="class_name_and_type_text" translatable="false">%1$s %2$s</string>
+    <string name="subject_name_and_type_text" translatable="false">%1$s %2$s</string>
 
     <string name="edit_assignment_title">Edit Assignment</string>
     <string name="edit_assignment_subtitle">Change this assignment.</string>
     <string name="edit_assignment_name_label">Assignment Name</string>
 
     <string name="edit_notes_hint">Notes</string>
-    <string name="edit_class_name_hint">Class Name</string>
+    <string name="edit_subject_name_hint">Class Name</string>
     <string name="edit_teacher_name_hint">Teacher Name</string>
 
     <string name="your_week_title">Your Week</string>
@@ -42,15 +42,15 @@
     <string name="today_title">Today</string>
     <string name="nothing_due_today_label">Everything for today is done!</string>
 
-    <string name="create_class_title">Create a Class</string>
-    <string name="create_class_description">Add a new class to put assignments in.</string>
+    <string name="create_subject_title">Create a Class</string>
+    <string name="create_subject_description">Add a new class to put assignments in.</string>
 
-    <string name="edit_class_title">Edit Class</string>
-    <string name="edit_class_description">Change this class.</string>
+    <string name="edit_subject_title">Edit Class</string>
+    <string name="edit_subject_description">Change this class.</string>
 
     <string name="nothing_due_text">Nothing due on this day!</string>
 
-    <string name="no_classes_text">You don\'t have any classes. Add some to continue!</string>
+    <string name="no_subjects_text">You don\'t have any classes. Add some to continue!</string>
 
     <string name="no_assignments_due_text">No Assignments Due!</string>
 
@@ -77,12 +77,12 @@
     <string name="num_events_label" translatable="false">%d event</string>
     <string name="num_events_label_plural" translatable="false">%d events</string>
 
-    <string name="notif_channel_classes">Classes</string>
+    <string name="notif_channel_subjects">Classes</string>
     <string name="notif_channel_reminder">Reminders</string>
 
     <string name="license_copyright">%s %d</string>
 
-    <string name="no_classes_content_desc">No classes</string>
+    <string name="no_subjects_content_desc">No classes</string>
     <string name="nothing_due_content_desc">Nothing is due on this day.</string>
     <string name="no_assignments_due_content_desc">No assignments are due.</string>
     <string name="btn_expand_content_desc">Show notes</string>
@@ -95,7 +95,7 @@
     <string name="pref_show_notif_days_key" translatable="false">show_notif_days</string>
     <string name="pref_show_notif_time_key" translatable="false">show_notif_time</string>
     <string name="pref_what_assign_show_key" translatable="false">show_what_notif</string>
-    <string name="pref_classes_key" translatable="false">subjects</string>
+    <string name="pref_subjects_key" translatable="false">subjects</string>
     <string name="pref_first_time_key" translatable="false">first_time</string>
 
 

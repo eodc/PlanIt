@@ -3,5 +3,5 @@
     <dimen name="edit_dialog_width">375dp</dimen>
     <dimen name="edit_dialog_height">510dp</dimen>
 
-    <dimen name="mod_class_dialog_height">335dp</dimen>
+    <dimen name="mod_subject_dialog_height">335dp</dimen>
 </resources>

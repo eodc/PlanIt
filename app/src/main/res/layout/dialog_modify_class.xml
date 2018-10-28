@@ -13,7 +13,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/edit_class_title"
+        android:text="@string/edit_subject_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +24,7 @@
         android:layout_marginLeft="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
-        android:text="@string/edit_class_description"
+        android:text="@string/edit_subject_description"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textHeaderTitle" />
 
@@ -46,7 +46,7 @@
             android:id="@+id/editTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/edit_class_name_hint" />
+            android:hint="@string/edit_subject_name_hint" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -61,7 +61,7 @@
         android:layout_marginTop="8dp"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
-        app:layout_constraintEnd_toStartOf="@+id/pickerColorClass"
+        app:layout_constraintEnd_toStartOf="@+id/pickerColorSubject"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutEditTitle">
 
@@ -73,14 +73,14 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/pickerColorClass"
+        android:id="@+id/pickerColorSubject"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginEnd="24dp"
         android:layout_marginRight="24dp"
         android:layout_marginTop="8dp"
         android:foreground="?attr/selectableItemBackgroundBorderless"
-        android:src="@color/class_red"
+        android:src="@color/subject_red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layoutEditTitle" />
 

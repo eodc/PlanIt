@@ -1,19 +1,17 @@
 package io.eodc.planit.activity
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.core.content.ContextCompat
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import io.eodc.planit.R
-import io.eodc.planit.fragment.OnboardingAddClassesFragment
+import io.eodc.planit.fragment.OnboardingAddSubjectsFragment
 import io.eodc.planit.fragment.OnboardingFragment
 import io.eodc.planit.model.SubjectListViewModel
 import kotlinx.android.synthetic.main.activity_onboarding.*
@@ -41,7 +39,7 @@ class OnboardingActivity : AppCompatActivity(), androidx.viewpager.widget.ViewPa
                     OnboardingFragment.newInstance("Your Planner, Your Way",
                             R.drawable.ic_format_list_bulleted_blue_250dp,
                             "See your assignments in an overview, list, or calendar. It's your choice."),
-                    OnboardingAddClassesFragment())
+                    OnboardingAddSubjectsFragment())
             pager.adapter = OnboardingPagerAdapter(supportFragmentManager, mOnboardingFragments)
             layout_tab.setupWithViewPager(pager)
             pager.addOnPageChangeListener(this)

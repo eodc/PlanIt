@@ -127,7 +127,7 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         if (parent == spinnerType)
             mSelectedType = position
-        else if (parent == spinnerClass) mSelectedClass = id + 1
+        else if (parent == spinnerSubject) mSelectedClass = id + 1
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -150,13 +150,13 @@ class AddAssignmentFragment : BottomSheetDialogFragment(), AdapterView.OnItemSel
 
     private fun setupClassSpinner() {
         if (activity != null && context != null) {
-            spinnerClass!!.onItemSelectedListener = this
+            spinnerSubject!!.onItemSelectedListener = this
             val subjects = (activity as MainActivity).subjects
             val subjectAdapter = ArrayAdapter(context!!,
                     android.R.layout.simple_spinner_dropdown_item,
                     android.R.id.text1,
                     subjects!!)
-            spinnerClass!!.adapter = subjectAdapter
+            spinnerSubject!!.adapter = subjectAdapter
         }
     }
 

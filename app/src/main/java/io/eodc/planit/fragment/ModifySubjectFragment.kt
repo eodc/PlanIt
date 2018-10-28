@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.textfield.TextInputLayout
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.dialog_modify_class.*
  *
  * @author 2n
  */
-class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDialog.OnColorSelectedListener {
+class ModifySubjectFragment : DialogFragment(), SpectrumDialog.OnColorSelectedListener {
     private var mSubject: Subject? = null
     private lateinit var mColorChosen: String
 
@@ -35,7 +36,7 @@ class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDial
         if (fragmentManager != null) {
             SpectrumDialog.Builder(context)
                     .setColors(R.array.spectrum_colors)
-                    .setSelectedColorRes(R.color.class_red)
+                    .setSelectedColorRes(R.color.subject_red)
                     .setDismissOnColorSelected(false)
                     .setOnColorSelectedListener(this)
                     .build().show(fragmentManager!!, null)
@@ -118,18 +119,19 @@ class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDial
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (mSubject == null) {
-            textHeaderTitle.setText(R.string.create_class_title)
-            textHeaderSubtitle.setText(R.string.create_class_description)
+            textHeaderTitle.setText(R.string.create_subject_title)
+            textHeaderSubtitle.setText(R.string.create_subject_description)
             btnConfirm.setText(R.string.btn_create_label)
+            mColorChosen = "#" + Integer.toHexString(ContextCompat.getColor(context!!, R.color.subject_red))
         } else {
             btnDelete.visibility = View.VISIBLE
 
-            editTitle.setText(mSubject!!.name)
-            editTeacherName.setText(mSubject!!.teacher)
-            pickerColorClass.setImageDrawable(ColorDrawable(Color.parseColor(mSubject!!.color)))
+            editTitle.setText(mSubject?.name)
+            editTeacherName.setText(mSubject?.teacher)
+            pickerColorSubject.setImageDrawable(ColorDrawable(Color.parseColor(mSubject?.color)))
+            mColorChosen = mSubject!!.color
         }
 
-        mColorChosen = "#" + Integer.toHexString(ContextCompat.getColor(context!!, R.color.class_red))
         setupInputListeners()
     }
 
@@ -137,21 +139,21 @@ class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDial
         btnConfirm.setOnClickListener { confirmChanges() }
         btnDelete.setOnClickListener { showDeleteDialog() }
         btnCancel.setOnClickListener { dismiss() }
-        pickerColorClass.setOnClickListener { showColorPicker() }
+        pickerColorSubject.setOnClickListener { showColorPicker() }
     }
 
     override fun onResume() {
         super.onResume()
         if (dialog != null && dialog.window != null) {
             val width = resources.getDimension(R.dimen.edit_dialog_width).toInt()
-            val height = resources.getDimension(R.dimen.mod_class_dialog_height).toInt()
+            val height = resources.getDimension(R.dimen.mod_subject_dialog_height).toInt()
             dialog.window!!.setLayout(width, height)
         }
     }
 
     override fun onColorSelected(positiveResult: Boolean, color: Int) {
         if (positiveResult) {
-            pickerColorClass.setImageDrawable(ColorDrawable(color))
+            pickerColorSubject.setImageDrawable(ColorDrawable(color))
             mColorChosen = "#" + Integer.toHexString(color)
         }
     }
@@ -159,13 +161,13 @@ class ModifyClassFragment : androidx.fragment.app.DialogFragment(), SpectrumDial
     companion object {
 
         /**
-         * Creates an new instance of a ModifyClassFragment
+         * Creates an new instance of a ModifySubjectFragment
          *
          * @param inSubject     Subject to modify, or null if new class.
-         * @return A new instance of ModifyClassFragment
+         * @return A new instance of ModifySubjectFragment
          */
-        fun newInstance(inSubject: Subject?): ModifyClassFragment {
-            val fragment = ModifyClassFragment()
+        fun newInstance(inSubject: Subject?): ModifySubjectFragment {
+            val fragment = ModifySubjectFragment()
             fragment.mSubject = inSubject
             return fragment
         }

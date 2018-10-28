@@ -9,24 +9,24 @@ import androidx.lifecycle.ViewModelProviders
 import io.eodc.planit.R
 import io.eodc.planit.adapter.SubjectAdapter
 import io.eodc.planit.model.SubjectListViewModel
-import kotlinx.android.synthetic.main.fragment_onboarding_classes.*
+import kotlinx.android.synthetic.main.fragment_onboarding_subjects.*
 
 /**
  * The last slide of the onboarding carousel, where the user initially adds their subjects
  *
  * @author 2n
  */
-class OnboardingAddClassesFragment : OnboardingFragment() {
+class OnboardingAddSubjectsFragment : OnboardingFragment() {
 
     private fun addClass() {
         if (fragmentManager != null) {
-            ModifyClassFragment.newInstance(null)
+            ModifySubjectFragment.newInstance(null)
                     .show(fragmentManager!!, null)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_onboarding_classes, container, false)
+        return inflater.inflate(R.layout.fragment_onboarding_subjects, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,23 +36,23 @@ class OnboardingAddClassesFragment : OnboardingFragment() {
                 Observer {
                     if (it != null) {
                         if (recycleSubject.adapter != null) {
-                            (recycleSubject.adapter as SubjectAdapter).swapClassesList(it)
+                            (recycleSubject.adapter as SubjectAdapter).swapSubjectsList(it)
                         } else {
                             recycleSubject.adapter = SubjectAdapter(it, context!!)
                         }
                         updateNoClassIndicators(it.size)
                     }
                 })
-        btnAddClass.setOnClickListener { addClass() }
+        btnAddSubject.setOnClickListener { addClass() }
     }
 
     private fun updateNoClassIndicators(count: Int) {
         if (count > 0) {
-            textOnboardingNoClass.visibility = View.GONE
-            imageNoClass.visibility = View.GONE
+            textOnboardingNoSubject.visibility = View.GONE
+            imageNoSubject.visibility = View.GONE
         } else {
-            textOnboardingNoClass.visibility = View.VISIBLE
-            imageNoClass.visibility = View.VISIBLE
+            textOnboardingNoSubject.visibility = View.VISIBLE
+            imageNoSubject.visibility = View.VISIBLE
         }
     }
 }

@@ -147,10 +147,10 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
                     android.R.layout.simple_spinner_dropdown_item,
                     android.R.id.text1,
                     subjects!!)
-            spinnerClass.adapter = mClassAdapter
-            spinnerClass.onItemSelectedListener = this
+            spinnerSubject.adapter = mClassAdapter
+            spinnerSubject.onItemSelectedListener = this
 
-            spinnerClass.setSelection(Iterables.indexOf(subjects) { c ->
+            spinnerSubject.setSelection(Iterables.indexOf(subjects) { c ->
                 c?.id == mAssignment.classId
             })
 
@@ -184,7 +184,7 @@ class ModifyAssignmentFragment : androidx.fragment.app.DialogFragment(), DatePic
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         if (parent == spinnerType)
             mSelectedType = position
-        else if (parent == spinnerClass) {
+        else if (parent == spinnerSubject) {
             val selected = parent.selectedItem as Subject
             mSelectedClassId = selected.id.toLong()
         }

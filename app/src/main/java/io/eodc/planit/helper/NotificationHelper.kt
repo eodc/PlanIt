@@ -38,10 +38,10 @@ class NotificationHelper
     init {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val classes = NotificationChannel(SUBJECTS_CHANNEL_ID,
-                    getString(R.string.notif_channel_classes),
+            val subjects = NotificationChannel(SUBJECTS_CHANNEL_ID,
+                    getString(R.string.notif_channel_subjects),
                     NotificationManager.IMPORTANCE_DEFAULT)
-            classes.setSound(null, null)
+            subjects.setSound(null, null)
 
             val reminder = NotificationChannel(REMINDER_CHANNEL_ID,
                     getString(R.string.notif_channel_reminder),
@@ -49,7 +49,7 @@ class NotificationHelper
             reminder.lightColor = Color.BLUE
             reminder.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
 
-            manager.createNotificationChannel(classes)
+            manager.createNotificationChannel(subjects)
             manager.createNotificationChannel(reminder)
         }
     }
@@ -82,8 +82,8 @@ class NotificationHelper
                 val summaryStyle = NotificationCompat.InboxStyle()
 
                 var summaryLineCount = 0
-                var overflowClasses = 0
-                var classesWithAssignmentsDue = 0
+                var overflowSubjects = 0
+                var subjectsWithAssignmentsDue = 0
 
                 for (currentSubject in subjects) {
                     val notificationBuilder = NotificationCompat.Builder(this, SUBJECTS_CHANNEL_ID)
@@ -107,12 +107,12 @@ class NotificationHelper
                     if (assignmentsDue > 0) {
                         summaryStyle.addLine(className + " " + if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
                         summaryLineCount++
-                        if (summaryLineCount > 6) overflowClasses++
+                        if (summaryLineCount > 6) overflowSubjects++
 
                         notificationStyle.bigText(sb.toString().trim { it <= ' ' })
                         val notif = notificationBuilder.setContentText(if (assignmentsDue == 1) sb.toString() else assignmentsDue.toString() + " assignments due")
                                 .setStyle(notificationStyle).build()
-                        classesWithAssignmentsDue++
+                        subjectsWithAssignmentsDue++
                         if (mManager != null)
                             mManager!!.notify(classId, notif)
                         else {
@@ -122,10 +122,10 @@ class NotificationHelper
                     }
                 }
                 summaryStyle
-                        .setBigContentTitle(classesWithAssignmentsDue.toString() + (if (classesWithAssignmentsDue == 1) " class " else " subjects ") + "with assignments due")
+                        .setBigContentTitle(subjectsWithAssignmentsDue.toString() + (if (subjectsWithAssignmentsDue == 1) " class " else " subjects ") + "with assignments due")
 
-                if (overflowClasses > 0) {
-                    summaryStyle.setSummaryText("+" + overflowClasses + " other " + if (overflowClasses == 1) "class" else "subjects")
+                if (overflowSubjects > 0) {
+                    summaryStyle.setSummaryText("+" + overflowSubjects + " other " + if (overflowSubjects == 1) "class" else "subjects")
                 }
 
                 summaryBuilder.setStyle(summaryStyle)

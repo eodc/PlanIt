@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/border_class_color"
+        android:id="@+id/borderColorSubject"
         android:layout_width="4dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,7 +22,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintStart_toEndOf="@+id/borderColorSubject"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Calculus" />
 
@@ -34,7 +34,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/border_class_color"
+        app:layout_constraintStart_toEndOf="@+id/borderColorSubject"
         app:layout_constraintTop_toBottomOf="@+id/textHeaderTitle"
         tools:text="Mr. Tsuchiyama" />
 
