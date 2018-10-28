@@ -72,6 +72,7 @@
 
     <string name="this_week_label">next 7 days</string>
 
+    <string name="no_events_label" translatable="false">Nothing for</string>
     <string name="num_events_label" translatable="false">%d event</string>
     <string name="num_events_label_plural" translatable="false">%d events</string>
 

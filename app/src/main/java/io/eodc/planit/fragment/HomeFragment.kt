@@ -105,10 +105,12 @@ class HomeFragment : NavigableFragment() {
             xAxis.setLabelCount(7, true)
             xAxis.valueFormatter = formatter
 
-            if (totalCount > 1)
-                textGraphAssignmentCount.text = getString(R.string.num_events_label_plural, totalCount)
-            else
-                textGraphAssignmentCount.text = getString(R.string.num_events_label, totalCount)
+            when (totalCount) {
+                0 -> textGraphAssignmentCount.text = getString(R.string.no_events_label)
+                1 -> textGraphAssignmentCount.text = getString(R.string.num_events_label, totalCount)
+                else -> textGraphAssignmentCount.text = getString(R.string.num_events_label_plural, totalCount)
+            }
+
             graphHomeWeeksAssignments.data = lineData
             graphHomeWeeksAssignments.invalidate()
         }
